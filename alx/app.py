@@ -36,21 +36,20 @@ class Paths:
             else:
                 prefix = "/opt/local"
 
-            self.root = os.path.join(prefix, env, dirname)
-            oneup = os.path.abspath(os.path.join(self.root, ".."))
-            self.data = os.path.join(oneup, "data", dirname)
-            self.scripts = os.path.join()
-            self.log = os.path.join(oneup, "log")
-        else:
-            self.root = os.path.abspath(os.path.dirname(sys.argv[0]))
-            self.data = os.path.join(self.root, "data")
+            self.root = os.path.join(prefix, env)
+            self.data = os.path.join(self.root, "data", dirname)
             self.log = os.path.join(self.root, "log")
-            oneup = os.path.abspath(os.path.join(self.root, ".."))
+            self.top = os.path.join(self.root, "scripts", dirname)
+        else:
+            self.top = os.path.abspath(os.path.dirname(sys.argv[0]))
+            self.root = os.path.abspath(os.path.join(self.top, "..", ".."))
+            self.data = os.path.join(self.top, "data")
+            self.log = os.path.join(self.top, "log")
 
-        self.bin = os.path.join(oneup, "bin")
-        self.lib = os.path.join(oneup, "lib", "alx")
+        self.bin = os.path.join(self.root, "bin")
+        self.scripts = os.path.join(self.root, "scripts")
         self.logfile = os.path.join(self.log, appname + ".log")
-        self.etc = self.root
+        self.etc = self.top
 
         if inifile:
             self.config = os.path.join(self.etc, inifile)
