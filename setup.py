@@ -1,4 +1,4 @@
-from setuptools import setup
+from setuptools import setup, find_packages
 
 with open("README.md", "r") as fh:
     long_description = fh.read()
@@ -16,7 +16,7 @@ setup(
         "License :: OSI Approved :: MIT License",
         "Operating System :: OS Independent",
     ],
-    packages=['alx'],
+    packages=['alx', 'alx/data'],
     package_data = {'alx': ['*.ini']},
     zip_safe=True,
     install_requires=['setuptools-git', 'arrow', 'sqlalchemy', 
