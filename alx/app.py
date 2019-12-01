@@ -79,18 +79,13 @@ class ALXApp:
         self.arguments = parser.parse_args()
         self.environment = self.arguments.environment
 
-        libhome = os.path.dirname(os.path.abspath(__file__))
-        self.libconfigfile = os.path.join(libhome, 'alx.ini')
-        self.libconfig = self.read_config(self.libconfigfile)
+        self.libconfig = read_lib_config()
 
         self.paths = Paths(self, inifile=inifile)
-        self.config = self.read_config(self.paths.config)
+        self.config = read_config(self.paths.config)
 
         if self.config:
             self.parse_config(self, self.config[self.environment])
-
-        libdir = os.path.dirname(__file__)
-        self.libconfig = self.read_config(os.path.join(libdir, 'alx.ini'))
 
         self.start_logging()
 
@@ -102,16 +97,6 @@ class ALXApp:
                 setattr(obj, item, config.get(item))
         except:
             raise
-
-    @staticmethod
-    def read_config(filename):
-        if not os.path.isfile(filename):
-            return None
-
-        config = configparser.ConfigParser()
-        config.read(filename)
-
-        return config
 
     def start_logging(self):
         days = self.libconfig.getint('logging', 'days')
@@ -152,4 +137,22 @@ class ALXApp:
 
     def is_prod(self):
         return self.environment == 'prod'
+
+
+def read_config(filename):
+    if not os.path.isfile(filename):
+        return None
+
+    config = configparser.ConfigParser()
+    config.read(filename)
+
+    return config
+
+def read_lib_config():
+    libdir = os.path.dirname(__file__)
+    return read_config(os.path.join(libdir, 'alx.ini'))
+
+
+if __name__ == "__main__":
+    app = ALXApp("Test Application")
 
