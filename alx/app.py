@@ -27,7 +27,7 @@ class Paths:
         appname = app.appname
         env = app.environment
 
-        dirname = os.path.dirname(os.path.dirname(sys.argv[0]))
+        dirname = os.path.basename(os.path.dirname(sys.argv[0]))
 
         if env == 'prod' or env == 'test':
             # put in alx.ini
@@ -35,15 +35,21 @@ class Paths:
                 prefix = "C:\\opt\\local"
             else:
                 prefix = "/opt/local"
-            self.top = prefix
-        else:
-            self.top = dirname
 
-        self.data = os.path.join(self.top, "data", appname)
-        self.log = os.path.join(self.top, "log")
-        self.bin = os.path.join(self.top, "bin")
+            self.root = os.path.join(prefix, env)
+            self.data = os.path.join(self.root, "data", dirname)
+            self.log = os.path.join(self.root, "log")
+            self.top = os.path.join(self.root, "scripts", dirname)
+        else:
+            self.top = os.path.abspath(os.path.dirname(sys.argv[0]))
+            self.root = os.path.abspath(os.path.join(self.top, "..", ".."))
+            self.data = os.path.join(self.top, "data")
+            self.log = os.path.join(self.top, "log")
+
+        self.bin = os.path.join(self.root, "bin")
+        self.scripts = os.path.join(self.root, "scripts")
         self.logfile = os.path.join(self.log, appname + ".log")
-        self.etc = os.path.join(self.top, 'etc')
+        self.etc = self.top
 
         if inifile:
             self.config = os.path.join(self.etc, inifile)
@@ -73,13 +79,18 @@ class ALXApp:
         self.arguments = parser.parse_args()
         self.environment = self.arguments.environment
 
-        self.libconfig = read_lib_config()
+        libhome = os.path.dirname(os.path.abspath(__file__))
+        self.libconfigfile = os.path.join(libhome, 'alx.ini')
+        self.libconfig = self.read_config(self.libconfigfile)
 
         self.paths = Paths(self, inifile=inifile)
-        self.config = read_config(self.paths.config)
+        self.config = self.read_config(self.paths.config)
 
         if self.config:
             self.parse_config(self, self.config[self.environment])
+
+        libdir = os.path.dirname(__file__)
+        self.libconfig = self.read_config(os.path.join(libdir, 'alx.ini'))
 
         self.start_logging()
 
@@ -91,6 +102,16 @@ class ALXApp:
                 setattr(obj, item, config.get(item))
         except:
             raise
+
+    @staticmethod
+    def read_config(filename):
+        if not os.path.isfile(filename):
+            return None
+
+        config = configparser.ConfigParser()
+        config.read(filename)
+
+        return config
 
     def start_logging(self):
         days = self.libconfig.getint('logging', 'days')
@@ -131,22 +152,4 @@ class ALXApp:
 
     def is_prod(self):
         return self.environment == 'prod'
-
-
-def read_config(filename):
-    if not os.path.isfile(filename):
-        return None
-
-    config = configparser.ConfigParser()
-    config.read(filename)
-
-    return config
-
-def read_lib_config():
-    libdir = os.path.dirname(__file__)
-    return read_config(os.path.join(libdir, 'alx.ini'))
-
-
-if __name__ == "__main__":
-    app = ALXApp("Test Application")
 
