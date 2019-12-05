@@ -3,7 +3,7 @@ default::
 clean::
 	rm -fr dist *egg-info
 
-install:: dist upload
+install:: clean dist upload
 
 dist::
 	python setup.py sdist
