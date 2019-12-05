@@ -27,7 +27,7 @@ class Paths:
         appname = app.appname
         env = app.environment
 
-        dirname = os.path.basename(os.path.dirname(sys.argv[0]))
+        dirname = os.path.dirname(os.path.dirname(sys.argv[0]))
 
         if env == 'prod' or env == 'test':
             # put in alx.ini
@@ -35,21 +35,15 @@ class Paths:
                 prefix = "C:\\opt\\local"
             else:
                 prefix = "/opt/local"
-
-            self.root = os.path.join(prefix, env)
-            self.data = os.path.join(self.root, "data", dirname)
-            self.log = os.path.join(self.root, "log")
-            self.top = os.path.join(self.root, "scripts", dirname)
+            self.top = prefix
         else:
-            self.top = os.path.abspath(os.path.dirname(sys.argv[0]))
-            self.root = os.path.abspath(os.path.join(self.top, "..", ".."))
-            self.data = os.path.join(self.top, "data")
-            self.log = os.path.join(self.top, "log")
+            self.top = dirname
 
-        self.bin = os.path.join(self.root, "bin")
-        self.scripts = os.path.join(self.root, "scripts")
+        self.data = os.path.join(self.top, "data", appname)
+        self.log = os.path.join(self.top, "log")
+        self.bin = os.path.join(self.top, "bin")
         self.logfile = os.path.join(self.log, appname + ".log")
-        self.etc = self.top
+        self.etc = os.path.join(self.top, 'etc')
 
         if inifile:
             self.config = os.path.join(self.etc, inifile)
