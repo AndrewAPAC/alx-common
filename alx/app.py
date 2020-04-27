@@ -24,7 +24,7 @@ class Paths:
         :param app: The ALXApp objet
         :param inifile: If the inifile name is not the same as the
         """
-        appname = app.appname
+        appname = app.name
         env = app.environment
 
         dirname = os.path.basename(os.path.dirname(sys.argv[0]))
@@ -49,7 +49,7 @@ class Paths:
         self.bin = os.path.join(self.root, "bin")
         self.scripts = os.path.join(self.root, "scripts")
         self.logfile = os.path.join(self.log, appname + ".log")
-        self.etc = self.top
+        self.etc = os.path.join(self.root, 'etc')
 
         if inifile:
             self.config = os.path.join(self.etc, inifile)
@@ -59,40 +59,60 @@ class Paths:
 
 class ALXApp:
     def __init__(self, description="Unknown App", args=None, appname=None,
-                 inifile=None):
+                 inifile=None, mylogger=None, logging=True,
+                 myparser=None, epilog=None,
+                 formatter=None):
 
         if not appname:
-            self.appname = os.path.splitext(os.path.basename(sys.argv[0]))[0]
+            self.name = os.path.splitext(os.path.basename(sys.argv[0]))[0]
         else:
-            self.appname = appname
+            self.name = appname
 
-        parser = argparse.ArgumentParser(description)
+        parser = argparse.ArgumentParser(description=description,
+                                         epilog=epilog,
+                                         formatter_class=formatter)
 
-        parser.add_argument("-e", "--environment", default='dev',
+        parser.add_argument("-e", "--env", default='dev',
                             help="Runtime Environment, dev, test or prod")
+
         if args:
             for a in args:
-                parser.add_argument(*a)
+                if type(a[-1]) is dict:
+                    arg = a[:-1]
+                    kwargs = a[-1]
+                    parser.add_argument(*arg, **kwargs)
+                else:
+                    parser.add_argument(*a)
+
+        self.arguments = parser.parse_args()
 
         self.logger = None
 
-        self.arguments = parser.parse_args()
-        self.environment = self.arguments.environment
+        if self.arguments.env in ('test', 'uat', 'tst'):
+            self.environment = 'test'
+        elif self.arguments.env in ('prd', 'prod', 'production'):
+            self.environment = 'prod'
+        else:
+            self.environment = 'dev'
 
         libhome = os.path.dirname(os.path.abspath(__file__))
         self.libconfigfile = os.path.join(libhome, 'alx.ini')
         self.libconfig = self.read_config(self.libconfigfile)
 
         self.paths = Paths(self, inifile=inifile)
-        self.config = self.read_config(self.paths.config)
+        self.config = self.read_config(self.paths.config, myparser)
 
-        if self.config:
+        if self.config and self.environment in self.config:
             self.parse_config(self, self.config[self.environment])
 
         libdir = os.path.dirname(__file__)
         self.libconfig = self.read_config(os.path.join(libdir, 'alx.ini'))
 
-        self.start_logging()
+        if mylogger:
+            logger = mylogger
+
+        if logging:
+            self.start_logging()
 
     def parse_config(self, obj, config):
         try:
@@ -104,11 +124,15 @@ class ALXApp:
             raise
 
     @staticmethod
-    def read_config(filename):
+    def read_config(filename, parser=None):
         if not os.path.isfile(filename):
             return None
 
-        config = configparser.ConfigParser()
+        if not parser:
+            config = configparser.ConfigParser()
+        else:
+            config = parser
+
         config.read(filename)
 
         return config
@@ -142,7 +166,7 @@ class ALXApp:
             ch.setFormatter(formatter)
             logger.addHandler(ch)
 
-        logger.info("Starting application '{}'".format(self.appname))
+        logger.info("Starting application '{}'".format(self.name))
 
     def is_dev(self):
         return self.environment == 'dev'
