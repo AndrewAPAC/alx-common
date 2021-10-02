@@ -1,0 +1,8 @@
+sources::
+    @echo $(SRCS)
+
+prod::
+    @echo Making production version
+
+test::
+    @echo Making test version
