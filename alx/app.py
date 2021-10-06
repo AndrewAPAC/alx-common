@@ -69,8 +69,7 @@ class ALXApp:
             self.name = appname
 
         parser = argparse.ArgumentParser(description=description,
-                                         epilog=epilog,
-                                         formatter_class=formatter)
+                                         epilog=epilog)
 
         parser.add_argument("-e", "--env", default='dev',
                             help="Runtime Environment, dev, test or prod")
