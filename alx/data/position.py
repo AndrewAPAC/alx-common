@@ -1,12 +1,10 @@
 
 class Position:
-    def __init__(self, date, account, symbol, position=0, close=0.0,
-                 description=""):
+    def __init__(self, date, account, symbol, position=0, close=0.0):
         self.date = date
         self.account = account
         self.symbol = symbol
         self.position = position
-        self.description = description
         self.close = close
 
     def save(self, db):
