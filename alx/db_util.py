@@ -1,6 +1,6 @@
 from mysql.connector import MySQLConnection
-from sqlalchemy import create_engine, MetaData, Table
-from sqlalchemy.orm import mapper, sessionmaker
+#from sqlalchemy import create_engine, MetaData, Table
+#from sqlalchemy.orm import mapper, sessionmaker
 
 
 class ALXDatabase:
@@ -8,6 +8,7 @@ class ALXDatabase:
                  database=None):
         self.config = {'user': user, 'password': passwd,
                        'host': host, 'database': database}
+        self.cursor = None
 
     def connect(self):
         try:
@@ -16,10 +17,11 @@ class ALXDatabase:
             raise
 
         self.cursor = self.connection.cursor()
+
         return self.cursor
 
 
     def close(self):
         self.connection.close()
         self.cursor.close()
-
+        self.cursor = None
