@@ -4,7 +4,7 @@ from alx.misc import singleton
 from alx.app import logger as logging
 
 # @singleton
-class ALXDatabase:
+class ALXDatabaseSA:
     def __init__(self, type=None, user=None, passwd=None,
                  host=None, database=None, debug=False):
         connectstr = "%s://%s:%s@%s/%s" % \
