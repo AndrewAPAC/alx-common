@@ -1,12 +1,13 @@
 class Trade:
-    def __init__(self, date, symbol, side, quantity, price, amount,
+    def __init__(self, security, date, side, quantity, price, amount,
                  reference = None, fee = 0.0):
+        self.security = security
         self.date = date
-        self.symbol = symbol
+        self.symbol = self.security.symbol
         self.side = side
         self.quantity = quantity
         self.price = price
-        self.amount = amount
+        self.value = amount
         self.reference = reference
         self.fee = fee
 
@@ -17,6 +18,6 @@ class Trade:
             cursor.callproc('sp_update_transaction',
                             (self.date, self.reference, self.symbol,
                              self.side, self.quantity, self.price,
-                             self.fee, self.amount))
+                             self.fee, self.value))
         except Exception as e:
             raise

@@ -5,7 +5,7 @@ with open("README.md", "r") as fh:
 
 setup(
     name='alx-common',
-    version='0.9.6',
+    version='1.0.0',
     author='Andrew Lister',
     author_email='a.lister.hk@gmail.com',
     description='A common library for home development',
