@@ -85,7 +85,7 @@ class ALXApp:
 
         self.arguments = parser.parse_args()
 
-        self.logger = None
+        self.logger = logger
 
         if self.arguments.env in ('test', 'uat', 'tst'):
             self.environment = 'test'
@@ -108,7 +108,7 @@ class ALXApp:
         self.libconfig = self.read_config(os.path.join(libdir, 'alx.ini'))
 
         if mylogger:
-            logger = mylogger
+            logger = app.logger = mylogger
 
         if logging:
             self.start_logging()
