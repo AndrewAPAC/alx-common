@@ -1,5 +1,5 @@
-from googlefinance.client import get_price_data
-import pandas as pd
+#from googlefinance.client import get_price_data
+#import pandas as pd
 
 class Price:
     def __init__(self, security, date, close=-1.0):

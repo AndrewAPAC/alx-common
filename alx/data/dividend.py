@@ -5,7 +5,7 @@
 
 class Dividend:
     def __init__(self, security, paydate, quantity, divpershare, total,
-                 franked = 0, unfranked = 0, credit = 0):
+                 franked=0, unfranked=0, credit=0):
         self.security = security
         self.symbol = security.symbol
         self.paydate = paydate
