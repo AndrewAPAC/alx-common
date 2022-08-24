@@ -4,8 +4,8 @@
 #
 # Author: Andrew Lister
 # Date: September 2019
-
-import app
+import os
+from app import ALXApp as app
 
 class ALXhtml:
     end_html = "</html>\n"
@@ -20,8 +20,9 @@ class ALXhtml:
         :param title: The title to use in the head section of the html
         """
 
-        config = app.read_lib_config()
-        self.css = "<style>\n" + config.get('html', 'css') + "</style>\n"
+        self.config = app.read_lib_config()
+
+        self.css = "<style>\n" + self.config.get('html', 'css') + "</style>\n"
         self.head = "<head>\n"
         if title:
             self.head += "<title>" + title + "</title>\n"

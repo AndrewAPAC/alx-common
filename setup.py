@@ -1,13 +1,14 @@
 from setuptools import setup, find_packages
+from alx import __author__, __version__
 
 with open("README.md", "r") as fh:
     long_description = fh.read()
 
 setup(
     name='alx-common',
-    version='1.0.1',
-    author='Andrew Lister',
-    author_email='a.lister.hk@gmail.com',
+    version=__version__,
+    author=__author__,
+    author_email=__author_email__,
     description='A common library for home development',
     long_description=long_description,
     long_description_content_type="text/markdown",

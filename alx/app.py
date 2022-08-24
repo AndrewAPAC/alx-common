@@ -85,8 +85,6 @@ class ALXApp:
 
         self.arguments = parser.parse_args()
 
-        self.logger = logger
-
         if self.arguments.env in ('test', 'uat', 'tst'):
             self.environment = 'test'
         elif self.arguments.env in ('prd', 'prod', 'production'):
@@ -94,21 +92,16 @@ class ALXApp:
         else:
             self.environment = 'dev'
 
-        libhome = os.path.dirname(os.path.abspath(__file__))
-        self.libconfigfile = os.path.join(libhome, 'alx.ini')
-        self.libconfig = self.read_config(self.libconfigfile)
-
         self.paths = Paths(self, inifile=inifile)
         self.config = self.read_config(self.paths.config, myparser)
 
         if self.config and self.environment in self.config:
             self.parse_config(self, self.config[self.environment])
 
-        libdir = os.path.dirname(__file__)
-        self.libconfig = self.read_config(os.path.join(libdir, 'alx.ini'))
+        self.libconfig = self.read_lib_config()
 
         if mylogger:
-            logger = app.logger = mylogger
+            self.logger = mylogger
 
         if logging:
             self.start_logging()
@@ -135,6 +128,12 @@ class ALXApp:
         config.read(filename)
 
         return config
+
+    @staticmethod
+    def read_lib_config():
+        libhome = os.path.dirname(os.path.abspath(__file__))
+        filename = os.path.join(libhome, 'alx.ini')
+        return ALXApp.read_config(filename)
 
     def start_logging(self):
         days = self.libconfig.getint('logging', 'days')
@@ -165,7 +164,7 @@ class ALXApp:
             ch.setFormatter(formatter)
             logger.addHandler(ch)
 
-        logger.info("Starting application '{}'".format(self.name))
+        logger.debug("Starting application '{}'".format(self.name))
 
     def is_dev(self):
         return self.environment == 'dev'
@@ -175,4 +174,3 @@ class ALXApp:
 
     def is_prod(self):
         return self.environment == 'prod'
-
