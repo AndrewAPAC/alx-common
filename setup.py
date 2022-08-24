@@ -1,5 +1,5 @@
 from setuptools import setup, find_packages
-from alx import __author__, __version__
+from alx import __author__, __version__, __author_email__
 
 with open("README.md", "r") as fh:
     long_description = fh.read()
