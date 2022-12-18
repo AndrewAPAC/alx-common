@@ -27,3 +27,13 @@ class Environment:
             self.period_type = os.getenv("_PERIOD_TYPE")
         except Exception as e:
             raise("Environment error: %s", format(e))
+
+        self.dataview = {}
+
+        # Pull out all the columns from the dataview (only works if starts
+        # with '_' and contains a lowercase letter
+        for e in sorted(os.environ):
+            if not e.startswith("_"):
+                continue
+            if any(c for c in e if c.islower()):
+                self.dataview[e[1:]] = os.environ[e]
