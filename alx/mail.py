@@ -8,7 +8,7 @@ from email.mime.text import MIMEText
 class ALXmail(ALXhtml):
     def __init__(self, type="html"):
         """
-        class to send email - both text and html (default).  It is a sunclass
+        class to send email - both text and html (default).  It is a subclass
         of `ALXhtml` to allow simple html mail composition.  configuration
         is stored in `alx.ini`
 
@@ -88,7 +88,7 @@ class ALXmail(ALXhtml):
 
 if __name__ == "__main__":
     mail = ALXmail("html")
-    mail.set_subject("test html email")
+    mail.set_subject("test html itrs_email")
     mail.add_recipient("a.lister.hk@gmail.com")
     mail.add_bcc("andrew.lister@clsa.com")
     mail.add_h1("Here is a heading 1")
