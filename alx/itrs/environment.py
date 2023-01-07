@@ -28,7 +28,7 @@ class Environment:
         except Exception as e:
             raise("Environment error: %s", format(e))
 
-        self.dataview = {}
+        self.dataview_columns = {}
 
         # Pull out all the columns from the dataview (only works if starts
         # with '_' and contains a lowercase letter
@@ -36,4 +36,4 @@ class Environment:
             if not e.startswith("_"):
                 continue
             if any(c for c in e if c.islower()):
-                self.dataview[e[1:]] = os.environ[e]
+                self.dataview_columns[e[1:]] = os.environ[e]

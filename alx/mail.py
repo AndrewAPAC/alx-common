@@ -8,7 +8,7 @@ from email.mime.text import MIMEText
 class ALXmail(ALXhtml):
     def __init__(self, type="html"):
         """
-        class to send email - both text and html (default).  It is a subclass
+        class to send itrs_email - both text and html (default).  It is a subclass
         of `ALXhtml` to allow simple html mail composition.  configuration
         is stored in `alx.ini`
 
