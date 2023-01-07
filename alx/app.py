@@ -27,25 +27,13 @@ class Paths:
         appname = app.name
         env = app.environment
 
-        dirname = os.path.basename(os.path.dirname(sys.argv[0]))
+        basename = os.path.basename(os.path.dirname(sys.argv[0]))
+        dirname = os.path.dirname(sys.argv[0])
+        self.root = os.path.abspath(os.path.join(dirname, "..", ".."))
 
-        if env == 'prod' or env == 'test':
-            # put in alx.ini
-            if platform.system() == "Windows":
-                prefix = "C:\\opt\\local"
-            else:
-                prefix = "/opt/local"
-
-            self.root = os.path.join(prefix, env)
-            self.data = os.path.join(self.root, "data", dirname)
-            self.log = os.path.join(self.root, "log")
-            self.top = os.path.join(self.root, "scripts", dirname)
-        else:
-            self.top = os.path.abspath(os.path.dirname(sys.argv[0]))
-            self.root = os.path.abspath(os.path.join(self.top, "..", ".."))
-            self.data = os.path.join(self.top, "data")
-            self.log = os.path.join(self.top, "log")
-
+        self.data = os.path.join(self.root, "data", basename)
+        self.log = os.path.join(self.root, "log", basename)
+        self.top = os.path.join(self.root, "scripts", basename)
         self.bin = os.path.join(self.root, "bin")
         self.scripts = os.path.join(self.root, "scripts")
         self.logfile = os.path.join(self.log, appname + ".log")
