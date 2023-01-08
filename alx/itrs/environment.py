@@ -14,17 +14,20 @@ class Environment:
             self.gateway = os.getenv("_GATEWAY")
             self.rowname = os.getenv("_ROWNAME")
             self.column = os.getenv("_COLUMN")
+            self.first_column = os.getenv("_FIRSTCOLUMN")
             self.dataview = os.getenv("_DATAVIEW")
             self.plugin_name = os.getenv("_PLUGINNAME")
             self.rule = os.getenv("_RULE")
             self.host = os.getenv("_NETPROBE_HOST")
-            self.severity = os.getenv("_SEVERITY")
+            self.severity = os.getenv("_SEVERITY") or "critical"
+            self.severity = self.severity.lower()
             self.path = os.getenv("_VARIABLEPATH")
             self.assignee_email = os.getenv("_ASSIGNEE_EMAIL")
             self.assignee_name = os.getenv("_ASSIGNEE_USERNAME")
             self.assigner_name = os.getenv("_ASSIGNER_USERNAME")
             self.comment = os.getenv("_COMMENT")
             self.period_type = os.getenv("_PERIOD_TYPE")
+            self.clear = os.getenv("_CLEAR")
         except Exception as e:
             raise("Environment error: %s", format(e))
 
@@ -34,6 +37,8 @@ class Environment:
         # with '_' and contains a lowercase letter
         for e in sorted(os.environ):
             if not e.startswith("_"):
+                continue
+            if e[1:] == self.first_column:
                 continue
             if any(c for c in e if c.islower()):
                 self.dataview_columns[e[1:]] = os.environ[e]

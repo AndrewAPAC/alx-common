@@ -156,6 +156,19 @@ class ALXhtml:
         """
         self.body += "<table>\n"
 
+    def start_row(self):
+        self.body += "  <tr>\n"
+
+    def add_cell(self, value, style=None):
+        if not style:
+            self.body += "    <td>" + str(value) + "</td>\n"
+        else:
+            self.body += "    <td style='%s'>" % style
+            self.body += str(value) + "</td>\n"
+
+    def end_row(self):
+        self.body += "  </tr>\n"
+
     def add_row(self, values, tag="d"):
         """
         Add a whole row to a table.  The values passed in should be a
