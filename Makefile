@@ -5,9 +5,9 @@ clean::
 
 install:: clean dist upload
 
-dist::
+dist:: clean
 	python setup.py sdist
 
-upload::
+upload:: install
 	twine upload -r local dist/*
 
