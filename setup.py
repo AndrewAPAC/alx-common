@@ -1,4 +1,4 @@
-from setuptools import setup, find_packages
+from setuptools import setup
 from alx import __author__, __version__, __author_email__
 
 with open("README.md", "r") as fh:
@@ -17,7 +17,7 @@ setup(
         "License :: OSI Approved :: MIT License",
         "Operating System :: OS Independent",
     ],
-    packages=['alx', 'alx/data'],
+    packages=['alx', 'alx/data', 'alx/itrs'],
     package_data = {'alx': ['*.ini']},
     zip_safe=True,
     install_requires=['setuptools-git', 'arrow', 'sqlalchemy',
