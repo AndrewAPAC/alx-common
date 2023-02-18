@@ -94,13 +94,31 @@ class ALXApp:
         if logging:
             self.start_logging()
 
-    def parse_config(self, obj, config):
+    @staticmethod
+    def parse_config(obj, config):
         try:
             for item in config:
                 # Add all the config values as string values in the app
                 value = config.get(item)
-                setattr(obj, item, config.get(item))
-        except:
+                if '$data' in value:
+                    value = value.replace('$data', obj.paths.data)
+                if value in ('True', 'False', 'true', 'false'):
+                    # Convert to boolean
+                    setattr(obj, item, config.getboolean(item))
+                else:
+                    try:
+                        # Is it an integer?
+                        i = int(value)
+                        setattr(obj, item, i)
+                    except (ValueError, TypeError):
+                        try:
+                            # or a float?
+                            f = float(value)
+                            setattr(obj, item, f)
+                        except (ValueError, TypeError):
+                            # OOnly a string left....
+                            setattr(obj, item, config.get(item))
+        except Exception:
             raise
 
     @staticmethod
