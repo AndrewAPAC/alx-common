@@ -2,7 +2,7 @@ import configparser
 import os
 import sys
 import argparse
-import platform
+from cryptography.fernet import Fernet
 import logging
 from logging.handlers import TimedRotatingFileHandler
 
@@ -172,6 +172,34 @@ class ALXApp:
 
         logger.debug("Starting application '{}'".format(self.name))
 
+    def _read_key(self):
+        keyfile = os.path.join(os.path.expanduser('~'), '.key.' +
+                            os.getenv('USER'))
+        if not os.path.exists(keyfile):
+            logger.error("Could not open %s", keyfile)
+            sys.exit(1)
+        st = os.stat(keyfile)
+        if int(oct(st.st_mode)[3:]) > 600:
+            logger.error("Check permissions on %s.  Too open", keyfile)
+            sys.exit(1)
+
+        with open(keyfile) as k:
+            key = k.read().strip()
+
+        fernet = Fernet(key)
+
+        return fernet
+
+    def encrypt(self, password):
+        fernet = self._read_key()
+        encoded = fernet.encrypt(password.encode())
+        return encoded.decode()
+
+    def decrypt(self, string):
+        fernet = self._read_key()
+        decoded = fernet.decrypt(string.encode()).decode()
+        return decoded
+
     def is_dev(self):
         return self.environment == 'dev'
 
@@ -180,3 +208,4 @@ class ALXApp:
 
     def is_prod(self):
         return self.environment == 'prod'
+

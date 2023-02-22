@@ -1,3 +1,3 @@
-__version__ = "1.4.1"
+__version__ = "1.4.5"
 __author__ = "Andrew Lister"
 __author_email__ =  "a.lister.hk@gmail.com"

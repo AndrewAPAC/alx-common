@@ -21,7 +21,7 @@ setup(
     package_data = {'alx': ['*.ini']},
     zip_safe=True,
     install_requires=['setuptools-git', 'arrow', 'sqlalchemy',
-                      'googlefinance.client'],
+                      'cryptography'],
     include_package_data=True
 
 )
