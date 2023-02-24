@@ -173,7 +173,7 @@ class ALXApp:
         logger.debug("Starting application '{}'".format(self.name))
 
     def _read_key(self):
-        keyfile = os.path.join(os.path.expanduser('~'), '.key.' +
+        keyfile = os.path.join(os.getenv('HOME'), '.key.' +
                             os.getenv('USER'))
         if not os.path.exists(keyfile):
             logger.error("Could not open %s", keyfile)
