@@ -102,7 +102,8 @@ class ALXApp:
                 value = config.get(item)
                 if '$data' in value:
                     value = value.replace('$data', obj.paths.data)
-                if value in ('True', 'False', 'true', 'false'):
+                    setattr(obj, item, value)
+                elif value in ('True', 'False', 'true', 'false'):
                     # Convert to boolean
                     setattr(obj, item, config.getboolean(item))
                 else:
