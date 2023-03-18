@@ -13,6 +13,8 @@ class Environment:
             self.sampler = os.getenv("_SAMPLER")
             self.gateway = os.getenv("_GATEWAY")
             self.rowname = os.getenv("_ROWNAME")
+            if not self.rowname:
+                self.rowname = os.getenv("_HEADLINE")
             self.column = os.getenv("_COLUMN")
             self.first_column = os.getenv("_FIRSTCOLUMN")
             self.dataview = os.getenv("_DATAVIEW")
