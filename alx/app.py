@@ -102,7 +102,8 @@ class ALXApp:
                 value = config.get(item)
                 if '$data' in value:
                     value = value.replace('$data', obj.paths.data)
-                if value in ('True', 'False', 'true', 'false'):
+                    setattr(obj, item, value)
+                elif value in ('True', 'False', 'true', 'false'):
                     # Convert to boolean
                     setattr(obj, item, config.getboolean(item))
                 else:
@@ -172,9 +173,10 @@ class ALXApp:
 
         logger.debug("Starting application '{}'".format(self.name))
 
-    def _read_key(self):
+    @staticmethod
+    def _read_key():
         keyfile = os.path.join(os.path.expanduser('~'), '.key.' +
-                            os.getenv('USER'))
+                               os.getlogin())
         if not os.path.exists(keyfile):
             logger.error("Could not open %s", keyfile)
             sys.exit(1)
