@@ -152,7 +152,9 @@ class ALXApp:
         else:
             loglevel = self.libconfig.get('logging', 'loglevel')
 
-        logger.setLevel(loglevel)
+        self.logger = logger
+
+        self.logger.setLevel(loglevel)
 
         if not os.path.isdir(self.paths.log):
             os.makedirs(self.paths.log)
@@ -162,27 +164,26 @@ class ALXApp:
         formatter = logging.Formatter(logformat)
         fh.setLevel(loglevel)
         fh.setFormatter(formatter)
-        logger.addHandler(fh)
+        self.logger.addHandler(fh)
 
         if self.is_dev():
             # Also log to console...
             ch = logging.StreamHandler()
             ch.setLevel(loglevel)
             ch.setFormatter(formatter)
-            logger.addHandler(ch)
+            self.logger.addHandler(ch)
 
-        logger.debug("Starting application '{}'".format(self.name))
+        self.logger.debug("Starting application '{}'".format(self.name))
 
-    @staticmethod
-    def _read_key():
+    def _read_key(self):
         keyfile = os.path.join(os.path.expanduser('~'), '.key.' +
                                os.getlogin())
         if not os.path.exists(keyfile):
-            logger.error("Could not open %s", keyfile)
+            self.logger.error("Could not open %s", keyfile)
             sys.exit(1)
         st = os.stat(keyfile)
         if int(oct(st.st_mode)[3:]) > 600:
-            logger.error("Check permissions on %s.  Too open", keyfile)
+            self.logger.error("Check permissions on %s.  Too open", keyfile)
             sys.exit(1)
 
         with open(keyfile) as k:
