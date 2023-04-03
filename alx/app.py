@@ -39,6 +39,11 @@ class Paths:
         self.logfile = os.path.join(self.log, appname + ".log")
         self.etc = os.path.join(self.root, 'etc')
 
+        if not os.path.isdir(self.data):
+            os.makedirs(self.data)
+        if not os.path.isdir(self.log):
+            os.makedirs(self.log)
+
         if inifile:
             self.config = os.path.join(self.etc, inifile)
         else:
@@ -93,6 +98,8 @@ class ALXApp:
 
         if logging:
             self.start_logging()
+
+        self.key = None
 
     @staticmethod
     def parse_config(obj, config):
@@ -194,13 +201,15 @@ class ALXApp:
         return fernet
 
     def encrypt(self, password):
-        fernet = self._read_key()
-        encoded = fernet.encrypt(password.encode())
+        if not self.key:
+            self.key = self._read_key()
+        encoded = self.key.encrypt(password.encode())
         return encoded.decode()
 
     def decrypt(self, string):
-        fernet = self._read_key()
-        decoded = fernet.decrypt(string.encode()).decode()
+        if not self.key:
+            self.key = self._read_key()
+        decoded = self.key.decrypt(string.encode()).decode()
         return decoded
 
     def is_dev(self):
