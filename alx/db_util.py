@@ -1,7 +1,5 @@
 from mysql.connector import MySQLConnection
-#from sqlalchemy import create_engine, MetaData, Table
-#from sqlalchemy.orm import mapper, sessionmaker
-
+from .app import logger
 
 class ALXDatabase:
     def __init__(self, type='mysql', user=None, passwd=None, host=None,
@@ -20,6 +18,18 @@ class ALXDatabase:
 
         return self.cursor
 
+    def run(self, sql):
+        sql = sql.replace('\n', ' ')
+        logger.info(sql)
+        try:
+            self.cursor.execute(sql)
+        except Exception as e:
+            logger.error('SQL execution failed: %s', format(e))
+            raise
+
+        result = self.cursor.fetchall()
+
+        return result
 
     def close(self):
         self.connection.close()
