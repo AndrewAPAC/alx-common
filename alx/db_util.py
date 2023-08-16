@@ -19,7 +19,7 @@ class ALXDatabase:
         return self.cursor
 
     def run(self, sql):
-        sql = sql.replace('\n', ' ')
+        sql = sql.replace('\n', ' ').strip()
         logger.info(sql)
         try:
             self.cursor.execute(sql)
@@ -27,9 +27,10 @@ class ALXDatabase:
             logger.error('SQL execution failed: %s', format(e))
             raise
 
-        result = self.cursor.fetchall()
+        if sql.lower().startswith("select"):
+            return self.cursor.fetchall()
 
-        return result
+        return None
 
     def close(self):
         self.connection.close()
