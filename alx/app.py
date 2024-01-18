@@ -3,6 +3,7 @@ import os
 import sys
 import argparse
 from cryptography.fernet import Fernet
+import json
 import logging
 from logging.handlers import TimedRotatingFileHandler
 
@@ -124,8 +125,11 @@ class ALXApp:
                             f = float(value)
                             setattr(obj, item, f)
                         except (ValueError, TypeError):
-                            # OOnly a string left....
-                            setattr(obj, item, config.get(item))
+                            # Only a string left....
+                            if value.startswith('[') or value.startswith('{'):
+                                setattr(obj, item, json.loads(value))
+                            else:
+                                setattr(obj, item, value)
         except Exception:
             raise
 
