@@ -55,7 +55,13 @@ class ALXmail(ALXhtml):
         if self.type == "html":
             super().add_paragraph(p)
         else:
-            self.body += p + "\n"
+            self.body += "\n" + p + "\n"
+
+    def add_text(self, t):
+        if self.type == "html":
+            super().add_paragraph(t)
+        else:
+            self.body += t + "\n"
 
     def add_attachment(self, filename):
         raise NotImplementedError
