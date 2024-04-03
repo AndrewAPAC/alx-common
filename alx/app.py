@@ -5,6 +5,7 @@ import argparse
 from cryptography.fernet import Fernet
 import json
 import logging
+import platform
 from logging.handlers import TimedRotatingFileHandler
 
 
@@ -193,7 +194,7 @@ class ALXApp:
             self.logger.error("Could not open %s", keyfile)
             sys.exit(1)
         st = os.stat(keyfile)
-        if int(oct(st.st_mode)[3:]) > 600:
+        if platform.system() != 'Windows' and int(oct(st.st_mode)[3:]) > 600:
             self.logger.error("Check permissions on %s.  Too open", keyfile)
             sys.exit(1)
 
