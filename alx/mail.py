@@ -102,6 +102,7 @@ class ALXmail(ALXhtml):
                 error = format(e)
                 count += 1
                 time.sleep(30)
+            break
 
         self.server.quit()
 
@@ -113,7 +114,7 @@ if __name__ == "__main__":
     mail = ALXmail("html")
     mail.set_subject("test html itrs_email")
     mail.add_recipient("a.lister.hk@gmail.com")
-    mail.add_bcc("andrew.lister@clsa.com")
+    mail.add_bcc("andrew.lister@outlook.co.id")
     mail.add_h1("Here is a heading 1")
 
     p = """
