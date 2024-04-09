@@ -1,3 +1,5 @@
+import time
+
 from alx.app import ALXApp
 from alx.html import ALXhtml
 import smtplib
@@ -88,8 +90,23 @@ class ALXmail(ALXhtml):
         part = MIMEText(body, self.type)
         self.message.attach(part)
 
-        self.server.sendmail(self.sender, all, self.message.as_string())
+        error = None
+        count = 0
+        while count < 10:
+            error = None
+            try:
+                self.server.sendmail(self.sender, all,
+                                     self.message.as_string())
+            except (smtplib.SMTPException, smtplib.SMTPResponseException,
+                    Exception) as e:
+                error = format(e)
+                count += 1
+                time.sleep(30)
+
         self.server.quit()
+
+        if error:
+            raise smtplib.SMTPException(e)
 
 
 if __name__ == "__main__":
