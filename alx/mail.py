@@ -33,7 +33,6 @@ class ALXmail(ALXhtml):
         self.bcc = []
         self.attachments = []
         self.message = MIMEMultipart()
-        self.server = smtplib.SMTP(self.mailhost)
 
     def set_from(self, sender):
         self.sender = sender
@@ -89,6 +88,7 @@ class ALXmail(ALXhtml):
 
         part = MIMEText(body, self.type)
         self.message.attach(part)
+        self.server = smtplib.SMTP(self.mailhost)
         self.server.sendmail(self.sender, all, self.message.as_string())
         self.server.quit()
 
