@@ -26,7 +26,8 @@ class Toolkit:
         self.num_columns += 1
 
     def add_row(self, values, delimiter=','):
-        values = values.split(delimiter)
+        if isinstance(values, str):
+            values = values.split(delimiter)
 
         for i, v in enumerate(values):
             v = str(v)
@@ -35,16 +36,16 @@ class Toolkit:
         self.rows.append(values)
         self.num_rows += 1
 
-    def error(self, message):
+    def error(self, message=''):
         self.add_headline("samplingStatus", "FAIL " + message)
         self._display()
         sys.exit(1)
 
-    def warning(self, message):
+    def warning(self, message=''):
         self.add_headline("samplingStatus", "WARN " + message)
         self._display()
 
-    def ok(self, message):
+    def ok(self, message=''):
         self.add_headline("samplingStatus", "OK " + message)
         self._display()
 
