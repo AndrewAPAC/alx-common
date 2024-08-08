@@ -34,5 +34,6 @@ class ALXDatabase:
 
     def close(self):
         self.connection.close()
-        self.cursor.close()
+        if self.cursor:
+            self.cursor.close()
         self.cursor = None
