@@ -1,12 +1,20 @@
 from mysql.connector import MySQLConnection
 from .app import logger
+import re
 
 class ALXDatabase:
-    def __init__(self, type='mysql', user=None, passwd=None, host=None,
-                 database=None):
-        self.config = {'user': user, 'password': passwd,
-                       'host': host, 'database': database}
-        self.cursor = None
+    def __init__(self, dbtype='mysql', user=None, passwd=None, host=None,
+                 database=None, port=None):
+        if dbtype == 'mysql':
+            if not port:
+                port = 3306
+            self.config = {'user': user, 'password': passwd,
+                           'host': host, 'database': database,
+                           'port': port}
+            self.cursor = None
+            self.connection = None
+        else:
+            raise NotImplementedError
 
     def connect(self):
         try:
@@ -19,7 +27,10 @@ class ALXDatabase:
         return self.cursor
 
     def run(self, sql):
-        sql = sql.replace('\n', ' ').strip()
+        # Make the sql pretty for the log
+        sql = sql.replace("\n", " ").strip()
+        sql = re.sub("\s\s+", " ", sql)
+        sql = sql.replace("( ", "(")
         logger.info(sql)
         try:
             self.cursor.execute(sql)
