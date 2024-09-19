@@ -1,5 +1,12 @@
+import os.path
+import socket
 import time
-
+from email.mime.application import MIMEApplication
+from email.mime.audio import MIMEAudio
+from email.mime.image import MIMEImage
+from smtplib import SMTPException, SMTPAuthenticationError, SMTPConnectError, SMTPDataError, SMTPHeloError, \
+    SMTPNotSupportedError, SMTPRecipientsRefused, SMTPResponseException, SMTPSenderRefused, SMTPServerDisconnected
+import mimetypes
 from alx.app import ALXApp
 from alx.html import ALXhtml
 import smtplib
@@ -7,7 +14,7 @@ from email.mime.multipart import MIMEMultipart
 from email.mime.text import MIMEText
 
 
-class ALXmail(ALXhtml):
+class ALXmail(ALXhtml, smtplib.SMTP):
     def __init__(self, type="html"):
         """
         class to send itrs_email - both text and html (default).  It is a subclass
@@ -27,6 +34,8 @@ class ALXmail(ALXhtml):
             raise TypeError("Only 'plain' and 'html' are supported")
 
         self.sender = self.config.get("mail", "from")
+        self.server = None
+        self.images = 0
         self.mailhost = self.config.get("mail", "server")
         self.recipients = []
         self.cc = []
@@ -65,7 +74,41 @@ class ALXmail(ALXhtml):
             self.body += t + "\n"
 
     def add_attachment(self, filename):
-        raise NotImplementedError
+        """
+        Adds a file as an attachment
+
+        :param filename: the full path to the file to attach
+        """
+        if not os.path.isfile(filename):
+            raise FileNotFoundError(filename)
+
+        cd = 'attachment'   # Content-Disposition
+        fn = os.path.basename(filename)
+        with open(filename, "rb") as fp:
+            data = fp.read()
+
+        maintype, subtype = mimetypes.guess_type(filename)
+
+        if maintype and maintype.startswith('image'):
+            attachment = MIMEImage(data)
+            if self.type == 'html':
+                cd = 'inline'
+                image = 'image%02d' % self.images
+                self.add_paragraph('<img src="cid:%s" width="100%%">\n' % image)
+                self.images += 1
+                attachment.add_header('Content-ID', '<%s>' % image)
+        elif maintype and maintype.startswith('application'):
+            attachment = MIMEApplication(data)
+        elif maintype and maintype.startswith('audio'):
+            attachment = MIMEAudio(data)
+        else:
+            data = data.decode()
+            attachment = MIMEText(data)
+
+        attachment.add_header('Content-Disposition', cd,
+                              filename=fn)
+
+        self.attachments.append(attachment)
 
     def send(self):
         self.message["From"] = self.sender
@@ -77,9 +120,7 @@ class ALXmail(ALXhtml):
             self.message["Bcc"] = ", ".join(self.bcc)
 
         for a in self.attachments:
-            pass
-
-        all = self.recipients + self.cc + self.bcc
+            self.message.attach(a)
 
         if self.type == 'html':
             body = self.get_html()
@@ -88,9 +129,26 @@ class ALXmail(ALXhtml):
 
         part = MIMEText(body, self.type)
         self.message.attach(part)
-        self.server = smtplib.SMTP(self.mailhost)
-        self.server.sendmail(self.sender, all, self.message.as_string())
-        self.server.quit()
+
+        count = 0
+        loop = 20
+
+        while count < 20:
+            try:
+                self.server = smtplib.SMTP(self.mailhost)
+                self.server.send_message(self.message)
+                self.server.quit()
+                return
+            except (socket.error, SMTPException, SMTPAuthenticationError,
+                    SMTPConnectError, SMTPDataError, SMTPHeloError,
+                    SMTPNotSupportedError, SMTPRecipientsRefused,
+                    SMTPResponseException, SMTPSenderRefused,
+                    SMTPServerDisconnected) as ex:
+                count += 1
+                if count == loop:
+                    raise type(ex).__name__(format(ex))
+                else:
+                    sleep(5)
 
 
 if __name__ == "__main__":
@@ -113,6 +171,10 @@ if __name__ == "__main__":
     mail.add_item("Item 3")
     mail.add_item("Item 4")
     mail.end_ul()
+
+    mail.add_attachment("/etc/resolv.conf")
+    mail.add_attachment("/home/andrew/GoogleDrive/FilingCabinet/Andrew/Home/Lovina/20240912.land.agreement.pdf")
+    mail.add_attachment("/home/andrew/dev/alx/data/account_info/monthly_pnl.png")
 
     mail.add_ol()
     mail.add_item("Item 1")
