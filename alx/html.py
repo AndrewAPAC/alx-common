@@ -5,6 +5,8 @@
 # Author: Andrew Lister
 # Date: September 2019
 from alx.app import ALXApp
+
+
 class ALXhtml:
     end_html = "</html>\n"
     end_head = "</head>\n"
@@ -85,6 +87,14 @@ class ALXhtml:
         :param heading: the text for the header
         """
         self.add_heading(5, heading)
+
+    def add_horizontal_line(self):
+        """
+        Adds a horizontal line
+
+        :return:
+        """
+        self.body += "<hr>\n"
 
     def add_paragraph(self, paragraph):
         """
@@ -175,6 +185,7 @@ class ALXhtml:
         list of values that make up the complete row
 
         :param values: a list of values
+        :param tag: the tag for the row - 'h' or 'd'
         """
 
         self.body += "  <tr>\n"
