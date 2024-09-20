@@ -110,8 +110,11 @@ class ALXApp:
                 # Add all the config values as string values in the app
                 value = config.get(item)
                 if '$data' in value:
-                    value = value.replace('$data', obj.paths.data)
-                    setattr(obj, item, value)
+                    if hasattr(obj, 'paths'):
+                        value = value.replace('$data', obj.paths.data)
+                        setattr(obj, item, value)
+                    else:
+                        continue
                 elif value in ('True', 'False', 'true', 'false'):
                     # Convert to boolean
                     setattr(obj, item, config.getboolean(item))
