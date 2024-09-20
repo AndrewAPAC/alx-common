@@ -88,13 +88,15 @@ class ALXmail(ALXhtml, smtplib.SMTP):
             data = fp.read()
 
         maintype, subtype = mimetypes.guess_type(filename)
-
+        image_ref = None
         if maintype and maintype.startswith('image'):
             attachment = MIMEImage(data)
             if self.type == 'html':
                 cd = 'inline'
                 image = 'image%02d' % self.images
-                self.add_paragraph('<img src="cid:%s" width="100%%">\n' % image)
+                # The content_id is returned so the application
+                # can put it where it wants
+                content_id = '<img src="cid:%s" width="100%%">' % image
                 self.images += 1
                 attachment.add_header('Content-ID', '<%s>' % image)
         elif maintype and maintype.startswith('application'):
@@ -109,6 +111,8 @@ class ALXmail(ALXhtml, smtplib.SMTP):
                               filename=fn)
 
         self.attachments.append(attachment)
+
+        return content_id
 
     def send(self):
         self.message["From"] = self.sender
