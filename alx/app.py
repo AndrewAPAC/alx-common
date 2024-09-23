@@ -7,9 +7,10 @@ import json
 import logging
 import platform
 from logging.handlers import TimedRotatingFileHandler
-
+from collections import OrderedDict
 
 logger = logging.getLogger(os.path.splitext(os.path.basename(sys.argv[0]))[0])
+
 
 class Paths:
     def __init__(self, app, inifile=None):
@@ -130,8 +131,12 @@ class ALXApp:
                             setattr(obj, item, f)
                         except (ValueError, TypeError):
                             # Only a string left....
-                            if value.startswith('[') or value.startswith('{'):
-                                setattr(obj, item, json.loads(value))
+                            if (value.startswith('[') or
+                                    value.startswith('{')):
+                                od = OrderedDict
+                                setattr(obj, item,
+                                        json.loads(
+                                            value, object_pairs_hook=od))
                             else:
                                 setattr(obj, item, value)
         except Exception:
