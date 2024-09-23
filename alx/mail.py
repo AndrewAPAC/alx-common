@@ -14,7 +14,7 @@ from email.mime.multipart import MIMEMultipart
 from email.mime.text import MIMEText
 
 
-class ALXmail(ALXhtml, smtplib.SMTP):
+class ALXmail(ALXhtml):
     def __init__(self, type="html"):
         """
         class to send itrs_email - both text and html (default).  It is a subclass
@@ -117,10 +117,14 @@ class ALXmail(ALXhtml, smtplib.SMTP):
     def send(self):
         self.message["From"] = self.sender
         self.message["Subject"] = self.subject
+        # Remove duplicate names
+        self.recipients = list(set(self.recipients))
         self.message["To"] = ", ".join(self.recipients)
         if len(self.cc) > 0:
+            self.cc = list(set(self.cc))
             self.message["Cc"] = ", ".join(self.cc)
         if len(self.bcc) > 0:
+            self.bcc = list(set(self.bcc))
             self.message["Bcc"] = ", ".join(self.bcc)
 
         for a in self.attachments:
