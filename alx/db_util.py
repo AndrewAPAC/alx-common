@@ -1,14 +1,32 @@
 from mysql.connector import MySQLConnection
+from mysql.connector.cursor import MySQLCursor
+
 from .app import logger
 import re
 
+
 class ALXDatabase:
-    def __init__(self, dbtype='mysql', user=None, passwd=None, host=None,
-                 database=None, port=None):
+    def __init__(self, dbtype: str = 'mysql', user: str = None,
+                 password: str = None, host: str = None, database: str = None,
+                 port: int = 3306):
+        """
+        :param dbtype: The database type.  Default is *mysql* and is the
+        only supported type at present
+        :param user: The username to use
+        :param password: The password to use
+        :param host: The host to connect
+        :param database: The name of the database
+        :param port: The port (default is mysql, 3306)
+        """
+
+        self.cursor = None
+        """The cursor assigned in `ALXDatabase.connect` after
+        making the database connection"""
+        self.connection = None
+        """The connection assigned in `ALXDatabase.connect` after
+        making the database connection"""
         if dbtype == 'mysql':
-            if not port:
-                port = 3306
-            self.config = {'user': user, 'password': passwd,
+            self.config = {'user': user, 'password': password,
                            'host': host, 'database': database,
                            'port': port}
             self.cursor = None
@@ -16,10 +34,14 @@ class ALXDatabase:
         else:
             raise NotImplementedError
 
-    def connect(self):
+    def connect(self) -> MySQLCursor:
+        """
+        :return: The cursor from the connection made in `MySQLConnection`
+        with the parameters set in `ALXDatabase`
+        """
         try:
             self.connection = MySQLConnection(**self.config)
-        except:
+        except Exception:
             raise
 
         self.cursor = self.connection.cursor()
@@ -27,11 +49,26 @@ class ALXDatabase:
         return self.cursor
 
     def run(self, sql):
+        """
+
+        :param sql: The sql statement to execute.
+        :return: If a *select* statement then the result set
+        from the call to `MySQLConnection.cursor.execute()` or
+        *None* if an `insert`, `update`, `upsert` statement
+
+        Tidies up the sql; string passed, logs the statement to
+        `ALXApp.logger` and executes the statement on the
+        `ALXDatabase` object.
+
+        If the statement is a *select* then the resultset is
+        returned and *None* otherwise
+        """
         # Make the sql pretty for the log
         sql = sql.replace("\n", " ").strip()
         sql = re.sub("\s\s+", " ", sql)
         sql = sql.replace("( ", "(")
         logger.info(sql)
+
         try:
             self.cursor.execute(sql)
         except Exception as e:
@@ -44,6 +81,10 @@ class ALXDatabase:
         return None
 
     def close(self):
+        """
+        Close the `ALXDatabase` connection and cursor and
+         set them to None
+        """
         self.connection.close()
         if self.cursor:
             self.cursor.close()

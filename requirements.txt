@@ -1,0 +1,8 @@
+SQLAlchemy
+cryptography
+mysql-connector-python
+arrow
+DateTime
+pandas
+googlefinance
+setuptools

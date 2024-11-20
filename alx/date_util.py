@@ -2,7 +2,7 @@ from datetime import datetime
 import arrow
 
 
-def date_subst(format, when=None):
+def date_subst(format: str, when: datetime | arrow.Arrow = None):
     """
     Return a formatted string of the date.
 

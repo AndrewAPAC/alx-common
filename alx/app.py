@@ -11,57 +11,93 @@ from collections import OrderedDict
 
 logger = logging.getLogger(os.path.splitext(os.path.basename(sys.argv[0]))[0])
 
-
 class Paths:
-    def __init__(self, app, inifile=None):
+    def __init__(self, app: str, inifile: str = None):
         """
+        :param app: The ALXApp objet
+        :param inifile: If the inifile name is not the same as the default `app.ini` then it can be set here
+
         A class to hold the default paths for the application
 
-        /opt/local/env
-            - bin
-            - data/app
-            - lib
-            - log
-            - scripts/app
-
-        :param app: The ALXApp objet
-        :param inifile: If the inifile name is not the same as the
+        If the `data` or `log` directory does not exist, it will be created even if not used.
         """
         appname = app.name
         env = app.environment
-
+        """The execution environment: `prod`, `test` or `dev` (default)"""
         basename = os.path.basename(os.path.dirname(sys.argv[0]))
         dirname = os.path.dirname(sys.argv[0])
         self.root = os.path.abspath(os.path.join(dirname, "..", ".."))
-
-        self.data = os.path.join(self.root, "data", basename)
-        self.log = os.path.join(self.root, "log", basename)
-        self.top = os.path.join(self.root, "scripts", basename)
+        """The root of the installation, typically `/opt/local/env` (where *env* is *prod*, *test* or *dev*) """
         self.bin = os.path.join(self.root, "bin")
-        self.scripts = os.path.join(self.root, "scripts")
-        self.logfile = os.path.join(self.log, appname + ".log")
+        """The location of the start script: `root/bin`"""
+        self.data = os.path.join(self.root, "data", basename)
+        """The location of the application data: `root/data/app`"""
         self.etc = os.path.join(self.root, 'etc')
+        """The location of the configuration files: `root/etc`"""
+        self.log = os.path.join(self.root, "log", basename)
+        """The location of the log files: `root/log/app`"""
+        self.logfile = os.path.join(self.log, appname + ".log")
+        """The log filename: `root/log/app/app.log`"""
+        self.scripts = os.path.join(self.root, "scripts")
+        """The location of the scripts: `root/scripts`"""
+        self.top = os.path.join(self.root, "scripts", basename)
+        """The location of the application scripts: `root/scripts/app`"""
 
         if not os.path.isdir(self.data):
             os.makedirs(self.data)
         if not os.path.isdir(self.log):
             os.makedirs(self.log)
 
+        self.config = os.path.join(self.etc, appname + ".ini")
+        """The name of the config file determined from `self.etc`/app"""
         if inifile:
             self.config = os.path.join(self.etc, inifile)
-        else:
-            self.config = os.path.join(self.etc, appname + ".ini")
 
 
 class ALXApp:
-    def __init__(self, description="Unknown App", args=None, appname=None,
-                 inifile=None, mylogger=None, logging=True,
-                 myparser=None, epilog=None,
-                 formatter=None):
+    def __init__(self, description: str = "Unknown App",
+                 args: list = None, appname: str = None,
+                 inifile: str = None, epilog: str = None):
+        """
+        :param description: A short description for the app - used with `--help`
+        :param args: A list of arguments added with argparse.ArgumentParser.add_argument.  Example
+        ```
+        args = [
+            ["-d", "--date", {"help": "store as '%%Y-%%m-%%d' date in database"}],
+            ["-s", "--start", {"default": None, "type": str,
+                               "help": "The first date from which to retrieve prices"}],
+            ["-g", "--gui", {"action": "store_true", "default": False,
+                             "help": "Display the browser."}]
+         ]
+        ```
+        but you can just use this trimmed down version to store the
+        arguments as strings
+        ```
+        args = [
+            ["--date"],
+            ["--start"],
+         ]
+        ```
+        :param appname: The name of the application.  Default is the
+         name of argv[0]
+        :param inifile: The name of the configuration file.  Default
+         is to create it from appname
+        :param epilog: The text to use at the end of the help
+         message when the app is called with `--help`
 
-        if not appname:
-            self.name = os.path.splitext(os.path.basename(sys.argv[0]))[0]
-        else:
+        Initialise the `ALXapp` object which does a number of things:
+        * Creates the application name from `sys.argv[0]` and stores it in `ALXApp.name` if not passed as a parameter
+        * Adds a `--env` / `-e` argument and sets `self.environment`
+        * Initialises the `Paths` class.
+        * Reads the arguments provided in the `args` parameter.
+        * Reads and parses the configuration file and stores the values in the ALXAppp object
+        * Reads and parses the library configuration stored in `alx.ini`
+        * Initialises and starts logging to `Paths.logfile`
+        """
+
+        self.name = os.path.splitext(os.path.basename(sys.argv[0]))[0]
+        """The name of the application from the parameter or calculated from `sys.argv`"""
+        if appname:
             self.name = appname
 
         parser = argparse.ArgumentParser(description=description,
@@ -81,32 +117,54 @@ class ALXApp:
                     parser.add_argument(*a)
 
         self.arguments = parser.parse_args()
-
+        """A namespace of the arguments as parsed by 
+        `argparse.Arguments.parse_args`"""
+        self.environment = 'dev'
+        """The execution environment - default is `dev` but any of 
+        * test || uat || tst: **test**
+        * prod || production || prd: **production**
+        
+        can be used to set *prod* or *test*
+        """
         if self.arguments.env in ('test', 'uat', 'tst'):
             self.environment = 'test'
         elif self.arguments.env in ('prd', 'prod', 'production'):
             self.environment = 'prod'
-        else:
-            self.environment = 'dev'
 
         self.paths = Paths(self, inifile=inifile)
-        self.config = self.read_config(self.paths.config, myparser)
-
+        """The `Paths` namespace that holds path information"""
+        self.config = self.read_config(self.paths.config)
+        """The application configuration read from `Paths.config` from a 
+        call to `ALXApp.read_config`. The configuration values are assigned
+        to the `ALXApp` class with a call to `ALXApp.parse_config`"""
         if self.config and self.environment in self.config:
             self.parse_config(self, self.config[self.environment])
 
         self.libconfig = self.read_lib_config()
+        """The global library configuration from `alx.ini`"""
 
-        if mylogger:
-            self.logger = mylogger
-
-        if logging:
-            self.start_logging()
+        self.logger = logger
+        """The `logging.Logger` object used for logging and created in
+         `ALXApp.start_logging`"""
+        self.start_logging()
 
         self.key = None
+        """The key to encrypt and decrypt data, stored in `~/.key.username`"""
 
     @staticmethod
-    def parse_config(obj, config):
+    def parse_config(obj: object, config: configparser.ConfigParser):
+        """
+        :param obj: The object in which to store the configuration
+         values (usually `self`)
+        :param config: The `configparser` object.  It can be a section
+        like `config[app.environment]`
+
+        Parses the `config` and stores in `obj` as the appropriate type.
+        It works out if it is a boolean, float, integer or string. If
+        the configuration value starts with a `[` or `{` then it is
+        loaded using `json.loads` and stores in an `OrderredDict`
+        """
+
         try:
             for item in config:
                 # Add all the config values as string values in the app
@@ -144,26 +202,42 @@ class ALXApp:
             raise
 
     @staticmethod
-    def read_config(filename, parser=None):
+    def read_config(filename: str) -> configparser.ConfigParser:
+        """
+        :param filename: Name of the configuration file to read
+        :return: The `configparser.ConfigParser` configuration
+
+        Reads the configuration file in `filename` using the parser
+        passed in `parser` which is typically the default
+        """
         if not os.path.isfile(filename):
             return None
 
-        if not parser:
-            config = configparser.ConfigParser()
-        else:
-            config = parser
-
+        config = configparser.ConfigParser()
         config.read(filename)
 
         return config
 
     @staticmethod
-    def read_lib_config():
+    def read_lib_config() -> configparser.ConfigParser:
+        """
+        Reads the global `alx.ini` file using ALXApp.read_config
+        :return: The configuration
+        """
         libhome = os.path.dirname(os.path.abspath(__file__))
         filename = os.path.join(libhome, 'alx.ini')
         return ALXApp.read_config(filename)
 
     def start_logging(self):
+        """
+        Sets up a standard logger using the configuration in `alx.ini`
+        By default, log files are rolled at midnight and kept for the
+        number of days configured in `alx.ini`.  The loglevel and
+        format are also set in the config file.
+
+        If the application is in development mode, a console logger
+        is also added for convenience
+        """
         days = self.libconfig.getint('logging', 'days')
         logformat = self.libconfig.get('logging', 'format')
         when = self.libconfig.get('logging', 'when')
@@ -172,8 +246,6 @@ class ALXApp:
             loglevel = self.loglevel
         else:
             loglevel = self.libconfig.get('logging', 'loglevel')
-
-        self.logger = logger
 
         self.logger.setLevel(loglevel)
 
@@ -196,7 +268,9 @@ class ALXApp:
 
         self.logger.debug("Starting application '{}'".format(self.name))
 
-    def _read_key(self):
+    def _read_key(self) -> str:
+        """Reads the key from `~/.key.user` and uses it to encrypt and
+         decrypt strings using the `cryptography` python module"""
         keyfile = os.path.join(os.path.expanduser('~'), '.key.' +
                                os.getlogin())
         if not os.path.exists(keyfile):
@@ -214,24 +288,45 @@ class ALXApp:
 
         return fernet
 
-    def encrypt(self, password):
+    def encrypt(self, string: str) -> str:
+        """
+        :param string: The string to encrypt.
+        :return: the encrypted string
+
+        Encrypts the password using the key read from `~/.key.username`
+        """
         if not self.key:
             self.key = self._read_key()
         encoded = self.key.encrypt(password.encode())
         return encoded.decode()
 
-    def decrypt(self, string):
+    def decrypt(self, string: str) -> str:
+        """
+        :param string: The string to decrypt.
+        :return: the decrypted string
+
+        Decrypts the password using the key read from `~/.key.username`
+        """
         if not self.key:
             self.key = self._read_key()
         decoded = self.key.decrypt(string.encode()).decode()
         return decoded
 
-    def is_dev(self):
+    def is_dev(self) -> bool:
+        """
+        :return: `True` if running in dev mode and `False` otherwise
+        """
         return self.environment == 'dev'
 
-    def is_test(self):
+    def is_test(self) -> bool:
+        """
+        :return: `True` if running in test mode and `False` otherwise
+        """
         return self.environment == 'test'
 
-    def is_prod(self):
+    def is_prod(self) -> bool:
+        """
+        :return: `True` if running in prod mode and `False` otherwise
+        """
         return self.environment == 'prod'
 
