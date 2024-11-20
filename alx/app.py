@@ -9,20 +9,19 @@ import platform
 from logging.handlers import TimedRotatingFileHandler
 from collections import OrderedDict
 
-logger = logging.getLogger(os.path.splitext(os.path.basename(sys.argv[0]))[0])
 
 class Paths:
-    def __init__(self, app: str, inifile: str = None):
+    def __init__(self, _app: str, inifile: str = None):
         """
-        :param app: The ALXApp objet
-        :param inifile: If the inifile name is not the same as the default `app.ini` then it can be set here
-
         A class to hold the default paths for the application
 
         If the `data` or `log` directory does not exist, it will be created even if not used.
+
+        :param _app: The ALXApp objet
+        :param inifile: If the inifile name is not the same as the default `app.ini` then it can be set here
         """
-        appname = app.name
-        env = app.environment
+        appname = _app.name
+        env = _app.environment
         """The execution environment: `prod`, `test` or `dev` (default)"""
         basename = os.path.basename(os.path.dirname(sys.argv[0]))
         dirname = os.path.dirname(sys.argv[0])
@@ -54,11 +53,22 @@ class Paths:
             self.config = os.path.join(self.etc, inifile)
 
 
-class ALXApp:
+class ALXapp:
+    logger = logging.getLogger(os.path.splitext(os.path.basename(sys.argv[0]))[0])
+
     def __init__(self, description: str = "Unknown App",
                  args: list = None, appname: str = None,
                  inifile: str = None, epilog: str = None):
         """
+        Initialise the `ALXapp` object which does a number of things:
+        * Creates the application name from `sys.argv[0]` and stores it in `ALXApp.name` if not passed as a parameter
+        * Adds a `--env` / `-e` argument and sets `self.environment`
+        * Initialises the `Paths` class.
+        * Reads the arguments provided in the `args` parameter.
+        * Reads and parses the configuration file and stores the values in the ALXAppp object
+        * Reads and parses the library configuration stored in `alx.ini`
+        * Initialises and starts logging to `Paths.logfile`
+
         :param description: A short description for the app - used with `--help`
         :param args: A list of arguments added with argparse.ArgumentParser.add_argument.  Example
         ```
@@ -84,15 +94,6 @@ class ALXApp:
          is to create it from appname
         :param epilog: The text to use at the end of the help
          message when the app is called with `--help`
-
-        Initialise the `ALXapp` object which does a number of things:
-        * Creates the application name from `sys.argv[0]` and stores it in `ALXApp.name` if not passed as a parameter
-        * Adds a `--env` / `-e` argument and sets `self.environment`
-        * Initialises the `Paths` class.
-        * Reads the arguments provided in the `args` parameter.
-        * Reads and parses the configuration file and stores the values in the ALXAppp object
-        * Reads and parses the library configuration stored in `alx.ini`
-        * Initialises and starts logging to `Paths.logfile`
         """
 
         self.name = os.path.splitext(os.path.basename(sys.argv[0]))[0]
@@ -143,9 +144,6 @@ class ALXApp:
         self.libconfig = self.read_lib_config()
         """The global library configuration from `alx.ini`"""
 
-        self.logger = logger
-        """The `logging.Logger` object used for logging and created in
-         `ALXApp.start_logging`"""
         self.start_logging()
 
         self.key = None
@@ -154,15 +152,15 @@ class ALXApp:
     @staticmethod
     def parse_config(obj: object, config: configparser.ConfigParser):
         """
-        :param obj: The object in which to store the configuration
-         values (usually `self`)
-        :param config: The `configparser` object.  It can be a section
-        like `config[app.environment]`
-
         Parses the `config` and stores in `obj` as the appropriate type.
         It works out if it is a boolean, float, integer or string. If
         the configuration value starts with a `[` or `{` then it is
         loaded using `json.loads` and stores in an `OrderredDict`
+
+        :param obj: The object in which to store the configuration
+         values (usually `self`)
+        :param config: The `configparser` object.  It can be a section
+        like `config[app.environment]`
         """
 
         try:
@@ -204,11 +202,11 @@ class ALXApp:
     @staticmethod
     def read_config(filename: str) -> configparser.ConfigParser:
         """
-        :param filename: Name of the configuration file to read
-        :return: The `configparser.ConfigParser` configuration
-
         Reads the configuration file in `filename` using the parser
         passed in `parser` which is typically the default
+
+        :param filename: Name of the configuration file to read
+        :return: The `configparser.ConfigParser` configuration
         """
         if not os.path.isfile(filename):
             return None
@@ -222,11 +220,12 @@ class ALXApp:
     def read_lib_config() -> configparser.ConfigParser:
         """
         Reads the global `alx.ini` file using ALXApp.read_config
+
         :return: The configuration
         """
         libhome = os.path.dirname(os.path.abspath(__file__))
         filename = os.path.join(libhome, 'alx.ini')
-        return ALXApp.read_config(filename)
+        return ALXapp.read_config(filename)
 
     def start_logging(self):
         """
@@ -271,6 +270,7 @@ class ALXApp:
     def _read_key(self) -> str:
         """Reads the key from `~/.key.user` and uses it to encrypt and
          decrypt strings using the `cryptography` python module"""
+
         keyfile = os.path.join(os.path.expanduser('~'), '.key.' +
                                os.getlogin())
         if not os.path.exists(keyfile):
@@ -290,10 +290,10 @@ class ALXApp:
 
     def encrypt(self, string: str) -> str:
         """
+        Encrypts the password using the key read from `~/.key.username`
+
         :param string: The string to encrypt.
         :return: the encrypted string
-
-        Encrypts the password using the key read from `~/.key.username`
         """
         if not self.key:
             self.key = self._read_key()
@@ -302,10 +302,10 @@ class ALXApp:
 
     def decrypt(self, string: str) -> str:
         """
+        Decrypts the password using the key read from `~/.key.username`
+
         :param string: The string to decrypt.
         :return: the decrypted string
-
-        Decrypts the password using the key read from `~/.key.username`
         """
         if not self.key:
             self.key = self._read_key()
@@ -329,4 +329,18 @@ class ALXApp:
         :return: `True` if running in prod mode and `False` otherwise
         """
         return self.environment == 'prod'
+
+
+if __name__ == "__main__":
+    args = [
+        ["-d", "--date", {"help": "store as '%%Y-%%m-%%d' date in database"}],
+        ["-s", "--start", {"default": None, "type": str,
+                           "help": "The first date from which to retrieve prices"}],
+        ["-g", "--gui", {"action": "store_true", "default": False,
+                         "help": "Display the browser."}]
+    ]
+
+    app = ALXApp("test application", args=args, appname="account_info")
+    mail = ALXmail()
+
 

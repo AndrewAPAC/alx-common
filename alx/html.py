@@ -4,7 +4,7 @@
 #
 # Author: Andrew Lister
 # Date: September 2019
-from alx.app import ALXApp
+from alx.app import ALXapp
 
 
 class ALXhtml:
@@ -19,8 +19,7 @@ class ALXhtml:
 
         :param title: The title to use in the head section of the html
         """
-
-        self.config = ALXApp.read_lib_config()
+        self.config = ALXapp.read_lib_config()
 
         self.css = "<style>\n" + self.config.get('html', 'css') + "</style>\n"
         self.head = "<head>\n"
@@ -225,6 +224,7 @@ class ALXhtml:
         html += self.end_html
 
         return html
+
 
 if __name__ == "__main__":
     html = ALXhtml("HTML test")

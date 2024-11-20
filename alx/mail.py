@@ -7,7 +7,7 @@ from email.mime.image import MIMEImage
 from smtplib import SMTPException, SMTPAuthenticationError, SMTPConnectError, SMTPDataError, SMTPHeloError, \
     SMTPNotSupportedError, SMTPRecipientsRefused, SMTPResponseException, SMTPSenderRefused, SMTPServerDisconnected
 import mimetypes
-from alx.app import ALXApp
+#from alx.app import ALXapp
 from alx.html import ALXhtml
 import smtplib
 from email.mime.multipart import MIMEMultipart
