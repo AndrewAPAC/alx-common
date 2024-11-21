@@ -69,6 +69,52 @@ class ALXapp:
         * Reads and parses the library configuration stored in `alx.ini`
         * Initialises and starts logging to `Paths.logfile`
 
+        An example `alx.ini`
+        ```
+        [DEFAULT]
+        root:       /opt/local
+
+        [logging]
+        format:     %%(asctime)s: %%(levelname)s %%(module)s.%%(funcName)s:%%(lineno)d [%%(threadName)s] %%(message)s
+        loglevel:   INFO
+        days:       7
+        maxsize:    10485760
+        when:       midnight
+
+        [mail]
+        server:     localhost
+        from:       Andrew Lister <a.lister.hk@gmail.com>
+
+
+        [html]
+        css:
+                p, h1, h2, h3, h4, h5, ul, ol, li {
+                    font-family: Calibri, Arial, Helvetica
+                }
+
+                table {
+                  font-family: "Trebuchet MS", Arial, Helvetica, sans-serif;
+                  border-collapse: collapse;
+                  width: 100%%;
+                }
+
+                td, th {
+                  border: 1px solid #ddd;
+                  padding: 5px;
+                }
+
+                tr:nth-child(even){background-color: #f2f2f2;}
+                tr:hover {background-color: #ddd;}
+
+                th {
+                  padding-top: 8px;
+                  padding-bottom: 8px;
+                  text-align: left;
+                  background-color: #0771af;
+                  color: white;
+                }
+        ```
+
         :param description: A short description for the app - used with `--help`
         :param args: A list of arguments added with argparse.ArgumentParser.add_argument.  Example
         ```

@@ -3,6 +3,13 @@ import os
 
 class Environment:
     def __init__(self):
+        """
+        Populate the `Environment` object with commonly found
+        environment variables from [ITRS geneos](https://www.itrsgroup.com).
+        Useful when writing actions and triggers.  Please refer to the
+        source code to see what is set.
+        """
+
         try:
             self.location = os.getenv("location")
             self.application = os.getenv("application")
@@ -31,10 +38,10 @@ class Environment:
             self.period_type = os.getenv("_PERIOD_TYPE")
             self.clear = os.getenv("_CLEAR")
         except Exception as e:
-            raise("Environment error: %s", format(e))
+            raise ValueError('Environment error: %s', format(e))
 
         self.dataview_columns = {}
-
+        """A dictionary of all the columns found on the current dataview"""
         # Pull out all the columns from the dataview (only works if starts
         # with '_' and contains a lowercase letter
         for e in sorted(os.environ):

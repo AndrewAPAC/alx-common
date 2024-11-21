@@ -1,9 +1,18 @@
 default::
 
-clean::
-	rm -fr dist *egg-info
+sources = \
+	alx/app.py \
+	alx/date_util.py \
+	alx/db_util.py \
+	alx/html.py \
+	alx/mail.py \
+	alx/itrs/environment.py \
+	alx/itrs/toolkit.py
 
-install:: clean dist upload
+clean::
+	rm -fr dist *egg-info doc build
+
+install:: clean dist upload doc
 
 dist:: clean
 	python setup.py sdist
@@ -11,3 +20,6 @@ dist:: clean
 upload:: install
 	twine upload -r local dist/*
 
+doc::
+	-mkdir -p doc
+	pdoc -o doc $(sources)
