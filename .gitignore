@@ -13,7 +13,6 @@
 .DS_Store
 dist/
 build/
-doc/
 *.egg-info/
 __pycache__
 
