@@ -343,7 +343,7 @@ class ALXapp:
         """
         if not self.key:
             self.key = self._read_key()
-        encoded = self.key.encrypt(password.encode())
+        encoded = self.key.encrypt(string.encode())
         return encoded.decode()
 
     def decrypt(self, string: str) -> str:

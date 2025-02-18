@@ -35,6 +35,7 @@ class Environment:
             self.assignee_name = os.getenv("_ASSIGNEE_USERNAME")
             self.assigner_name = os.getenv("_ASSIGNER_USERNAME")
             self.comment = os.getenv("_COMMENT")
+            self.previous_comment = os.getenv("_PREVIOUS_COMMENT")
             self.period_type = os.getenv("_PERIOD_TYPE")
             self.clear = os.getenv("_CLEAR")
         except Exception as e:
