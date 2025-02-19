@@ -5,7 +5,8 @@ class Environment:
     def __init__(self):
         """
         Populate the `Environment` object with commonly found
-        environment variables from [ITRS geneos](https://www.itrsgroup.com).
+        environment variables from [ITRS geneos]
+        (docs.itrsgroup.com/docs/geneos/7.2.0/processing/monitoring-and-alerts/geneos_rulesactionsalerts_tr/index.html#script-actions).
         Useful when writing actions and triggers.  Please refer to the
         source code to see what is set.
         """
