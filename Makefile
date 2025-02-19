@@ -11,7 +11,10 @@ sources = \
 clean::
 	rm -fr dist *egg-info doc build
 
-install:: clean dist upload doc
+pip::
+	pip install --upgrade alx-common
+
+install:: clean dist upload doc pip
 
 dist:: clean
 	python setup.py sdist

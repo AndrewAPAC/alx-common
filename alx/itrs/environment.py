@@ -102,12 +102,12 @@ class Environment:
         self.period_type = os.getenv("_PERIOD_TYPE")
         """The value of the environment variable `_PERIOD_TYPE` - 
         Period for which the item is assigned:
-        * Manual — Assigned to the user until unassigned.
-        * UntilOk — Assigned until severity is OK.
-        * Until severity changes to specified — Assigned until severity changed to one specified by assigner.
-        * Until severity changes from specified — Assigned until severity changed from specified by assigner.
-        * Until a specific date / time — Assigned until a specific date / time.
-        * Until severity changes to specified or until a specific date / time — Assigned until severity changed to one specified by assigner or a specific date / time.
+        * **Manual** — Assigned to the user until unassigned.
+        * **UntilOk** — Assigned until severity is OK.
+        * **Until severity changes to specified** — Assigned until severity changed to one specified by assigner.
+        * **Until severity changes from specified** — Assigned until severity changed from specified by assigner.
+        * **Until a specific date / time** — Assigned until a specific date / time.
+        * **Until severity changes to specified or until a specific date / time** — Assigned until severity changed to one specified by assigner or a specific date / time.
 """
 
         self.dataview_columns = {}
