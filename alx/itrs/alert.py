@@ -7,6 +7,9 @@ from alx.app import ALXapp
 colours = {"critical": "#FF7474",
            "warning": "#FFCF80",
            "ok": "#BCF0BC"}
+"""A global variable defining the standard ITRS colours.  It could potentially
+go in a config file one day"""
+
 
 class HtmlAlert:
     def __init__(self, environment: Environment):
@@ -14,13 +17,15 @@ class HtmlAlert:
         Create an html table of information suitable for an alert.
         This alert can be sent using the ALXmail module.  Currently,
         it is used for email alerts and user assignment events
-        :param e: The environment created in alx.itrs.environment
+        :param environment: The environment created in alx.itrs.environment.Environment
         """
         self.environment = environment
-
+        """Stores the environment passed
+        """
         # Could read from config file....
         # ALXapp.read_lib_config()
         self.style = "background-color: %s;" % colours[environment.severity]
+        """The additional styles for the cells coloured with the severity from colours"""
 
     def create(self) -> str:
         """

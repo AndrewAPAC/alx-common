@@ -6,9 +6,7 @@ sources = \
 	alx/db_util.py \
 	alx/html.py \
 	alx/mail.py \
-	alx/itrs/environment.py \
-	alx/itrs/alert.py \
-	alx/itrs/toolkit.py
+	alx/itrs
 
 clean::
 	rm -fr dist *egg-info doc build
