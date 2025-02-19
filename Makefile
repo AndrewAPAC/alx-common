@@ -7,6 +7,7 @@ sources = \
 	alx/html.py \
 	alx/mail.py \
 	alx/itrs/environment.py \
+	alx/itrs/alert.py \
 	alx/itrs/toolkit.py
 
 clean::
