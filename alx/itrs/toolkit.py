@@ -5,8 +5,8 @@ import sys
 class Toolkit:
     def __init__(self, filename: str = None, display_on_exit: bool = True):
         """
-        Populate and output an [ITRS geneos](https://www.itrsgroup.com)
-        toolkit sampler.
+        Populate and output an [ITRS geneos ttolkit sampler]
+        (https://docs.itrsgroup.com/docs/geneos/7.2.0/collection/toolkit-plugin).
 
         :param filename: If a filename is set then the output goes to
         this file rather than the default of `sys.stdout`
@@ -28,8 +28,12 @@ class Toolkit:
         self._display_on_exit = display_on_exit
 
     def add_headline(self, label: str, value: str | int | float):
-        """Add a headline to the toolkit"""
-        self.headlines[label] = value
+        """
+        Add a headline to the toolkit
+        :param label: The label for the headline
+        :param value: the value for the headline
+        """
+        self.headlines[label] = str(value).replace(",", "\\,")
 
     def add_headings(self, headings: str, delimiter: str = ','):
         """
