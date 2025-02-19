@@ -11,6 +11,7 @@
 *~
 *.bak
 .DS_Store
+doc/
 dist/
 build/
 *.egg-info/
