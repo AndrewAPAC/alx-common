@@ -3,7 +3,7 @@ import arrow
 
 
 def date_subst(format: str, when: datetime | arrow.Arrow = None,
-               tz: timezone = timezone.utc):
+               tz: timezone = timezone.utc) -> str:
     """
     Return a formatted string of the date.
 
