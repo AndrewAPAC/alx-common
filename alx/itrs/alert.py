@@ -1,6 +1,8 @@
 from alx.html import ALXhtml
 from alx.date_util import date_subst
 from alx.itrs.environment import Environment
+from alx.app import ALXapp
+
 
 colours = {"critical": "#FF7474",
            "warning": "#FFCF80",
@@ -15,6 +17,9 @@ class HtmlAlert:
         :param e: The environment created in alx.itrs.environment
         """
         self.environment = environment
+
+        # Could read from config file....
+        # ALXapp.read_lib_config()
         self.style = "background-color: %s;" % colours[environment.severity]
 
     def create(self) -> str:
@@ -47,10 +52,7 @@ class HtmlAlert:
         html.end_row()
 
         if len(e.dataview_columns) > 0:
-            html.start_row()
-            html.add_cell("Dataview Columns", 'font-weight: bold;')
-            html.add_cell("")
-            html.end_row()
+            html.add_headings(["Dataview Columns", ""])
 
             for c in e.dataview_columns:
                 if e.dataview_columns[c]:
