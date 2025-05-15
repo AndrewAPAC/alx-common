@@ -6,3 +6,17 @@ cryptography
 arrow
 DateTime
 mariadb
+praw
+selenium
+psutil
+undetected-chromedriver
+requests
+google-api-python-client
+protobuf
+google-auth-oauthlib
+pyshorteners
+python-dateutil
+pandas
+gnupg
+plotly
+yfinance
