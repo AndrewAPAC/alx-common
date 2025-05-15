@@ -11,7 +11,8 @@ class ALXdatabase:
         Simplifies and removes repetitive statements to connect to a database.
 
         :param dbtype: The database type.  Default is *mysql* and is the
-        only supported type at present
+        only supported type at present. Note that mysql is a synonym for
+        mariadb
         :param user: The username to use
         :param password: The password to use
         :param host: The host to connect
@@ -68,9 +69,9 @@ class ALXdatabase:
         *None* if an `insert`, `update`, `upsert` statement
         """
         # Make the sql pretty for the log
-        sql = sql.replace("\n", " ").strip()
-        sql = re.sub("\s\s+", " ", sql)
-        sql = sql.replace("( ", "(")
+        sql = sql.replace(r"\n", r" ").strip()
+        sql = re.sub(r"\s\s+", r" ", sql)
+        sql = sql.replace(r"( ", r"(")
         self.logger.info(sql)
 
         try:
@@ -95,6 +96,6 @@ class ALXdatabase:
                 self.cursor.close()
         except mariadb.ProgrammingError:
             pass
-    
+
         self.cursor = None
         self.connection = None
