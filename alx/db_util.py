@@ -69,9 +69,9 @@ class ALXdatabase:
         *None* if an `insert`, `update`, `upsert` statement
         """
         # Make the sql pretty for the log
-        sql = sql.replace(r"\n", r" ").strip()
-        sql = re.sub(r"\s\s+", r" ", sql)
-        sql = sql.replace(r"( ", r"(")
+        sql = sql.replace('\n', ' ').strip()
+        sql = re.sub(r'\s\s+', ' ', sql)
+        sql = sql.replace('( ', '(')
         self.logger.info(sql)
 
         try:
@@ -91,7 +91,8 @@ class ALXdatabase:
          set them to None
         """
         try:
-            self.connection.close()
+            if self.connection:
+                self.connection.close()
             if self.cursor:
                 self.cursor.close()
         except mariadb.ProgrammingError:
