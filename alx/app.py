@@ -263,14 +263,15 @@ class ALXapp:
         return config
 
     @staticmethod
-    def read_lib_config() -> configparser.ConfigParser:
+    def read_lib_config(filename: str="alx.ini") -> configparser.ConfigParser:
         """
-        Reads the global `alx.ini` file using ALXApp.read_config
+        Reads and parses a configuration file using ALXApp.read_config
 
+        :param: The name of the config file.  Default is `alx.ini`
         :return: The configuration
         """
-        libhome = os.path.dirname(os.path.abspath(__file__))
-        filename = os.path.join(libhome, 'alx.ini')
+        lib_home = os.path.dirname(os.path.abspath(__file__))
+        filename = os.path.join(lib_home, filename)
         return ALXapp.read_config(filename)
 
     def start_logging(self):
@@ -284,7 +285,7 @@ class ALXapp:
         is also added for convenience
         """
         days = self.libconfig.getint('logging', 'days')
-        logformat = self.libconfig.get('logging', 'format')
+        log_format = self.libconfig.get('logging', 'format')
         when = self.libconfig.get('logging', 'when')
 
         if hasattr(self, 'loglevel'):
@@ -299,7 +300,7 @@ class ALXapp:
 
         fh = TimedRotatingFileHandler(self.paths.logfile, when=when,
                                       backupCount=days)
-        formatter = logging.Formatter(logformat)
+        formatter = logging.Formatter(log_format)
         fh.setLevel(loglevel)
         fh.setFormatter(formatter)
         self.logger.addHandler(fh)

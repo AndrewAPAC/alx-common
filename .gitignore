@@ -11,9 +11,9 @@
 *~
 *.bak
 .DS_Store
+doc/
 dist/
 build/
-doc/
 *.egg-info/
 __pycache__
 

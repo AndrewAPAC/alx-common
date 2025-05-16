@@ -1,5 +1,4 @@
-from mysql.connector import MySQLConnection
-from mysql.connector.cursor import MySQLCursor
+import mariadb
 from alx.app import ALXapp
 import re
 
@@ -12,7 +11,8 @@ class ALXdatabase:
         Simplifies and removes repetitive statements to connect to a database.
 
         :param dbtype: The database type.  Default is *mysql* and is the
-        only supported type at present
+        only supported type at present. Note that mysql is a synonym for
+        mariadb
         :param user: The username to use
         :param password: The password to use
         :param host: The host to connect
@@ -37,16 +37,16 @@ class ALXdatabase:
         else:
             raise NotImplementedError
 
-    def connect(self) -> MySQLCursor:
+    def connect(self) -> mariadb.Cursor:
         """
         Initiates a connection to the database with parameters set
         in `ALXdatabase` instantiation
 
-        :return: The cursor from the connection made in `MySQLConnection`
+        :return: The cursor from the connection made in `mariadb.connect`
         with the parameters set in `ALXDatabase`
         """
         try:
-            self.connection = MySQLConnection(**self.config)
+            self.connection = mariadb.connect(**self.config)
         except Exception:
             raise
 
@@ -56,11 +56,11 @@ class ALXdatabase:
 
     def run(self, sql):
         """
-        Tidies up the sql; string passed, logs the statement to
+        Tidies up the sql string passed, logs the statement to
         `ALXapp.logger` and executes the statement on the
         `ALXdatabase` object.
 
-        If the statement is a *select* then the resultset is
+        If the statement is a *select*, then the resultset is
         returned and *None* otherwise
 
         :param sql: The sql statement to execute.
@@ -69,15 +69,15 @@ class ALXdatabase:
         *None* if an `insert`, `update`, `upsert` statement
         """
         # Make the sql pretty for the log
-        sql = sql.replace("\n", " ").strip()
-        sql = re.sub("\s\s+", " ", sql)
-        sql = sql.replace("( ", "(")
+        sql = sql.replace('\n', ' ').strip()
+        sql = re.sub(r'\s\s+', ' ', sql)
+        sql = sql.replace('( ', '(')
         self.logger.info(sql)
 
         try:
             self.cursor.execute(sql)
         except Exception as e:
-            logger.error('SQL execution failed: %s', format(e))
+            self.logger.error('SQL execution failed: %s', format(e))
             raise
 
         if sql.lower().startswith("select"):
@@ -90,7 +90,13 @@ class ALXdatabase:
         Close the `ALXdatabase` connection and cursor and
          set them to None
         """
-        self.connection.close()
-        if self.cursor:
-            self.cursor.close()
+        try:
+            if self.connection:
+                self.connection.close()
+            if self.cursor:
+                self.cursor.close()
+        except mariadb.ProgrammingError:
+            pass
+
         self.cursor = None
+        self.connection = None

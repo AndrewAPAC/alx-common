@@ -6,13 +6,15 @@ sources = \
 	alx/db_util.py \
 	alx/html.py \
 	alx/mail.py \
-	alx/itrs/environment.py \
-	alx/itrs/toolkit.py
+	alx/itrs
 
 clean::
 	rm -fr dist *egg-info doc build
 
-install:: clean dist upload doc
+pip::
+	pip install --upgrade alx-common
+
+install:: clean dist upload doc pip
 
 dist:: clean
 	python setup.py sdist

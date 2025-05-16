@@ -166,9 +166,20 @@ class ALXhtml:
         self.body += "<table>\n"
 
     def start_row(self):
+        """
+        Simply start a new row in the current table
+        :return: None
+        """
         self.body += "  <tr>\n"
 
     def add_cell(self, value, style=None):
+        """
+        Add a single cell to the current table
+        :param value: this can be of any type, it will be converted to a
+        string
+        :param style: a css style for the cell
+        :return:
+        """
         if not style:
             self.body += "    <td>" + str(value) + "</td>\n"
         else:
@@ -176,18 +187,25 @@ class ALXhtml:
             self.body += str(value) + "</td>\n"
 
     def end_row(self):
+        """
+        Simply end the current row in the current table
+        :return: None
+        """
         self.body += "  </tr>\n"
 
-    def add_row(self, values, tag="d"):
+    def add_row(self, values, tag="d", style=None):
         """
         Add a whole row to a table.  The values passed in should be a
         list of values that make up the complete row
 
         :param values: a list of values
         :param tag: the tag for the row - 'h' or 'd'
+        :param style: a css style for the row
         """
-
-        self.body += "  <tr>\n"
+        if not style:
+            self.body += "  <tr>\n"
+        else:
+            self.body += "  <tr style='%s'>\n" % style
         for td in values:
             self.body += "    <t%s>" % tag + str(td) + "</t%s>\n" % tag
         self.body += "  </tr>\n"
