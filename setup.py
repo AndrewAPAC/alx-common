@@ -12,16 +12,11 @@ setup(
     description='A common library for home development',
     long_description=long_description,
     long_description_content_type="text/markdown",
-    classifiers=[
-        "Programming Language :: Python :: 3",
-        "License :: OSI Approved :: MIT License",
-        "Operating System :: OS Independent",
-    ],
-    packages=['alx', 'alx/data', 'alx/itrs'],
+    license="GPL v3",
+    packages=['alx', 'alx/itrs'],
     package_data = {'alx': ['*.ini']},
     zip_safe=True,
     install_requires=['setuptools-git', 'arrow', 'sqlalchemy',
                       'cryptography'],
     include_package_data=True
-
 )

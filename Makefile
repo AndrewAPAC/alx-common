@@ -19,7 +19,7 @@ install:: clean dist upload doc pip
 dist:: clean
 	python setup.py sdist
 
-upload:: install
+upload::
 	twine upload -r local dist/*
 
 doc::
