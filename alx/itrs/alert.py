@@ -17,11 +17,11 @@ class HtmlAlert:
         Create an html table of information suitable for an alert.
         This alert can be sent using the ALXmail module.  Currently,
         it is used for email alerts and user assignment events
+
         :param environment: The environment created in alx.itrs.environment.Environment
         """
         self.environment = environment
-        """Stores the environment passed
-        """
+        """Stores the environment passed"""
         # Could read from config file....
         # ALXapp.read_lib_config()
         self.style = "background-color: %s;" % colours[environment.severity]
@@ -30,7 +30,7 @@ class HtmlAlert:
     def create(self) -> str:
         """
         Populate the html table with the values in the environment created
-        in a call to alx.itrs.Environment
+        in a call to alx.itrs.environment.Environment
         :return: the formatted html table
         """
         e = self.environment

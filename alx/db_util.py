@@ -5,7 +5,7 @@ import re
 
 class ALXdatabase:
     def __init__(self, dbtype: str = 'mysql', user: str = None,
-                 password: str = None, host: str = None, database: str = None,
+                 password: str = None, host: str = 'localhost', database: str = None,
                  port: int = 3306):
         """
         Simplifies and removes repetitive statements to connect to a database.
@@ -15,15 +15,15 @@ class ALXdatabase:
         mariadb
         :param user: The username to use
         :param password: The password to use
-        :param host: The host to connect
+        :param host: The host to connect (default is `localhost`)
         :param database: The name of the database
-        :param port: The port (default is mysql, 3306)
+        :param port: The port (default is mariadb, 3306)
         """
 
         self.logger = ALXapp.logger
-        """The default logger from the `ALXapp` module"""
+        """The default logger from the alx.app.ALXapp.logger"""
         self.cursor = None
-        """The cursor assigned in `ALXDatabase.connect` after
+        """The cursor assigned in `ALXdatabase.connect` after
         making the database connection"""
         self.connection = None
         """The connection assigned in `ALXDatabase.connect` after
@@ -43,7 +43,7 @@ class ALXdatabase:
         in `ALXdatabase` instantiation
 
         :return: The cursor from the connection made in `mariadb.connect`
-        with the parameters set in `ALXDatabase`
+        with the parameters set in `ALXdatabase`
         """
         try:
             self.connection = mariadb.connect(**self.config)
@@ -54,19 +54,19 @@ class ALXdatabase:
 
         return self.cursor
 
-    def run(self, sql):
+    def run(self, sql: str) -> list:
         """
         Tidies up the sql string passed, logs the statement to
         `ALXapp.logger` and executes the statement on the
         `ALXdatabase` object.
 
-        If the statement is a *select*, then the resultset is
+        If the statement is a *select*, then the result set is
         returned and *None* otherwise
 
         :param sql: The sql statement to execute.
         :return: If a *select* statement then the result set
-        from the call to `MySQLConnection.cursor.execute()` or
-        *None* if an `insert`, `update`, `upsert` statement
+        from the call to execute on the`mariadb.Cursor` or
+        *None* if an `insert`, `update`, `upsert` or `replace` statement
         """
         # Make the sql pretty for the log
         sql = sql.replace('\n', ' ').strip()

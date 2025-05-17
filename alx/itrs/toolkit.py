@@ -5,8 +5,7 @@ import sys
 class Toolkit:
     def __init__(self, filename: str = None, display_on_exit: bool = True):
         """
-        Populate and output an [ITRS geneos ttolkit sampler]
-        (https://docs.itrsgroup.com/docs/geneos/7.2.0/collection/toolkit-plugin).
+        Populate and output an [ITRS geneos toolkit sampler](https://docs.itrsgroup.com/docs/geneos/7.2.0/collection/toolkit-plugin).
 
         :param filename: If a filename is set then the output goes to
         this file rather than the default of `sys.stdout`
