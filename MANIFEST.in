@@ -1,0 +1,9 @@
+include README.md
+include pyproject.toml
+include requirements.txt
+
+recursive-include alx *.py *.ini
+recursive-include alx/itrs *.py
+
+prune alx/.idea
+prune etc
