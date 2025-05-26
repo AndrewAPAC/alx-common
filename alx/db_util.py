@@ -1,6 +1,7 @@
 import mariadb
 from alx.app import ALXapp
 import re
+from sql_formatter.core import format_sql
 
 
 class ALXdatabase:
@@ -54,25 +55,34 @@ class ALXdatabase:
 
         return self.cursor
 
-    def run(self, sql: str) -> list:
+    def run(self, sql: str, name: str = None) -> list:
         """
-        Tidies up the sql string passed, logs the statement to
+        Tidies up the SQL string passed, logs the statement to
         `ALXapp.logger` and executes the statement on the
         `ALXdatabase` object.
 
         If the statement is a *select*, then the result set is
         returned and *None* otherwise
 
-        :param sql: The sql statement to execute.
+        :param sql: The SQL statement to execute.
+        :param name: Optionally name the query to identify it in the logging output
         :return: If a *select* statement then the result set
         from the call to execute on the`mariadb.Cursor` or
         *None* if an `insert`, `update`, `upsert` or `replace` statement
         """
-        # Make the sql pretty for the log
-        sql = sql.replace('\n', ' ').strip()
-        sql = re.sub(r'\s\s+', ' ', sql)
-        sql = sql.replace('( ', '(')
-        self.logger.info(sql)
+        # Make the SQL pretty for the log
+        # sql = sql.replace('\n', ' ').strip()
+        # sql = re.sub(r'\s\s+', ' ', sql)
+        # sql = sql.replace('( ', '(')
+        sql = format_sql(sql)
+
+        if name:
+            log = name + ":\n" + sql
+        else:
+            log = "\n" + sql
+
+        # Write the SQL on a new line for easy cut & paste
+        self.logger.info(log)
 
         try:
             self.cursor.execute(sql)
@@ -83,7 +93,7 @@ class ALXdatabase:
         if sql.lower().startswith("select"):
             return self.cursor.fetchall()
 
-        return None
+        return []
 
     def close(self):
         """
