@@ -222,8 +222,7 @@ class ALXhtml:
 
         :param values: A list of values
         :param tag: The tag for the row - 'h' or 'd'
-        :param style: a css style for the row (do not include tags) like
-        * `padding: 5px; font-size: 14px; text-align: left;`
+        :param style: a css style for the row (do not include `style` tags)
         """
         if not style:
             self.body += "  <tr>\n"
