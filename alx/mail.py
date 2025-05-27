@@ -14,13 +14,13 @@ from email.mime.text import MIMEText
 
 
 class ALXmail(ALXhtml):
-    def __init__(self, type="html"):
+    def __init__(self, type: str = "html") -> None:
         """
-        class to send itrs_email - both text and html (default).  It is a subclass
-        of `ALXhtml` to allow simple html mail composition.  configuration
+        Class to send itrs_email - both text and html (default). It is a subclass
+        of `ALXhtml` to allow simple html mail composition. Configuration
         is stored in `alx.ini`
 
-        :param type: either 'plain' or 'html' (default)
+        :param type: Either 'plain' or 'html' (default)
         :return: None
         """
         super().__init__()
@@ -33,6 +33,7 @@ class ALXmail(ALXhtml):
             raise TypeError("Only 'plain' and 'html' are supported")
 
         self.sender = self.config.get("mail", "from")
+        self.subject = "No subject"
         self.server = None
         self.images = 0
         self.mailhost = self.config.get("mail", "server")
@@ -42,37 +43,37 @@ class ALXmail(ALXhtml):
         self.attachments = []
         self.message = MIMEMultipart()
 
-    def set_from(self, sender):
+    def set_from(self, sender: str) -> None:
         self.sender = sender
 
-    def set_subject(self, subject):
+    def set_subject(self, subject: str) -> None:
         self.subject = subject
 
-    def add_recipient(self, to):
+    def add_recipient(self, to: str) -> None:
         self.recipients.append(to)
 
-    def add_cc(self, to):
+    def add_cc(self, to: str) -> None:
         self.cc.append(to)
 
-    def add_bcc(self, to):
+    def add_bcc(self, to: str) -> None:
         self.bcc.append(to)
 
-    def set_body(self, body):
+    def set_body(self, body: str) -> None:
         self.body = body
 
-    def add_paragraph(self, p):
+    def add_paragraph(self, p: str) -> None:
         if self.type == "html":
             super().add_paragraph(p)
         else:
             self.body += "\n" + p + "\n"
 
-    def add_text(self, t):
+    def add_text(self, t: str) -> None:
         if self.type == "html":
             super().add_paragraph(t)
         else:
             self.body += t + "\n"
 
-    def add_attachment(self, filename):
+    def add_attachment(self, filename: str) -> str:
         """
         Adds a file as an attachment
 
@@ -82,12 +83,12 @@ class ALXmail(ALXhtml):
             raise FileNotFoundError(filename)
 
         cd = 'attachment'   # Content-Disposition
+        content_id = ""
         fn = os.path.basename(filename)
         with open(filename, "rb") as fp:
             data = fp.read()
 
         maintype, subtype = mimetypes.guess_type(filename)
-        image_ref = None
         if maintype and maintype.startswith('image'):
             attachment = MIMEImage(data)
             if self.type == 'html':
@@ -113,7 +114,7 @@ class ALXmail(ALXhtml):
 
         return content_id
 
-    def send(self):
+    def send(self) -> None:
         self.message["From"] = self.sender
         self.message["Subject"] = self.subject
         # Remove duplicate names

@@ -7,7 +7,7 @@ from sql_formatter.core import format_sql
 class ALXdatabase:
     def __init__(self, dbtype: str = 'mysql', user: str = None,
                  password: str = None, host: str = 'localhost', database: str = None,
-                 port: int = 3306):
+                 port: int = 3306) -> None:
         """
         Simplifies and removes repetitive statements to connect to a database.
 
@@ -95,7 +95,7 @@ class ALXdatabase:
 
         return []
 
-    def close(self):
+    def close(self) -> None:
         """
         Close the `ALXdatabase` connection and cursor and
          set them to None
