@@ -22,7 +22,7 @@ class ALXhtml:
         """
         self.config = ALXapp.read_lib_config()
         """Adds the configuration read from `alx.ini`"""
-        self.css = "<style>\n" + self.config.get('html', 'css') + "\n</style>\n"
+        self.css = "\n" + self.config.get('html', 'css') + "\n"
         """Stores the css read from the ini file.  More styles can be added with `set_css`"""
         self.head = "<head>\n"
         """Initialise the `head` with `title` if specified"""
@@ -40,7 +40,7 @@ class ALXhtml:
         :param css: A block of css. The `style` tags should not be included
         """
 
-        self.css = "<style>\n" + css + "\n</style>\n"
+        self.css = "\n" + css + "\n"
 
     def add_heading(self, number: int, heading: str) -> None:
         """
@@ -273,7 +273,7 @@ class ALXhtml:
         """
         html = self.html
         html += self.head
-        html += self.css
+        html += "<style>" + self.css + "\n</style>\n"
         html += self.end_head
         html += self.body
         html += self.end_body
