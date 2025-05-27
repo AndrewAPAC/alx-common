@@ -5,6 +5,7 @@
 # Author: Andrew Lister
 # Date: September 2019
 from alx.app import ALXapp
+from typing import Any
 
 
 class ALXhtml:
@@ -12,7 +13,7 @@ class ALXhtml:
     end_head = "</head>\n"
     end_body = "</body>\n"
 
-    def __init__(self, title=None):
+    def __init__(self, title: str = None) -> None:
         """
         An HTML module to simplify the creation of HTML through the use of
         methods.  This makes the code calling the library much more readable
@@ -32,7 +33,7 @@ class ALXhtml:
         self.body = "<body>\n"
         """Initialise the `body` text"""
 
-    def set_css(self, css):
+    def set_css(self, css: str) -> None:
         """
         Allow the default css to be overridden if necessary
 
@@ -41,7 +42,7 @@ class ALXhtml:
 
         self.css = "<style>\n" + css + "\n</style>\n"
 
-    def add_heading(self, number, heading):
+    def add_heading(self, number: int, heading: str) -> None:
         """
         adds a heading of level 'number'.  This method should likely
         be accessed by the helper functions - `add_h1`, `add_h2`, etc.
@@ -51,53 +52,53 @@ class ALXhtml:
         """
         self.body += "<h%d>" % number + heading + "</h%d>\n" % number
 
-    def add_h1(self, heading):
+    def add_h1(self, heading: str) -> None:
         """
-        Adds a level 1 heading
+        Adds level 1 heading
 
         :param heading: The text for the header
         """
         self.add_heading(1, heading)
 
-    def add_h2(self, heading):
+    def add_h2(self, heading: str) -> None:
         """
-        Adds a level 2 heading
+        Adds level 2 heading
 
         :param heading: The text for the header
         """
         self.add_heading(2, heading)
 
-    def add_h3(self, heading):
+    def add_h3(self, heading: str) -> None:
         """
-        Adds a level 3 heading
+        Adds level 3 heading
 
         :param heading: The text for the header
         """
         self.add_heading(3, heading)
 
-    def add_h4(self, heading):
+    def add_h4(self, heading: str) -> None:
         """
-        Adds a level 4 heading
+        Adds level 4 heading
 
         :param heading: The text for the header
         """
         self.add_heading(4, heading)
 
-    def add_h5(self, heading):
+    def add_h5(self, heading: str) -> None:
         """
-        Adds a level 5 heading
+        Adds level 5 heading
 
         :param heading: The text for the header
         """
         self.add_heading(5, heading)
 
-    def add_horizontal_line(self):
+    def add_horizontal_line(self) -> None:
         """
         Adds a horizontal line
         """
         self.body += "<hr>\n"
 
-    def add_paragraph(self, paragraph):
+    def add_paragraph(self, paragraph: str) -> None:
         """
         Adds a paragraph of text
 
@@ -105,7 +106,7 @@ class ALXhtml:
         """
         self.body += "<p>\n" + paragraph
 
-    def add_bold_text(self, text):
+    def add_bold_text(self, text: str) -> None:
         """
         Add some text in bold
 
@@ -113,7 +114,7 @@ class ALXhtml:
         """
         self.body += "<b>" + text + "</b>"
 
-    def add_italic_text(self, text):
+    def add_italic_text(self, text: str) -> None:
         """
         Add some text in italics
 
@@ -121,7 +122,7 @@ class ALXhtml:
         """
         self.body += "<i>" + text + "</i>"
 
-    def add_bold_italic_text(self, text):
+    def add_bold_italic_text(self, text: str) -> None:
         """
         Add some text in bold italics
 
@@ -129,13 +130,13 @@ class ALXhtml:
         """
         self.body += "<b><i>" + text + "</i></b>"
 
-    def add_ul(self):
+    def add_ul(self) -> None:
         """
         Adds an unordered list.  Finish with `end_ul`
         """
         self.body += "<ul>\n"
 
-    def add_ol(self, tag='1'):
+    def add_ol(self, tag: str = '1') -> None:
         """
         Adds an ordered list.  Finish with `end_ol`
         :param tag: The tag type:
@@ -147,7 +148,7 @@ class ALXhtml:
         """
         self.body += "<ol type='%s'>\n" % tag
 
-    def add_item(self, item):
+    def add_item(self, item: str) -> None:
         """
         Adds an item to the ordered or unordered list
 
@@ -155,56 +156,66 @@ class ALXhtml:
         """
         self.body += "  <li>" + item + "</li>\n"
 
-    def end_ol(self):
+    def end_ol(self) -> None:
         """
         Ends the ordered list
         """
         self.body += "</ol>\n"
 
-    def end_ul(self):
+    def end_ul(self) -> None:
         """
         Ends the unordered list
         """
         self.body += "</ul>\n"
 
-    def add_table(self, style=None):
+    def add_table(self, style: str = None) -> None:
         """
-        Adds a table
+        Adds a table to the html
 
-        :param style: adds an optional style to the table.  Do not include the `style` tags
+        :param style: Adds an optional style to the table.  Do not include the `style` tags
         """
         self.body += "<table"
         if style:
             self.body += " style='%s'" % style
         self.body += ">\n"
 
-    def start_row(self):
+    def start_row(self) -> None:
         """
         Start a new row in the current table
         """
         self.body += "  <tr>\n"
 
-    def add_cell(self, value, style=None):
+    def add_cell(self, value: Any, tag: str = 'd', style: str = None) -> None:
         """
         Add a single cell to the current table
 
-        :param value: This can be of any type, it will be converted to a
-        string
+        :param value: This can be of any type, it will be converted to a string
+        :param tag: Can be set to 'h' to create a heading
         :param style: A css style for the cell.  Do not include the `style` tags
         """
         if not style:
-            self.body += "    <td>" + str(value) + "</td>\n"
+            self.body += "    <t%s>%s</t%s>\n" % (tag, str(value), tag)
         else:
-            self.body += "    <td style='%s'>" % style
-            self.body += str(value) + "</td>\n"
+            self.body += "    <t%s style='%s'>%s</t%s>\n" % (tag, style, str(value), tag)
 
-    def end_row(self):
+    def add_cells(self, values: list, tag: str, style: str) -> None:
+        """
+        Add a list of cells, possibly to a partial row
+        :param values: A list of values to add.  Elements can be of any type
+        :param tag: The tag: either 'd' or 'h'. Default is 'd'
+        :param style: A css style for the cells
+        :return: None
+        """
+        for v in values:
+            self.add_cell(v, tag, style)
+
+    def end_row(self) -> None:
         """
         End the current row in the current table
         """
         self.body += "  </tr>\n"
 
-    def add_row(self, values, tag="d", style=None):
+    def add_row(self, values: list, tag: str = "d", style: str = None):
         """
         Add a whole row to a table.  The values passed in should be a
         list of values that make up the complete row
@@ -222,21 +233,21 @@ class ALXhtml:
             self.body += "    <t%s>" % tag + str(td) + "</t%s>\n" % tag
         self.body += "  </tr>\n"
 
-    def add_headings(self, values):
+    def add_headings(self, values: list) -> None:
         """
         Calls `add_row` with a tag of `h` and passes `values` to
         :param values: a list of values to be used as headings
         """
         self.add_row(values, "h")
 
-    def end_table(self):
+    def end_table(self) -> None:
         """
-        End the current table with a `/table` tag.  Not ending the table can lead
-        unexpected results!
+        End the current table with a `/table` tag.  Not ending the table can
+        lead to unexpected results!
         """
         self.body += "</table>\n"
 
-    def add_html(self, html):
+    def add_html(self, html: str) -> None:
         """
         Add raw html to the class
 
@@ -244,15 +255,18 @@ class ALXhtml:
         """
         self.body += html + "\n"
 
-    def add_url(self, target, text):
+    def add_url(self, target: str, text: str = None) -> None:
         """
         Add a url to the object that will be displayed as a clickable link
         :param target: The target address or URL
-        :param text: The text to display for the link
+        :param text: The text to display for the link. If ommitted, the target
+            name is used
         """
+        if not text:
+            text = target
         self.body += "<a href='%s'>%s</a>\n" % (target, text)
 
-    def get_html(self):
+    def get_html(self) -> str:
         """
         Put all the elements together and return a formatted html document
 
@@ -307,4 +321,3 @@ if __name__ == "__main__":
     doc = html.get_html()
 
     print(doc)
-
