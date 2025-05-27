@@ -198,7 +198,7 @@ class ALXhtml:
         else:
             self.body += "    <t%s style='%s'>%s</t%s>\n" % (tag, style, str(value), tag)
 
-    def add_cells(self, values: list, tag: str, style: str) -> None:
+    def add_cells(self, values: list, tag: str = 'd', style: str = None) -> None:
         """
         Add a list of cells, possibly to a partial row
         :param values: A list of values to add.  Elements can be of any type
