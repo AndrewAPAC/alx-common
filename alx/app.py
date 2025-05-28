@@ -61,7 +61,8 @@ class ALXapp:
                  inifile: str = None, epilog: str = None):
         """
         Initialise the `ALXapp` object which does a number of things:
-        * Creates the application name from `sys.argv[0]` and stores it in `ALXApp.name` if not passed as a parameter
+        * Creates the application name from `sys.argv[0]` and stores it in
+        `name` if not passed as a parameter
         * Adds a `--env` / `-e` argument and sets `self.environment`
         * Initialises the `Paths` class.
         * Reads the arguments provided in the `args` parameter.

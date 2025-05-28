@@ -34,20 +34,19 @@ class ALXhtml:
         """Initialise the `html` text"""
         self.body = "<body>\n"
         """Initialise the `body` text"""
-        self.column_headings = []
-        """Holds column indexes that should be treated as headings.
-        For example, to mark the first column as a heading, set to 
-        [True] through `html.set_column_headings`"""
         self._current_row = 0
         """Internal variable to hold current row number"""
         self._current_column = 0
         """Internal variable to hold current column number"""
+        self.column_headings = []
+        """Holds column indexes that should be treated as headings.
+        For example, to mark the first column as a heading, set to 
+        `[True]` through `set_column_headings`"""
         self.column_alignments = []
         """Holds column index alignments to treat alignments
-        differently to `self.css`. For example, to set the
-         alignemnt of the first column to left call 
-         `html.set_column_alignments(["left"])`"""
-
+        differently to the `css`. For example, to set the
+         alignemnt of the first column to left, call 
+         `set_column_alignments` with a parameter of `["left"]`"""
 
     def set_css(self, css: str) -> None:
         """
@@ -184,7 +183,7 @@ class ALXhtml:
         """
         self.body += "</ul>\n"
 
-    def add_table(self, style: str = None) -> None:
+    def add_table(self, style: str = "") -> None:
         """
         Adds a table to the html
 
@@ -213,13 +212,13 @@ class ALXhtml:
 
         :param alignments: A list of str values marking the justification of a
         column: "left", "center" or "right".  If a list element is not set
-        then the `self.css` rules are followed. By default, the first column is
-         set to left justified
+        then the `css` rules are followed. By default, the first column is
+        set to left justified
         :return: None
         """
         self.column_alignments = alignments
 
-    def start_row(self, style: str = None) -> None:
+    def start_row(self, style: str = "") -> None:
         """
         Start a new row in the current table
 
@@ -241,9 +240,11 @@ class ALXhtml:
         """
         if (self._current_column < len(self.column_headings) and
                 self.column_headings[self._current_column]):
+            # This column defined as a heading so mark as `th`
             tag = 'h'
         if (self._current_column < len(self.column_alignments) and
                 self.column_alignments[self._current_column]):
+            # This column has an alignment set, mark as so...
             style += ("text-align: %s; " %
                       self.column_alignments[self._current_column].lower())
 
@@ -304,13 +305,13 @@ class ALXhtml:
         """
         self.body += "</table>\n"
 
-    def add_html(self, html: str) -> None:
+    def add_html(self, value: str) -> None:
         """
         Add raw html to the class
 
-        :param html: The raw html
+        :param value: The raw html
         """
-        self.body += html + "\n"
+        self.body += value + "\n"
 
     def add_url(self, target: str, text: str = None) -> None:
         """
@@ -329,15 +330,15 @@ class ALXhtml:
 
         :return: The html value in the object
         """
-        html = self.html
-        html += self.head
-        html += "<style>" + self.css + "\n</style>\n"
-        html += self.end_head
-        html += self.body
-        html += self.end_body
-        html += self.end_html
+        value = self.html
+        value += self.head
+        value += "<style>" + self.css + "\n</style>\n"
+        value += self.end_head
+        value += self.body
+        value += self.end_body
+        value += self.end_html
 
-        return html
+        return value
 
 
 if __name__ == "__main__":
