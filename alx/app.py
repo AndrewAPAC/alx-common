@@ -92,21 +92,17 @@ class ALXapp:
                 p, h1, h2, h3, h4, h5, ul, ol, li {
                     font-family: Calibri, Arial, Helvetica
                 }
-
                 table {
                   font-family: "Trebuchet MS", Arial, Helvetica, sans-serif;
                   border-collapse: collapse;
                   width: 100%%;
                 }
-
                 td, th {
                   border: 1px solid #ddd;
                   padding: 5px;
                 }
-
                 tr:nth-child(even){background-color: #f2f2f2;}
                 tr:hover {background-color: #ddd;}
-
                 th {
                   padding-top: 8px;
                   padding-bottom: 8px;
