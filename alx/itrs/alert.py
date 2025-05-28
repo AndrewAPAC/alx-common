@@ -39,7 +39,7 @@ class HtmlAlert:
 
         html.add_table()
         html.add_headings(["Variable", "Value"])
-        html.set_column_headings()
+        # html.set_column_headings()
         html.start_row()
         html.add_cell("Severity")
         html.add_cell(e.severity.title(), style=self.style)
@@ -51,7 +51,7 @@ class HtmlAlert:
         html.add_row(["Date", date_subst("%a %b %d %Y %H:%M:%S %Z")])
         html.add_row(["Managed Entity", e.managed_entity])
         html.add_row(["Sampler", e.sampler])
-        html.add_row(["Dataview", e.dataview])
+        html.add_headings(["Dataview", e.dataview])
         html.start_row()
         html.add_cell("Value")
         html.add_cell("%s %s is %s" % (e.rowname, e.column, e.value),
