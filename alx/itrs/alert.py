@@ -39,6 +39,7 @@ class HtmlAlert:
 
         html.add_table()
         html.add_headings(["Variable", "Value"])
+        html.set_column_headings()
         html.start_row()
         html.add_cell("Severity")
         html.add_cell(e.severity.title(), style=self.style)
