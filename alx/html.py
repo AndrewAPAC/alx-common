@@ -22,6 +22,8 @@ class ALXhtml:
         """
         self.config = ALXapp.read_lib_config()
         """Adds the configuration read from `alx.ini`"""
+        self.logger = ALXapp.logger
+        """The default logger from the alx.app.ALXapp.logger"""
         self.css = "\n" + self.config.get('html', 'css') + "\n"
         """Stores the css read from the ini file.  More styles can be added with `set_css`"""
         self.head = "<head>\n"
@@ -32,6 +34,20 @@ class ALXhtml:
         """Initialise the `html` text"""
         self.body = "<body>\n"
         """Initialise the `body` text"""
+        self.column_headings = []
+        """Holds column indexes that should be treated as headings.
+        For example, to mark the first column as a heading, set to 
+        [True] through `html.set_column_headings`"""
+        self._current_row = 0
+        """Internal variable to hold current row number"""
+        self._current_column = 0
+        """Internal variable to hold current column number"""
+        self.column_alignments = []
+        """Holds column index alignments to treat alignments
+        differently to `self.css`. For example, to set the
+         alignemnt of the first column to left call 
+         `html.set_column_alignments(["left"])`"""
+
 
     def set_css(self, css: str) -> None:
         """
@@ -178,14 +194,44 @@ class ALXhtml:
         if style:
             self.body += " style='%s'" % style
         self.body += ">\n"
+        self._current_row = self._current_column = 0
 
-    def start_row(self) -> None:
+    def set_column_headings(self, headings: list = [True]) -> None:
+        """
+        Set columns to be headings (bold / different background) for each
+        column where the list element is True
+
+        :param headings: A list of boolean values marking a column as a
+            heading.  By default, the first column is set
+        :return: None
+        """
+        self.column_headings = headings
+
+    def set_column_alignments(self, alignments: list = ["left"]) -> None:
+        """
+        Set column alignments to the values in `alignments`
+
+        :param alignments: A list of str values marking the justification of a
+        column: "left", "center" or "right".  If a list element is not set
+        then the `self.css` rules are followed. By default, the first column is
+         set to left justified
+        :return: None
+        """
+        self.column_alignments = alignments
+
+    def start_row(self, style: str = None) -> None:
         """
         Start a new row in the current table
-        """
-        self.body += "  <tr>\n"
 
-    def add_cell(self, value: Any, tag: str = 'd', style: str = None) -> None:
+        :param style: The css style to use.
+        :return: None
+        """
+        if not style:
+            self.body += "  <tr>\n"
+        else:
+            self.body += "  <tr style='%s'>\n" % style
+
+    def add_cell(self, value: Any, tag: str = 'd', style: str = "") -> None:
         """
         Add a single cell to the current table
 
@@ -193,12 +239,23 @@ class ALXhtml:
         :param tag: Can be set to 'h' to create a heading
         :param style: A css style for the cell.  Do not include the `style` tags
         """
+        if (self._current_column < len(self.column_headings) and
+                self.column_headings[self._current_column]):
+            tag = 'h'
+        if (self._current_column < len(self.column_alignments) and
+                self.column_alignments[self._current_column]):
+            style += ("text-align: %s; " %
+                      self.column_alignments[self._current_column].lower())
+
         if not style:
             self.body += "    <t%s>%s</t%s>\n" % (tag, str(value), tag)
         else:
             self.body += "    <t%s style='%s'>%s</t%s>\n" % (tag, style, str(value), tag)
+        self.logger.debug("Row: %d, Column: %d (%s)", self._current_row,
+                          self._current_column, str(value))
+        self._current_column += 1
 
-    def add_cells(self, values: list, tag: str = 'd', style: str = None) -> None:
+    def add_cells(self, values: list, tag: str = 'd', style: str = "") -> None:
         """
         Add a list of cells, possibly to a partial row
         :param values: A list of values to add.  Elements can be of any type
@@ -214,8 +271,10 @@ class ALXhtml:
         End the current row in the current table
         """
         self.body += "  </tr>\n"
+        self._current_row += 1
+        self._current_column = 0
 
-    def add_row(self, values: list, tag: str = "d", style: str = None):
+    def add_row(self, values: list, tag: str = "d", style: str = ""):
         """
         Add a whole row to a table.  The values passed in should be a
         list of values that make up the complete row
@@ -224,13 +283,12 @@ class ALXhtml:
         :param tag: The tag for the row - 'h' or 'd'
         :param style: a css style for the row (do not include `style` tags)
         """
-        if not style:
-            self.body += "  <tr>\n"
-        else:
-            self.body += "  <tr style='%s'>\n" % style
-        for td in values:
-            self.body += "    <t%s>" % tag + str(td) + "</t%s>\n" % tag
-        self.body += "  </tr>\n"
+
+        self.start_row(style)
+        for value in values:
+            self.add_cell(value, tag, style)
+            # self.body += "    <t%s>" % tag + str(td) + "</t%s>\n" % tag
+        self.end_row()
 
     def add_headings(self, values: list) -> None:
         """
@@ -309,6 +367,8 @@ if __name__ == "__main__":
     html.end_ol()
 
     html.add_table()
+    html.set_column_headings()
+    html.set_column_alignments(["left", "center", "right"])
     html.add_headings(['heading 1', 'heading 2', 'heading 3', 'heading 4'])
     for r in range(1, 5):
         row = []

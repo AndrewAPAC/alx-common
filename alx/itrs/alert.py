@@ -7,6 +7,7 @@ from alx.app import ALXapp
 colours = {"critical": "#FF7474",
            "warning": "#FFCF80",
            "ok": "#BCF0BC"}
+
 """A global variable defining the standard ITRS colours.  It could potentially
 go in a config file one day"""
 
@@ -40,7 +41,7 @@ class HtmlAlert:
         html.add_headings(["Variable", "Value"])
         html.start_row()
         html.add_cell("Severity")
-        html.add_cell(e.severity.title(), self.style)
+        html.add_cell(e.severity.title(), style=self.style)
         html.end_row()
         html.add_row(["Gateway", e.gateway])
         html.add_row(["Application", e.application])
@@ -53,7 +54,7 @@ class HtmlAlert:
         html.start_row()
         html.add_cell("Value")
         html.add_cell("%s %s is %s" % (e.rowname, e.column, e.value),
-                      self.style)
+                      style=self.style)
         html.end_row()
 
         if len(e.dataview_columns) > 0:
