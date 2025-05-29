@@ -37,6 +37,9 @@ class ALXdatabase:
             self.connection = None
         else:
             raise NotImplementedError
+        self.logger.info("Initialising database connection to %s on %s as %s",
+                         self.config['database'], self.config['host'],
+                         self.config['user'])
 
     def connect(self) -> mariadb.Cursor:
         """
@@ -48,6 +51,9 @@ class ALXdatabase:
         """
         try:
             self.connection = mariadb.connect(**self.config)
+            self.logger.info("Connected to %s database on %s as %s",
+                             self.config['database'], self.config['host'],
+                             self.config['user'])
         except Exception:
             raise
 
