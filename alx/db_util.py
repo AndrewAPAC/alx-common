@@ -76,10 +76,6 @@ class ALXdatabase:
         from the call to execute on the`mariadb.Cursor` or
         *None* if an `insert`, `update`, `upsert` or `replace` statement
         """
-        # Make the SQL pretty for the log
-        # sql = sql.replace('\n', ' ').strip()
-        # sql = re.sub(r'\s\s+', ' ', sql)
-        # sql = sql.replace('( ', '(')
         sql = format_sql(sql)
 
         if name:
@@ -97,9 +93,31 @@ class ALXdatabase:
             raise
 
         if sql.lower().startswith("select"):
+            self.logger.info("%d rows returned", self.cursor.rowcount)
             return self.cursor.fetchall()
 
+        self.logger.info("%d rows affected", self.cursor.rowcount)
+
         return []
+
+    def commit(self):
+        """
+        Commit the current transaction.  This function should be called
+        after modifying or inserting data. It is not done automatically
+        to allow for exception handling
+
+        :return: None
+        """
+        self.connection.commit()
+
+    def rollback(self):
+        """
+        Rollback the current transaction. Do not commit the outstanding
+        data. It is not done automatically to allow for exception handling
+
+        :return: None
+        """
+        self.connection.rollback()
 
     def close(self) -> None:
         """
