@@ -17,7 +17,7 @@ class Paths:
 
         If the `data` or `log` directory does not exist, it will be created even if not used.
 
-        :param _app: The ALXApp objet
+        :param _app: The app.ALXApp object
         :param inifile: If the inifile name is not the same as the default `app.ini` then it can be set here
         """
         appname = _app.name
@@ -55,13 +55,14 @@ class Paths:
 
 class ALXapp:
     logger = logging.getLogger(os.path.splitext(os.path.basename(sys.argv[0]))[0])
-
+    """The default logger used by all applications using `ALXapp`"""
     def __init__(self, description: str = "Unknown App",
                  args: list = None, appname: str = None,
                  inifile: str = None, epilog: str = None):
         """
         Initialise the `ALXapp` object which does a number of things:
-        * Creates the application name from `sys.argv[0]` and stores it in `ALXApp.name` if not passed as a parameter
+        * Creates the application name from `sys.argv[0]` and stores it in
+        `name` if not passed as a parameter
         * Adds a `--env` / `-e` argument and sets `self.environment`
         * Initialises the `Paths` class.
         * Reads the arguments provided in the `args` parameter.
@@ -91,21 +92,17 @@ class ALXapp:
                 p, h1, h2, h3, h4, h5, ul, ol, li {
                     font-family: Calibri, Arial, Helvetica
                 }
-
                 table {
                   font-family: "Trebuchet MS", Arial, Helvetica, sans-serif;
                   border-collapse: collapse;
                   width: 100%%;
                 }
-
                 td, th {
                   border: 1px solid #ddd;
                   padding: 5px;
                 }
-
                 tr:nth-child(even){background-color: #f2f2f2;}
                 tr:hover {background-color: #ddd;}
-
                 th {
                   padding-top: 8px;
                   padding-bottom: 8px;

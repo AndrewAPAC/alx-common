@@ -15,7 +15,7 @@ def date_subst(fmt: str, when: datetime | arrow.Arrow = None,
     if not when:
         when = datetime.now(tz).astimezone()
 
-    if type(when) == arrow.Arrow:
+    if isinstance(when, arrow.Arrow):
         when = when.datetime
 
     return when.strftime(fmt)

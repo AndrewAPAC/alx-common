@@ -1,12 +1,13 @@
 import mariadb
 from alx.app import ALXapp
 import re
+from sql_formatter.core import format_sql
 
 
 class ALXdatabase:
     def __init__(self, dbtype: str = 'mysql', user: str = None,
-                 password: str = None, host: str = None, database: str = None,
-                 port: int = 3306):
+                 password: str = None, host: str = 'localhost', database: str = None,
+                 port: int = 3306) -> None:
         """
         Simplifies and removes repetitive statements to connect to a database.
 
@@ -15,15 +16,15 @@ class ALXdatabase:
         mariadb
         :param user: The username to use
         :param password: The password to use
-        :param host: The host to connect
+        :param host: The host to connect (default is `localhost`)
         :param database: The name of the database
-        :param port: The port (default is mysql, 3306)
+        :param port: The port (default is mariadb, 3306)
         """
 
         self.logger = ALXapp.logger
-        """The default logger from the `ALXapp` module"""
+        """The default logger from the alx.app.ALXapp.logger"""
         self.cursor = None
-        """The cursor assigned in `ALXDatabase.connect` after
+        """The cursor assigned in `ALXdatabase.connect` after
         making the database connection"""
         self.connection = None
         """The connection assigned in `ALXDatabase.connect` after
@@ -36,6 +37,9 @@ class ALXdatabase:
             self.connection = None
         else:
             raise NotImplementedError
+        self.logger.info("Initialising database connection to %s on %s as %s",
+                         self.config['database'], self.config['host'],
+                         self.config['user'])
 
     def connect(self) -> mariadb.Cursor:
         """
@@ -43,10 +47,13 @@ class ALXdatabase:
         in `ALXdatabase` instantiation
 
         :return: The cursor from the connection made in `mariadb.connect`
-        with the parameters set in `ALXDatabase`
+        with the parameters set in `ALXdatabase`
         """
         try:
             self.connection = mariadb.connect(**self.config)
+            self.logger.info("Connected to %s database on %s as %s",
+                             self.config['database'], self.config['host'],
+                             self.config['user'])
         except Exception:
             raise
 
@@ -54,25 +61,30 @@ class ALXdatabase:
 
         return self.cursor
 
-    def run(self, sql):
+    def run(self, sql: str, name: str = None) -> list:
         """
-        Tidies up the sql string passed, logs the statement to
+        Tidies up the SQL string passed, logs the statement to
         `ALXapp.logger` and executes the statement on the
         `ALXdatabase` object.
 
-        If the statement is a *select*, then the resultset is
+        If the statement is a *select*, then the result set is
         returned and *None* otherwise
 
-        :param sql: The sql statement to execute.
+        :param sql: The SQL statement to execute.
+        :param name: Optionally name the query to identify it in the logging output
         :return: If a *select* statement then the result set
-        from the call to `MySQLConnection.cursor.execute()` or
-        *None* if an `insert`, `update`, `upsert` statement
+        from the call to execute on the`mariadb.Cursor` or
+        *None* if an `insert`, `update`, `upsert` or `replace` statement
         """
-        # Make the sql pretty for the log
-        sql = sql.replace('\n', ' ').strip()
-        sql = re.sub(r'\s\s+', ' ', sql)
-        sql = sql.replace('( ', '(')
-        self.logger.info(sql)
+        sql = format_sql(sql)
+
+        if name:
+            log = name + ":\n" + sql
+        else:
+            log = "\n" + sql
+
+        # Write the SQL on a new line for easy cut & paste
+        self.logger.info(log)
 
         try:
             self.cursor.execute(sql)
@@ -81,11 +93,33 @@ class ALXdatabase:
             raise
 
         if sql.lower().startswith("select"):
+            self.logger.info("%d rows returned", self.cursor.rowcount)
             return self.cursor.fetchall()
 
-        return None
+        self.logger.info("%d rows affected", self.cursor.rowcount)
 
-    def close(self):
+        return []
+
+    def commit(self):
+        """
+        Commit the current transaction.  This function should be called
+        after modifying or inserting data. It is not done automatically
+        to allow for exception handling
+
+        :return: None
+        """
+        self.connection.commit()
+
+    def rollback(self):
+        """
+        Rollback the current transaction. Do not commit the outstanding
+        data. It is not done automatically to allow for exception handling
+
+        :return: None
+        """
+        self.connection.rollback()
+
+    def close(self) -> None:
         """
         Close the `ALXdatabase` connection and cursor and
          set them to None

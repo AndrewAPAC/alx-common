@@ -1,0 +1,27 @@
+[build-system]
+requires = ["setuptools>=61.0", "setuptools-git", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "alx-common"
+version = "2.6.5"
+description = "A common library for home development"
+readme = {file = "README.md", content-type = "text/markdown"}
+requires-python = ">=3.7"
+license = "GPL-3.0-or-later"
+authors = [
+  { name = "Andrew Lister", email = "andrew.lister@outlook.co.id" }
+]
+dependencies = [
+  "arrow",
+  "mariadb",
+  "sql-formatter",
+  "cryptography"
+]
+
+[project.urls]
+Homepage = "https://github.com/AndrewAPAC"
+
+[tool.setuptools.packages.find]
+where = ["."]
+include = ["alx", "alx.itrs"]
