@@ -76,12 +76,10 @@ class ALXdatabase:
         from the call to execute on the`mariadb.Cursor` or
         *None* if an `insert`, `update`, `upsert` or `replace` statement
         """
-        sql = format_sql(sql)
-
         if name:
-            log = name + ":\n" + sql
+            log = name + ":\n" + format_sql(sql)
         else:
-            log = "\n" + sql
+            log = "\n" + format_sql(sql)
 
         # Write the SQL on a new line for easy cut & paste
         self.logger.info(log)
@@ -134,3 +132,13 @@ class ALXdatabase:
 
         self.cursor = None
         self.connection = None
+
+    def __enter__(self) -> None:
+        return self
+
+    def __exit__(self, exc_type, exc_value, traceback) -> None:
+        if exc_type:
+            self.rollback()
+        else:
+            self.commit()
+        self.close()
