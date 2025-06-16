@@ -76,6 +76,8 @@ class ALXdatabase:
         from the call to execute on the`mariadb.Cursor` or
         *None* if an `insert`, `update`, `upsert` or `replace` statement
         """
+        sql = sql.strip()   # remove any extra whitespace from string boundaries
+
         if name:
             log = name + ":\n" + format_sql(sql)
         else:
