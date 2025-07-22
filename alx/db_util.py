@@ -7,7 +7,7 @@ from sql_formatter.core import format_sql
 class ALXdatabase:
     def __init__(self, dbtype: str = 'mysql', user: str = None,
                  password: str = None, host: str = 'localhost', database: str = None,
-                 port: int = 3306) -> None:
+                 port: int = 3306, autoconnect: bool = False) -> None:
         """
         Simplifies and removes repetitive statements to connect to a database.
 
@@ -19,6 +19,8 @@ class ALXdatabase:
         :param host: The host to connect (default is `localhost`)
         :param database: The name of the database
         :param port: The port (default is mariadb, 3306)
+        :param autoconnect: If True then connect to the database after
+         initialisation. Default is False
         """
 
         self.logger = ALXapp.logger
@@ -41,6 +43,9 @@ class ALXdatabase:
                          self.config['database'], self.config['host'],
                          self.config['user'])
 
+        if autoconnect:
+            self.connect()
+
     def connect(self) -> mariadb.Cursor:
         """
         Initiates a connection to the database with parameters set
@@ -61,17 +66,25 @@ class ALXdatabase:
 
         return self.cursor
 
-    def run(self, sql: str, name: str = None) -> list:
+    def run(self, sql: str, name: str = None,
+            params: tuple | list | dict = None,
+            multi: bool = False) -> list:
         """
         Tidies up the SQL string passed, logs the statement to
         `ALXapp.logger` and executes the statement on the
         `ALXdatabase` object.
 
+        Supports parameterized queries using the DB-API parameter
+        style (? or %s).
+
         If the statement is a *select*, then the result set is
         returned and *None* otherwise
 
         :param sql: The SQL statement to execute.
-        :param name: Optionally name the query to identify it in the logging output
+        :param name: Optionally name the query to identify it in the log
+        :param params: A tuple or list of parameters to use with the SQL query.
+        :param multi: If True, use executemany() for bulk inserts.
+
         :return: If a *select* statement then the result set
         from the call to execute on the`mariadb.Cursor` or
         *None* if an `insert`, `update`, `upsert` or `replace` statement
@@ -87,7 +100,12 @@ class ALXdatabase:
         self.logger.info(log)
 
         try:
-            self.cursor.execute(sql)
+            if multi and params:
+                self.cursor.executemany(sql, params)
+            elif params:
+                self.cursor.execute(sql, params)
+            else:
+                self.cursor.execute(sql)
         except Exception as e:
             self.logger.error('SQL execution failed: %s', format(e))
             raise
@@ -144,3 +162,9 @@ class ALXdatabase:
         else:
             self.commit()
         self.close()
+
+    def __del__(self):
+        try:
+            self.close()
+        except Exception:
+            pass
