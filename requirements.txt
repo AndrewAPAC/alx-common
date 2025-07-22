@@ -6,6 +6,5 @@ DateTime
 mariadb
 build
 sql-formatter
-docker
 humanize
-influxdb
+pytest

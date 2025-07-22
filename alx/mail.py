@@ -1,6 +1,7 @@
 import os.path
 import socket
 import time
+import re
 from email.mime.application import MIMEApplication
 from email.mime.audio import MIMEAudio
 from email.mime.image import MIMEImage
@@ -11,64 +12,119 @@ from alx.html import ALXhtml
 import smtplib
 from email.mime.multipart import MIMEMultipart
 from email.mime.text import MIMEText
+from typing import Union, Optional
 
 
 class ALXmail(ALXhtml):
-    def __init__(self, type: str = "html") -> None:
+    def __init__(self, mail_type: str = "html") -> None:
         """
         Class to send itrs_email - both text and html (default). It is a subclass
         of `ALXhtml` to allow simple html mail composition. Configuration
         is stored in `alx.ini`
 
-        :param type: Either 'plain' or 'html' (default)
+        :param type: Either 'text' or 'html' (default)
         :return: None
         """
         super().__init__()
 
-        self.type = type
+        self.mail_type = mail_type
+        """The type of the email - 'text' or 'html'. Default is html"""
 
-        if type == "plain":
+        if mail_type == "plain":
             self.body = ""
-        elif type != "html":
-            raise TypeError("Only 'plain' and 'html' are supported")
+        elif mail_type != "html":
+            raise TypeError("Only 'text' and 'html' are supported")
 
         self.sender = self.config.get("mail", "from")
+        """The email sender"""
         self.subject = "No subject"
+        """The email subject"""
         self.server = None
+        """The smtp server object"""
         self.images = 0
+        """Used for naming multiple image attachments"""
         self.mailhost = self.config.get("mail", "server")
+        """The hostname of the smtp server. Configured in alx.ini"""
         self.recipients = []
+        """A list of recipients"""
         self.cc = []
+        """A list of those on the cc list"""
         self.bcc = []
+        """A list of those on the bcc list"""
         self.attachments = []
-        self.message = MIMEMultipart()
+        """A list of attachments"""
+        # self.message = MIMEMultipart()
 
     def set_from(self, sender: str) -> None:
+        """
+        Set the address and name of sender
+        :param sender: The name and email address of the sender: 'First Last <sender@example.com>'
+        """
         self.sender = sender
 
     def set_subject(self, subject: str) -> None:
+        """
+        Sets the subject of the message
+        :param subject: The subject
+        """
         self.subject = subject
 
-    def add_recipient(self, to: str) -> None:
-        self.recipients.append(to)
+    def add_recipient(self, to: str, recipient_type: str = "to") -> None:
+        """
+        Adds a recipient of the message to the list of recipients
+        :param to: a single email address
+        :param recipient_type: The recipent type: 'to', 'cc', or 'bcc'
+        """
+        if recipient_type == "to":
+            self.recipients.append(to)
+        elif recipient_type == "cc":
+            self.cc.append(cc)
+        elif recipient_type == "bcc":
+            self.bcc.append(to)
 
-    def add_cc(self, to: str) -> None:
-        self.cc.append(to)
+    def set_recipients(self, to: Union[str, list], recipient_type = "to") -> None:
+        """
+        Sets the list of recipients for the email
+        :param to: A list or string of recipients, separated by ' ', ',' or ';'
+        :param recipient_type: The recipent type: 'to', 'cc', or 'bcc'. This
+         parameter is generally not needed as the helper functions should be used
+        """
 
-    def add_bcc(self, to: str) -> None:
-        self.bcc.append(to)
+        if type(to) is list:
+            recipients = to
+        else:
+            recipients = re.split(r"[,\s;]+", to)
+
+        for to in recipients:
+            self.add_recipient(to, recipient_type)
+
+    def add_cc(self, cc: str) -> None:
+        """
+        Adds a cc recipient or list of recipients
+
+        :param cc: A list or string of recipients, separated by ' ', ',' or ';'
+        """
+        self.set_recipients(cc, "cc")
+
+    def add_bcc(self, bcc: str) -> None:
+        """
+        Adds a bcc recipient or list of recipients
+
+        :param bcc: A list or string of recipients, separated by ' ', ',' or ';'
+        """
+        self.set_recipients(bcc, "bcc")
 
     def set_body(self, body: str) -> None:
         self.body = body
 
     def add_paragraph(self, p: str) -> None:
-        if self.type == "html":
+        if self.mail_type == "html":
             super().add_paragraph(p)
         else:
             self.body += "\n" + p + "\n"
 
     def add_text(self, t: str) -> None:
-        if self.type == "html":
+        if self.mail_type == "html":
             super().add_paragraph(t)
         else:
             self.body += t + "\n"
@@ -91,7 +147,7 @@ class ALXmail(ALXhtml):
         maintype, subtype = mimetypes.guess_type(filename)
         if maintype and maintype.startswith('image'):
             attachment = MIMEImage(data)
-            if self.type == 'html':
+            if self.mail_type == 'html':
                 cd = 'inline'
                 image = 'image%02d' % self.images
                 # The content_id is returned so the application
@@ -130,12 +186,12 @@ class ALXmail(ALXhtml):
         for a in self.attachments:
             self.message.attach(a)
 
-        if self.type == 'html':
+        if self.mail_type == 'html':
             body = self.get_html()
         else:
             body = self.body + "\n"
 
-        part = MIMEText(body, self.type)
+        part = MIMEText(body, self.mail_type)
         self.message.attach(part)
 
         count = 0
@@ -158,46 +214,3 @@ class ALXmail(ALXhtml):
                 else:
                     sleep(5)
 
-
-if __name__ == "__main__":
-    mail = ALXmail("html")
-    mail.set_subject("test html itrs_email")
-    mail.add_recipient("a.lister.hk@gmail.com")
-    mail.add_bcc("andrew.lister@outlook.co.id")
-    mail.add_h1("Here is a heading 1")
-
-    p = """
-    Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.
-    """
-    mail.add_paragraph(p)
-    mail.add_h2("Here is a heading 2")
-    mail.add_paragraph(p)
-
-    mail.add_ul()
-    mail.add_item("Item 1")
-    mail.add_item("Item 2")
-    mail.add_item("Item 3")
-    mail.add_item("Item 4")
-    mail.end_ul()
-
-    mail.add_attachment("/etc/resolv.conf")
-    mail.add_attachment("/home/andrew/GoogleDrive/FilingCabinet/Andrew/Home/Lovina/20240912.land.agreement.pdf")
-    mail.add_attachment("/home/andrew/dev/alx/data/account_info/monthly_pnl.png")
-
-    mail.add_ol()
-    mail.add_item("Item 1")
-    mail.add_item("Item 2")
-    mail.add_item("Item 3")
-    mail.add_item("Item 4")
-    mail.end_ol()
-
-    mail.add_table()
-    mail.add_headings(['heading 1', 'heading 2', 'heading 3', 'heading 4'])
-    for r in range(1, 5):
-        row = []
-        for c in range(1, 5):
-            row.append('column %d' % c)
-        mail.add_row(row)
-    mail.end_table()
-
-    mail.send()

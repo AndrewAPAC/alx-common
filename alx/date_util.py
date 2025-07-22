@@ -19,17 +19,3 @@ def date_subst(fmt: str, when: datetime | arrow.Arrow = None,
         when = when.datetime
 
     return when.strftime(fmt)
-
-
-if __name__ == "__main__":
-    import time
-    print(date_subst("%Y-%m-%d"))
-    print(date_subst("%a, %b %d %Y"))
-    print(date_subst("%H:%M:%S%z"))
-    time.sleep(2)
-    print(date_subst("%H:%M:%S %Z"))
-    time.sleep(1)
-    print(date_subst("%H:%M:%S"))
-
-    a = arrow.get(2013, 5, 5)
-    print(date_subst("%a, %b %d %Y", a))

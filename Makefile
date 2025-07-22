@@ -4,7 +4,10 @@ clean::
 pip::
 	pip install --upgrade alx-common
 
-install:: clean dist upload doc pip
+test::
+	pytest tests
+
+install:: clean dist test upload doc pip
 
 dist:: clean
 	python -m build
