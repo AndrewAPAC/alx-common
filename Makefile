@@ -7,7 +7,7 @@ clean::
 pip::
 	pip install --upgrade alx-common
 
-install:: clean dist test upload doc pip
+all:: clean dist test upload doc pip
 
 dist:: clean
 	python -m build
