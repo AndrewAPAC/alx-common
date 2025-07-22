@@ -1,6 +1,6 @@
 import os.path
 import socket
-import time
+from time import sleep
 import re
 from email.mime.application import MIMEApplication
 from email.mime.audio import MIMEAudio
@@ -10,6 +10,7 @@ from smtplib import SMTPException, SMTPAuthenticationError, SMTPConnectError, SM
 import mimetypes
 from alx.html import ALXhtml
 import smtplib
+from email.message import EmailMessage, Message
 from email.mime.multipart import MIMEMultipart
 from email.mime.text import MIMEText
 from typing import Union, Optional
@@ -32,8 +33,12 @@ class ALXmail(ALXhtml):
 
         if mail_type == "plain":
             self.body = ""
-        elif mail_type != "html":
-            raise TypeError("Only 'text' and 'html' are supported")
+            self.message = EmailMessage()
+            """The message as a plain or MIME multipart instance"""
+        elif mail_type == "html":
+            self.message = MIMEMultipart()
+        else:
+            raise TypeError("Only 'plain' and 'html' are supported")
 
         self.sender = self.config.get("mail", "from")
         """The email sender"""
@@ -53,8 +58,6 @@ class ALXmail(ALXhtml):
         """A list of those on the bcc list"""
         self.attachments = []
         """A list of attachments"""
-        self.message = MIMEMultipart()
-        """The message as a multipart MIME message"""
 
     def set_from(self, sender: str) -> None:
         """
@@ -79,7 +82,7 @@ class ALXmail(ALXhtml):
         if recipient_type == "to":
             self.recipients.append(to)
         elif recipient_type == "cc":
-            self.cc.append(cc)
+            self.cc.append(to)
         elif recipient_type == "bcc":
             self.bcc.append(to)
 
@@ -215,3 +218,27 @@ class ALXmail(ALXhtml):
                 else:
                     sleep(5)
 
+    def get_mime_message(self) -> Message:
+        """
+        Builds and returns the MIME message without sending it.
+        Used for testing and inspection.
+        """
+        if self.mail_type == "plain":
+            from email.message import EmailMessage
+            msg = EmailMessage()
+            msg.set_content(self.body)
+        else:
+            msg = MIMEMultipart()
+            for a in self.attachments:
+                msg.attach(a)
+            msg.attach(MIMEText(self.get_html(), "html"))
+
+        msg["From"] = self.sender
+        msg["To"] = ", ".join(self.recipients)
+        msg["Subject"] = self.subject
+        if self.cc:
+            msg["Cc"] = ", ".join(self.cc)
+        if self.bcc:
+            msg["Bcc"] = ", ".join(self.bcc)
+
+        return msg

@@ -1,11 +1,11 @@
+test::
+	pytest tests
+
 clean::
 	rm -fr dist *egg-info doc build alx_common-*
 
 pip::
 	pip install --upgrade alx-common
-
-test::
-	pytest tests
 
 install:: clean dist test upload doc pip
 

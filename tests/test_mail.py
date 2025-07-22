@@ -5,29 +5,17 @@ from unittest.mock import patch
 from alx.mail import ALXmail
 
 
-@pytest.fixture
-def sample_mail():
-    mail = ALXmail()
+def test_plain_email_body():
+    mail = ALXmail(mail_type="plain")
     mail.set_from("sender@example.com")
     mail.add_recipient("recipient@example.com")
     mail.set_subject("Test Email")
     mail.add_paragraph("This is a test email.")
-    return mail
 
+    msg = mail.get_mime_message()
 
-def test_plain_email_body(sample_mail):
-    msg = sample_mail.get_mime_message()
-    parts = msg.get_payload()
-    if isinstance(parts, list):
-        for part in parts:
-            if part.get_content_type() == "text/plain":
-                assert "This is a test email." in part.get_payload()
-                break
-        else:
-            pytest.fail("No plain text part found.")
-    else:
-        assert "This is a test email." in parts
-
+    assert msg.get_content_type() == "text/plain"
+    assert "This is a test email." in msg.get_payload()
 
 def test_html_body_rendering():
     mail = ALXmail()
@@ -66,7 +54,7 @@ def test_attachment_addition_unix(tmp_path):
 def test_binary_attachment(tmp_path):
     mail = ALXmail()
     mail.set_from("a@b.com")
-    mail.set_to("b@c.com")
+    mail.add_recipient("b@c.com")
     mail.set_subject("Binary Attachment Test")
 
     binary_path = tmp_path / "test.png"
