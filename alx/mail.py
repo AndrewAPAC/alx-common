@@ -53,7 +53,8 @@ class ALXmail(ALXhtml):
         """A list of those on the bcc list"""
         self.attachments = []
         """A list of attachments"""
-        # self.message = MIMEMultipart()
+        self.message = MIMEMultipart()
+        """The message as a multipart MIME message"""
 
     def set_from(self, sender: str) -> None:
         """
