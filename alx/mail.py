@@ -20,7 +20,7 @@ class ALXmail(ALXhtml):
     def __init__(self, mail_type: str = "html") -> None:
         """
         Class to send itrs_email - both text and html (default). It is a subclass
-        of `ALXhtml` to allow simple html mail composition. Configuration
+        of `alx.html.ALXhtml` to allow simple html mail composition. Configuration
         is stored in `alx.ini`
 
         :param type: Either 'text' or 'html' (default)
@@ -119,26 +119,55 @@ class ALXmail(ALXhtml):
         self.set_recipients(bcc, "bcc")
 
     def set_body(self, body: str) -> None:
+        """
+        Sets the body of the message to the parameter
+
+        :param body: The body of the message
+        """
         self.body = body
 
     def add_paragraph(self, p: str) -> None:
+        """
+        Adds a paragraph to the email in the appropriate format.  Either 'plain'
+        or 'html'
+        :param p: The text for the paragraph
+        """
         if self.mail_type == "html":
             super().add_paragraph(p)
         else:
             self.body += "\n" + p + "\n"
 
     def add_text(self, t: str) -> None:
-        if self.mail_type == "html":
-            super().add_paragraph(t)
-        else:
-            self.body += t + "\n"
+        """
+        Wrapper for `add_paragraph` for backwards compatability
+
+        :param t: The text to add
+        """
+        self.add_paragraph(t)
 
     def add_attachment(self, filename: str) -> str:
         """
-        Adds a file as an attachment
+        Adds a file as an attachment. If an image, it will be displayed
+        in the location it is attached. MIME types of application and
+        audio are also attached with the file type in mind. It could be
+        called as follows to put an image in a table cell created with
+        `add_table` and `add_cell`:
+        ```
+            cell = ("<a href=%s>%s</a><a href='%s'>%s</a>" %
+                 (url, k, url, mail.add_attachment(filename)))
+            mail.add_cell(cell)
+        ```
 
-        :param filename: the full path to the file to attach
+        :param filename: the path to the file to attach.
+
+        :return: The Content-ID of the attachment
         """
+
+        # If you are composing a plain text email, do not try to
+        # add an attachment. Tell your manager to fire you and
+        # find someone who knows what they are doing
+        assert(self.mail_type == 'html')
+
         if not os.path.isfile(filename):
             raise FileNotFoundError(filename)
 
@@ -175,6 +204,15 @@ class ALXmail(ALXhtml):
         return content_id
 
     def send(self) -> None:
+        """
+        Sends the message. It firsts constructs the email message
+        from the all the parts provided and adds the attachments.
+        It also tries a number of times (20) with a 5 second
+        delay between each attempt - in case there is a network
+        or mailhost glitch. If the number of attempts is exceeded,
+        the corresponding exception is thrown. The SMTP host to use is
+        configured in `alx.ini`
+        """
         self.message["From"] = self.sender
         self.message["Subject"] = self.subject
         # Remove duplicate names
@@ -218,10 +256,12 @@ class ALXmail(ALXhtml):
                 else:
                     sleep(5)
 
-    def get_mime_message(self) -> Message:
+    def _get_mime_message(self) -> Message:
         """
         Builds and returns the MIME message without sending it.
         Used for testing and inspection.
+
+        :return: The email message
         """
         if self.mail_type == "plain":
             from email.message import EmailMessage

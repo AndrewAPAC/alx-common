@@ -12,7 +12,7 @@ def test_plain_email_body():
     mail.set_subject("Test Email")
     mail.add_paragraph("This is a test email.")
 
-    msg = mail.get_mime_message()
+    msg = mail._get_mime_message()
 
     assert msg.get_content_type() == "text/plain"
     assert "This is a test email." in msg.get_payload()
@@ -24,7 +24,7 @@ def test_html_body_rendering():
     mail.set_subject("HTML Test")
     mail.add_html("<h1>This is HTML</h1>")
 
-    msg = mail.get_mime_message()
+    msg = mail._get_mime_message()
     html_found = False
     for part in msg.walk():
         if part.get_content_type() == "text/html":
@@ -45,7 +45,7 @@ def test_attachment_addition_unix(tmp_path):
         pytest.skip("/etc/resolv.conf not found")
 
     mail.add_attachment(test_file)
-    msg = mail.get_mime_message()
+    msg = mail._get_mime_message()
 
     filenames = [part.get_filename() for part in msg.walk() if part.get_filename()]
     assert "resolv.conf" in filenames
@@ -61,7 +61,7 @@ def test_binary_attachment(tmp_path):
     binary_path.write_bytes(b"\x89PNG\r\n\x1a\n\x00\x00\x00")  # Fake PNG header
 
     mail.add_attachment(str(binary_path))
-    msg = mail.get_mime_message()
+    msg = mail._get_mime_message()
 
     found = any(part.get_filename() == "test.png" for part in msg.walk())
     assert found, "Binary attachment not found"
