@@ -2,6 +2,7 @@ import configparser
 import os
 import sys
 import argparse
+import shutil
 from cryptography.fernet import Fernet
 import json
 import logging
@@ -11,18 +12,16 @@ from collections import OrderedDict
 
 
 class Paths:
-    def __init__(self, _app: str, inifile: str = None):
+    def __init__(self, _app: 'ALXapp', inifile: str = None) -> None:
         """
         A class to hold the default paths for the application
 
         If the `data` or `log` directory does not exist, it will be created even if not used.
 
-        :param _app: The app.ALXApp object
-        :param inifile: If the inifile name is not the same as the default `app.ini` then it can be set here
+        :param _app: The `app.ALXApp` object
+        :param inifile: If the inifile name is different from the default `app.ini` then it can be set here
         """
         appname = _app.name
-        env = _app.environment
-        """The execution environment: `prod`, `test` or `dev` (default)"""
         basename = os.path.basename(os.path.dirname(sys.argv[0]))
         dirname = os.path.dirname(sys.argv[0])
         self.root = os.path.abspath(os.path.join(dirname, "..", ".."))
@@ -70,10 +69,9 @@ class ALXapp:
         * Reads and parses the library configuration stored in `alx.ini`
         * Initialises and starts logging to `Paths.logfile`
 
-        An example `alx.ini`
+        An example `alx.ini` or `$HOME/config/alx/alx.ini`
         ```
         [DEFAULT]
-        root:       /opt/local
 
         [logging]
         format:     %%(asctime)s: %%(levelname)s %%(module)s.%%(funcName)s:%%(lineno)d [%%(threadName)s] %%(message)s
@@ -83,8 +81,8 @@ class ALXapp:
         when:       midnight
 
         [mail]
-        server:     localhost
-        from:       Andrew Lister <a.lister.hk@gmail.com>
+        server:     mailhost
+        from:       Super User <root@localhost>
 
 
         [html]
@@ -111,7 +109,6 @@ class ALXapp:
                   color: white;
                 }
         ```
-
         :param description: A short description for the app - used with `--help`
         :param args: A list of arguments added with argparse.ArgumentParser.add_argument.  Example
         ```
@@ -175,7 +172,7 @@ class ALXapp:
         elif self.arguments.env in ('prd', 'prod', 'production'):
             self.environment = 'prod'
 
-        self.paths = Paths(self, inifile=inifile)
+        self.paths = Paths(self, inifile)
         """The `Paths` namespace that holds path information"""
         self.config = self.read_config(self.paths.config)
         """The application configuration read from `Paths.config` from a 
@@ -190,15 +187,56 @@ class ALXapp:
         self.start_logging()
 
         self.key = None
-        """The key to encrypt and decrypt data, stored in `~/.key.username`"""
+        """The key to encrypt and decrypt encoded strings"""
+        self.keyfile = os.path.join(
+            os.environ.get("XDG_CONFIG_HOME", os.path.expanduser("~/.config")),
+            "alx", "key"
+        )
+        """The file from where to obtain the key: `~/.config/alx/key`"""
 
     @staticmethod
-    def parse_config(obj: object, config: configparser.ConfigParser):
+    def parse_config(obj: object, config: configparser.SectionProxy):
         """
         Parses the `config` and stores in `obj` as the appropriate type.
         It works out if it is a boolean, float, integer or string. If
         the configuration value starts with a `[` or `{` then it is
-        loaded using `json.loads` and stores in an `OrderredDict`
+        loaded using `json.loads` and stores in an `OrderedDict`
+
+        The config file should be structured so there are sections named
+        * `[DEFAULT]`
+        * `[dev]`
+        * `[test]`
+        * `[prod]`
+        This allows settings to be overridden simply by specifying
+        `-e env`. If a setting is not specified in an environment
+        section, then the value from `[DEFAULT]` is used. For example
+        ```
+        [DEFAULT]
+        loglevel:   INFO
+
+        [dev]
+        loglevel:   DEBUG
+
+        [test]
+        loglevel:   INFO
+
+        [prod]
+        loglevel:   WARN
+        ```
+        All the config file elements are stored in the `ALXapp` object.
+        If you define:
+        ```
+        foo: bar
+        bar: 1
+        baz: [1, 2, 3, 4]
+        ```
+        in the ini file, then your `ALXapp` object, say `app`, will have
+        these elements defined:
+        ```
+        app.foo = "bar"
+        app.bar = 1
+        app.baz = [1, 2, 3, 4]
+        ```
 
         :param obj: The object in which to store the configuration
          values (usually `self`)
@@ -243,7 +281,7 @@ class ALXapp:
             raise
 
     @staticmethod
-    def read_config(filename: str) -> configparser.ConfigParser:
+    def read_config(filename: str) -> configparser.ConfigParser | None:
         """
         Reads the configuration file in `filename` using the parser
         passed in `parser` which is typically the default
@@ -260,16 +298,38 @@ class ALXapp:
         return config
 
     @staticmethod
-    def read_lib_config(filename: str="alx.ini") -> configparser.ConfigParser:
+    def read_lib_config(filename: str = "alx.ini") -> configparser.ConfigParser:
         """
-        Reads and parses a configuration file using ALXApp.read_config
+        Reads and parses a configuration file using `read_config`
 
-        :param: The name of the config file.  Default is `alx.ini`
-        :return: The configuration
+        Order of preference:
+        1. `$XDG_CONFIG_HOME/alx/filename` (typically `~/.config/alx/alx.ini`)
+        2. `alx.ini` in the module directory
+
+        On first execution, `alx.ini` is copied from the module directory to
+        the users .config directory
+
+        But the function can be used with any config (ini) file. Interpolation
+        rules apply according to the `configparser.ConfigParser` documentation
+
+        :return: The `configparser.ConfigParser` configuration
         """
+        # Respect XDG_CONFIG_HOME, fallback to ~/.config
+        xdg_config_home = os.environ.get("XDG_CONFIG_HOME", os.path.expanduser("~/.config"))
+        user_config_dir = os.path.join(xdg_config_home, "alx")
+        user_config_path = os.path.join(user_config_dir, filename)
+
+        # Default config from package
         lib_home = os.path.dirname(os.path.abspath(__file__))
-        filename = os.path.join(lib_home, filename)
-        return ALXapp.read_config(filename)
+        default_config_path = os.path.join(lib_home, filename)
+
+        # If the user config doesn't exist, create it
+        if not os.path.isfile(user_config_path):
+            os.makedirs(user_config_dir, exist_ok=True)
+            shutil.copyfile(default_config_path, user_config_path)
+
+        # Read user config
+        return ALXapp.read_config(user_config_path)
 
     def start_logging(self):
         """
@@ -311,21 +371,20 @@ class ALXapp:
 
         self.logger.debug("Starting application '{}'".format(self.name))
 
-    def _read_key(self) -> str:
-        """Reads the key from `~/.key.user` and uses it to encrypt and
+    def _read_key(self) -> Fernet:
+        """Reads the key from `~/.config/alx/key` and uses it to encrypt and
          decrypt strings using the `cryptography` python module"""
 
-        keyfile = os.path.join(os.path.expanduser('~'), '.key.' +
-                               os.getlogin())
-        if not os.path.exists(keyfile):
-            self.logger.error("Could not open %s", keyfile)
+        if not os.path.exists(self.keyfile):
+            self.logger.error("Could not open %s", self.keyfile)
             sys.exit(1)
-        st = os.stat(keyfile)
+        st = os.stat(self.keyfile)
         if platform.system() != 'Windows' and int(oct(st.st_mode)[3:]) > 600:
-            self.logger.error("Check permissions on %s.  Too open", keyfile)
+            # Apologies to windows users but your security is too messy
+            self.logger.error("Check permissions on %s.  Too open", self.keyfile)
             sys.exit(1)
 
-        with open(keyfile) as k:
+        with open(self.keyfile) as k:
             key = k.read().strip()
 
         fernet = Fernet(key)
@@ -334,10 +393,17 @@ class ALXapp:
 
     def encrypt(self, string: str) -> str:
         """
-        Encrypts the password using the key read from `~/.key.username`
+        Encrypts the password using the key read from `~/.config/alx/key`. This
+        function provides an easy way to avoid storing plain text passwords
+
+        The keyfile needs to have permission `0600` and look something like
+        ```
+        P9H7kabcdefghijwlSrfVnKKqV5VCnW5RE8OT21eH5k=
+        ```
+        Please refer to `decrypt` for how to create a key
 
         :param string: The string to encrypt.
-        :return: the encrypted string
+        :return: The encrypted string
         """
         if not self.key:
             self.key = self._read_key()
@@ -346,10 +412,23 @@ class ALXapp:
 
     def decrypt(self, string: str) -> str:
         """
-        Decrypts the password using the key read from `~/.key.username`
+        Decrypts the password using the key read from `~/.config/alx/key`. This
+        function provides an easy way to avoid storing plain text passwords
+
+        Your code will then look like:
+        ```
+        self.passwd = app.decrypt(app.config.get('mysql', 'password'))
+        self.user = app.decrypt(app.config.get('mysql', 'user'))
+        ```
+        To generate a key, use this one liner:
+
+        `python -c "from cryptography.fernet import Fernet; print(Fernet.generate_key().decode())"`
+
+        If there are different users of an application using `ALXapp` then
+        the key must be consistent or the string will fail to decrypt.
 
         :param string: The string to decrypt.
-        :return: the decrypted string
+        :return: The decrypted string
         """
         if not self.key:
             self.key = self._read_key()
@@ -386,5 +465,3 @@ if __name__ == "__main__":
 
     app = ALXApp("test application", args=args, appname="account_info")
     mail = ALXmail()
-
-

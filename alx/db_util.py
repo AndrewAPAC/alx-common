@@ -1,70 +1,127 @@
-import mariadb
 from alx.app import ALXapp
 import re
+from typing import Any
+from alx.strings import normalize
 from sql_formatter.core import format_sql
+# Only want to support modules that are installed.
+try:
+    import psycopg2
+    has_postgres = True
+except ImportError:
+    has_postgres = False
+try:
+    import sqlite3
+    has_sqlite = True
+except ImportError:
+    has_sqlite = False  # basically always True, part of stdlib
+try:
+    import mariadb as mysql
+    has_mysql = True
+except ImportError:
+    try:
+        import pymysql as mysql
+        has_mysql = True
+    except ImportError:
+        has_mysql = False
+        mysql = None
 
 
 class ALXdatabase:
     def __init__(self, dbtype: str = 'mysql', user: str = None,
                  password: str = None, host: str = 'localhost', database: str = None,
-                 port: int = 3306, autoconnect: bool = False) -> None:
+                 port: int = 3306, autoconnect: bool = False,
+                 autocommit: bool = False) -> None:
         """
         Simplifies and removes repetitive statements to connect to a database.
 
-        :param dbtype: The database type.  Default is *mysql* and is the
-        only supported type at present. Note that mysql is a synonym for
-        mariadb
+        :param dbtype: The database type.  Default is *mysql* which can also
+         be used for *mariadb*. Supported options are
+           * `mysql` -> `pip install pymysql`
+           * `mariadb` -> `pip install mariadb`
+           * `postgres` -> `pip install psycopg2`
+           * `sqlite`
         :param user: The username to use
         :param password: The password to use
         :param host: The host to connect (default is `localhost`)
         :param database: The name of the database
         :param port: The port (default is mariadb, 3306)
         :param autoconnect: If True then connect to the database after
-         initialisation. Default is False
+            initialisation. Default is False
+        :param autocommit: If True then execute `commit` after each
+            successful transaction
+
+        You can also do this:
+        ```
+        with ALXdatabase(dbtype='sqlite', database=':memory:', autoconnect=True) as db:
+            db.run("CREATE TABLE test (id INT)")
+            db.run("INSERT INTO test (id) VALUES (1)")
+        # <-- commits automatically, or rolls back if an error occurred
+        ```
         """
 
         self.logger = ALXapp.logger
-        """The default logger from the alx.app.ALXapp.logger"""
+        """The default logger from the alx.app.ALXapp.logger. This class needs
+        to be used so the logger is initialised"""
         self.cursor = None
         """The cursor assigned in `ALXdatabase.connect` after
         making the database connection"""
         self.connection = None
-        """The connection assigned in `ALXDatabase.connect` after
+        """The connection assigned in `ALXdatabase.connect` after
         making the database connection"""
-        if dbtype == 'mysql':
-            self.config = {'user': user, 'password': password,
-                           'host': host, 'database': database,
-                           'port': port}
-            self.cursor = None
-            self.connection = None
+        self.autocommit = autocommit
+        """Whether to automatically commit a successful transaction"""
+
+        dbtype = normalize(dbtype)
+
+        if dbtype == 'mariadb':
+            self.dbtype = 'mysql'
         else:
-            raise NotImplementedError
-        self.logger.info("Initialising database connection to %s on %s as %s",
-                         self.config['database'], self.config['host'],
-                         self.config['user'])
+            self.dbtype = dbtype
+
+        self._params = {'user': user, 'password': password,
+                        'host': host, 'database': database,
+                        'port': port}
+        if self.dbtype == 'sqlite':
+            self._params['database'] = database or ':memory:'
+
+        self.logger.info("Initialising %s database connection to %s on %s as %s",
+                         dbtype, self._params['database'], self._params['host'],
+                         self._params['user'])
 
         if autoconnect:
             self.connect()
 
-    def connect(self) -> mariadb.Cursor:
+    def connect(self) -> Any:
         """
         Initiates a connection to the database with parameters set
-        in `ALXdatabase` instantiation
+        in `ALXdatabase` constructor
 
         :return: The cursor from the connection made in `mariadb.connect`
         with the parameters set in `ALXdatabase`
         """
-        try:
-            self.connection = mariadb.connect(**self.config)
-            self.logger.info("Connected to %s database on %s as %s",
-                             self.config['database'], self.config['host'],
-                             self.config['user'])
-        except Exception:
-            raise
+        if self.dbtype == 'mysql':
+            if not has_mysql:
+                raise RuntimeError("MySQL/MariaDB support not available")
+            self.connection = mysql.connect(**self._params)
+        elif self.dbtype == 'postgres':
+            if not has_postgres:
+                raise RuntimeError("PostgreSQL support not available")
+            self.connection = psycopg2.connect(**self._params)
+        elif self.dbtype == 'sqlite':
+            if not has_sqlite:
+                raise RuntimeError("SQLite support not available")
+            self.connection = sqlite3.connect(self._params['database'])
+        else:
+            raise ValueError(f"Unsupported database type: {self.dbtype}")
 
         self.cursor = self.connection.cursor()
-
+        self.logger.info("Connected successfully")
         return self.cursor
+
+    def _convert_placeholders(self, sql: str) -> str:
+        if self.dbtype == 'sqlite':
+            return re.sub(r'%s', '?', sql)
+        return sql
 
     def run(self, sql: str, name: str = None,
             params: tuple | list | dict = None,
@@ -86,18 +143,18 @@ class ALXdatabase:
         :param multi: If True, use executemany() for bulk inserts.
 
         :return: If a *select* statement then the result set
-        from the call to execute on the`mariadb.Cursor` or
-        *None* if an `insert`, `update`, `upsert` or `replace` statement
+        from the call to execute on the `cursor` or
+        an empty list if an `insert`, `update`, `upsert` or
+        `replace` statement
         """
-        sql = sql.strip()   # remove any extra whitespace from string boundaries
+        sql = sql.strip()
+        sql = self._convert_placeholders(sql)
 
         if name:
-            log = name + ":\n" + format_sql(sql)
+            log = "%s:\n%s" % (name, format_sql(sql))
         else:
-            log = "\n" + format_sql(sql)
-
-        # Write the SQL on a new line for easy cut & paste
-        self.logger.info(log)
+            log = format_sql(sql)
+        self.logger.debug(log)
 
         try:
             if multi and params:
@@ -106,8 +163,13 @@ class ALXdatabase:
                 self.cursor.execute(sql, params)
             else:
                 self.cursor.execute(sql)
+            if self.autocommit:
+                try:
+                    self.connection.commit()
+                except Exception as e:
+                    self.logger.warning("Autocommit failed: %s", e)
         except Exception as e:
-            self.logger.error('SQL execution failed: %s', format(e))
+            self.logger.error('SQL execution failed: %s', e)
             raise
 
         if sql.lower().startswith("select"):
@@ -115,7 +177,6 @@ class ALXdatabase:
             return self.cursor.fetchall()
 
         self.logger.info("%d rows affected", self.cursor.rowcount)
-
         return []
 
     def commit(self):
@@ -147,7 +208,7 @@ class ALXdatabase:
                 self.connection.close()
             if self.cursor:
                 self.cursor.close()
-        except mariadb.ProgrammingError:
+        except Exception:
             pass
 
         self.cursor = None

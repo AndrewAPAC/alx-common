@@ -1,10 +1,10 @@
 setuptools-git
 setuptools
 cryptography
-arrow
 DateTime
 mariadb
 build
 sql-formatter
 humanize
 pytest
+unidecode
