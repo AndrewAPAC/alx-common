@@ -47,5 +47,6 @@ convenience.  So you might have:
 [DEFAULT]
 output_file:        $data/output.txt
 ```
-and it will be replaced dynamically in `alx.app.py:parse_config`
+and it will be replaced dynamically in `alx.app.py:parse_config` with your
+application's data directory
 
