@@ -236,11 +236,21 @@ class ALXapp:
         baz: [1, 2, 3, 4]
         ```
         in the ini file, then your `ALXapp` object, say `app`, will have
-        these elements defined:
+        these elements defined (either from the `[DEFAULT]` section or the
+        appropriate environment:
         ```
         app.foo = "bar"
         app.bar = 1
         app.baz = [1, 2, 3, 4]
+        ```
+        Additionally, if you specify `$data` in the value, it will be
+        expanded to the data directory of the application.  For example
+        ```
+        output_file = $data/output.txt
+        ```
+        will result in:
+        ```
+        app.output_file = /opt/local/prod/data/app/output.txt
         ```
 
         :param obj: The object in which to store the configuration
@@ -403,7 +413,7 @@ class ALXapp:
         ```
         P9H7kabcdefghijwlSrfVnKKqV5VCnW5RE8OT21eH5k=
         ```
-        Please refer to `decrypt` for how to create a key
+        Please refer to `decrypt` for how to create a key.
 
         :param string: The string to encrypt.
         :return: The encrypted string
@@ -423,9 +433,10 @@ class ALXapp:
         self.passwd = app.decrypt(app.config.get('mysql', 'password'))
         self.user = app.decrypt(app.config.get('mysql', 'user'))
         ```
-        To generate a key, use this one liner:
-
-        `python -c "from cryptography.fernet import Fernet; print(Fernet.generate_key().decode())"`
+        To generate a key, use this one liner and place the ouput in `~/.config/alx/key`:
+        ```
+        python -c "from cryptography.fernet import Fernet; print(Fernet.generate_key().decode())"`
+        ```
 
         If there are different users of an application using `ALXapp` then
         the key must be consistent or the string will fail to decrypt.
