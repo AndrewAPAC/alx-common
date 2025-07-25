@@ -2,12 +2,17 @@
 
 **Reusable Python framework for infrastructure automation, monitoring, reporting, and internal tooling.**
 
+---
 > Before use, you need to create 2 files in `$HOME/.config/alx`:
 >   * `$HOME/.config/alx/env` with contents
 >     * `venv=<path/to/venv>`
 >     (do not include the /bin)
 > * `$HOME/.config/alx/key`
 >   * Add the output from `python -c "from cryptography.fernet import Fernet; print(Fernet.generate_key().decode())"`
+
+Inline documentation can be viewed with `pdoc alx` (or `pdoc ./alx` if not installed).
+Generated files are in the doc subdirectory.
+---
 
 **alx-common** provides a consistent foundation for building reliable internal applications that deal with:
 
