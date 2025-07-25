@@ -7,14 +7,10 @@ clean::
 pip::
 	pip install --upgrade alx-common
 
-all:: clean dist test upload doc pip
+all:: clean dist test upload pip
 
 dist:: clean
 	python -m build
 
 upload::
 	twine upload -r local dist/*
-
-doc::
-	-mkdir -p doc
-	pdoc -o doc ./alx
