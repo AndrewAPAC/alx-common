@@ -33,7 +33,7 @@ class Toolkit:
         self._filename = filename
         self._display_on_exit = display_on_exit
 
-    def add_headline(self, label: str, value: str | int | float):
+    def add_headline(self, label: str, value):
         """
         Add a headline to the toolkit
         :param label: The label for the headline
@@ -62,7 +62,7 @@ class Toolkit:
         self.headings.append(heading)
         self._num_columns += 1
 
-    def add_row(self, values: str | list, delimiter=','):
+    def add_row(self, values, delimiter=','):
         """
         Add a row to the sampler.  A list of values or a delimited string
         can be passed.  Handles quoting of values to ensure correct display

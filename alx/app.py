@@ -16,6 +16,7 @@ import logging
 import platform
 from logging.handlers import TimedRotatingFileHandler
 from collections import OrderedDict
+from typing import Optional
 
 
 class Paths:
@@ -300,7 +301,7 @@ class ALXapp:
             raise
 
     @staticmethod
-    def read_config(filename: str) -> configparser.ConfigParser | None:
+    def read_config(filename: str):
         """
         Reads the configuration file in `filename` using the parser
         passed in `parser` which is typically the default
