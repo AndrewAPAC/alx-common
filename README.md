@@ -34,14 +34,21 @@ Before use, create 2 files in `$HOME/.config/alx`:
 
 Originally designed to simplify and standardize automation scripts, 
 reporting jobs, monitoring pipelines, and operational tooling across 
-real-world production environments.
+real-world production environments.  The aim of `alx-common` is to 
+reduce hard coding and duplication of snippets. 
 
 Too many times, I have seen developers share code to 'send an email'.
 Then the `mailhost` changes and there are 200 scripts to fix. Or
 a shell script is copied and something edited to create a wrapper
-to start a python script. Bad practice is endemic in the 
-developer community as there are too many coders adopting a 
-cut-and-paste mentality.
+to start a python script. Or the same code is used over and over to 
+set up logging or read a configuration file coupled with a lot of hard
+coding an inconsistencies.
+
+Bad practice is endemic in the developer community as there are too
+many coders adopting a cut-and-paste mentality.
+
+The name comes from my company, ALX Solutions which is no longer in 
+operation.
 
 ---
 
