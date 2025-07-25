@@ -58,6 +58,9 @@ class Paths:
         if inifile:
             self.config = os.path.join(self.etc, inifile)
 
+    def __str__(self) -> str:
+        return "\n".join(f"{k}: {v}" for k, v in vars(self).items() if isinstance(v, str))
+
 
 class ALXapp:
     logger = logging.getLogger(os.path.splitext(os.path.basename(sys.argv[0]))[0])
@@ -181,6 +184,7 @@ class ALXapp:
 
         self.paths = Paths(self, inifile)
         """The `Paths` namespace that holds path information"""
+
         self.config = self.read_config(self.paths.config)
         """The application configuration read from `Paths.config` from a 
         call to `ALXApp.read_config`. The configuration values are assigned
@@ -191,6 +195,7 @@ class ALXapp:
         self.libconfig = self.read_lib_config()
         """The global library configuration from `alx.ini`"""
 
+        # Start logging with all configured parameters
         self.start_logging()
 
         self.key = None
@@ -284,12 +289,11 @@ class ALXapp:
                             setattr(obj, item, f)
                         except (ValueError, TypeError):
                             # Only a string left....
-                            if (value.startswith('[') or
-                                    value.startswith('{')):
-                                od = OrderedDict
-                                setattr(obj, item,
-                                        json.loads(
-                                            value, object_pairs_hook=od))
+                            if (value.startswith('[') or value.startswith('{')):
+                                try:
+                                    setattr(obj, item, json.loads(value, object_pairs_hook=OrderedDict))
+                                except json.JSONDecodeError:
+                                    setattr(obj, item, value)
                             else:
                                 setattr(obj, item, value)
         except Exception:
@@ -382,7 +386,8 @@ class ALXapp:
             ch.setFormatter(formatter)
             self.logger.addHandler(ch)
 
-        self.logger.debug("Starting application '{}'".format(self.name))
+        self.logger.debug("Starting application '%s', logging at level '%s'",
+                          format(self.name), format(loglevel))
 
     def _read_key(self) -> Fernet:
         """Reads the key from `~/.config/alx/key` and uses it to encrypt and
