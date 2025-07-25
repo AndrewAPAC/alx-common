@@ -21,6 +21,10 @@ echo "*** Executing ${dir}/bin/itrs_email"
 ${dir}/bin/itrs_email $(whoami)@localhost
 pause
 
+echo "*** Executing ${dir}/bin/check_ini -e dev"
+${dir}/bin/check_ini -e dev
+pause
+
 echo "*** Executing ${dir}/bin/create_email"
 ${dir}/bin/create_email
 pause
