@@ -7,3 +7,7 @@ recursive-include alx/itrs *.py
 
 prune alx/.idea
 prune etc
+exclude tests/*
+exclude examples/*
+prune tests
+prune examples
