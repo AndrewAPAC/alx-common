@@ -135,7 +135,7 @@ class ALXdatabase:
         return sql
 
     def run(self, sql: str, name: str = None,
-            params: tuple | list | dict = None,
+            params = None,
             multi: bool = False) -> list:
         """
         Tidies up the SQL string passed, logs the statement to
