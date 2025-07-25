@@ -107,20 +107,23 @@ class ALXdatabase:
         :return: The cursor from the connection made in `mariadb.connect`
         with the parameters set in `ALXdatabase`
         """
-        if self.dbtype == 'mysql':
-            if not has_mysql:
-                raise RuntimeError("MySQL/MariaDB support not available")
-            self.connection = mysql.connect(**self._params)
-        elif self.dbtype == 'postgres':
-            if not has_postgres:
-                raise RuntimeError("PostgreSQL support not available")
-            self.connection = psycopg2.connect(**self._params)
-        elif self.dbtype == 'sqlite':
-            if not has_sqlite:
-                raise RuntimeError("SQLite support not available")
-            self.connection = sqlite3.connect(self._params['database'])
-        else:
-            raise ValueError(f"Unsupported database type: {self.dbtype}")
+        try:
+            if self.dbtype == 'mysql':
+                if not has_mysql:
+                    raise RuntimeError("MySQL/MariaDB support not available")
+                self.connection = mysql.connect(**self._params)
+            elif self.dbtype == 'postgres':
+                if not has_postgres:
+                    raise RuntimeError("PostgreSQL support not available")
+                self.connection = psycopg2.connect(**self._params)
+            elif self.dbtype == 'sqlite':
+                if not has_sqlite:
+                    raise RuntimeError("SQLite support not available")
+                self.connection = sqlite3.connect(self._params['database'])
+            else:
+                raise ValueError(f"Unsupported database type: {self.dbtype}")
+        except Exception as e:
+            self.logger.error("Connection failed: %s", format(e))
 
         self.cursor = self.connection.cursor()
         self.logger.info("Connected successfully")
