@@ -1,0 +1,47 @@
+#!/bin/bash
+
+# Determine venv config location using XDG spec
+env_file="${XDG_CONFIG_HOME:-$HOME/.config/alx}/env"
+
+if [ ! -f "$env_file" ]; then
+    echo "Missing venv config at: $env_file"
+    echo
+    echo "Please create it and add:"
+    echo "    venv=/path/to/venv"
+    echo "Do not include /bin at the end"
+    exit 1
+fi
+
+# Load the venv=... setting
+. "$env_file"
+
+# Validate venv path
+if [ -z "$venv" ] || [ ! -x "$venv/bin/python" ]; then
+    echo "Invalid venv path: $venv"
+    echo "Check $env_file for correctness"
+    exit 1
+fi
+
+# Add venv bin to PATH
+export PATH="$venv/bin:$PATH"
+
+dir=$(dirname "$0")
+app=$(basename "$0")
+start=$dir"/../scripts/"$app
+
+if [ "$dir" == "." ]; then
+    dir=$(pwd)
+fi
+
+# Run the app
+if [ ! -f "$start/$app.py" ]; then
+    echo "Cannot find $start/$app.py"
+    exit 1
+fi
+
+cd "$start" || exit 1
+start=$(pwd)
+
+exec python $start/$app.py "$@"
+
+exit 0

@@ -1,0 +1,12 @@
+#!/bin/bash
+
+dir=$(dirname $(readlink -f $0))
+
+export PYTHONPATH="$dir/.."
+
+echo "PYTHONPATH set to: $PYTHONPATH"
+
+for x in $(ls -1 $dir/bin | grep -v start); do
+    echo "*** Executing ${dir}/bin/$x SecretPassword"
+    ${dir}/bin/$x SecretPassword
+done
