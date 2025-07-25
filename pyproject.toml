@@ -13,10 +13,12 @@ authors = [
   { name = "Andrew Lister", email = "andrew.lister@outlook.co.id" }
 ]
 dependencies = [
-  "arrow",
-  "mariadb",
   "sql-formatter",
-  "cryptography"
+  "cryptography",
+  "unidecode",
+  "DateTime",
+  "humanize",
+  "requests"
 ]
 
 [project.urls]
