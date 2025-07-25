@@ -9,6 +9,8 @@ pip::
 
 all:: clean dist test upload pip
 
+install:: all
+
 dist:: clean
 	python -m build
 
