@@ -338,7 +338,7 @@ class ALXapp:
 
         # If the user config doesn't exist, create it
         if not os.path.isfile(user_config):
-            os.makedirs(user_config_dir, exist_ok=True)
+            os.makedirs(config_home, exist_ok=True)
             shutil.copyfile(default_config_path, user_config)
 
         # Read user config
