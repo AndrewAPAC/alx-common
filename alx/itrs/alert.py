@@ -17,7 +17,7 @@ import json
 class HtmlAlert:
     def __init__(self, environment: Environment):
         """
-        Create an html table of information suitable for an alert.
+        Create an HTML table of information suitable for an alert.
         This alert can be sent using the ALXmail module.  Currently,
         it is used for email alerts and user assignment events
 
@@ -36,9 +36,9 @@ class HtmlAlert:
 
     def create(self) -> str:
         """
-        Populate the html table with the values in the environment created
+        Populate the HTML table with the values in the environment created
         in a call to alx.itrs.environment.Environment
-        :return: the formatted html table
+        :return: the formatted HTML table
         """
         e = self.environment
         html = ALXhtml()

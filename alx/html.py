@@ -15,7 +15,7 @@ class ALXhtml:
         An HTML module to simplify the creation of HTML through the use of
         methods.  This makes the code calling the library much more readable
 
-        :param title: The title to use in the head section of the html
+        :param title: The title to use in the head section of the HTML
         """
         self.config = ALXapp.read_lib_config()
         """Adds the configuration read from `alx.ini`"""
@@ -184,7 +184,7 @@ class ALXhtml:
 
     def add_table(self, style: str = "") -> None:
         """
-        Adds a table to the html
+        Adds a table to the HTML
 
         :param style: Adds an optional style to the table.  Do not include the `style` tags
         """
@@ -306,9 +306,9 @@ class ALXhtml:
 
     def add_html(self, value: str) -> None:
         """
-        Add raw html to the class
+        Add raw HTML to the class
 
-        :param value: The raw html
+        :param value: The raw HTML
         """
         self.body += value + "\n"
 
@@ -325,9 +325,9 @@ class ALXhtml:
 
     def get_html(self) -> str:
         """
-        Put all the elements together and return a formatted html document
+        Put all the elements together and return a formatted HTML document
 
-        :return: The html value in the object
+        :return: The complete HTML document
         """
         value = self.doctype
         value += self.html

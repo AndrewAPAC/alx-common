@@ -29,8 +29,8 @@ from typing import Union, Optional
 class ALXmail(ALXhtml):
     def __init__(self, mail_type: str = "html") -> None:
         """
-        Class to send itrs_email - both text and html (default). It is a subclass
-        of `alx.html.ALXhtml` to allow simple html mail composition. Configuration
+        Class to send itrs_email - both text and HTML (default). It is a subclass
+        of `alx.html.ALXhtml` to allow simple HTML mail composition. Configuration
         is stored in `alx.ini`
 
         :param type: Either 'text' or 'html' (default)
@@ -38,7 +38,7 @@ class ALXmail(ALXhtml):
         """
         super().__init__()
 
-        self.mail_type = mail_type
+        self.mail_type = mail_type.lower()
         """The type of the email - 'text' or 'html'. Default is html"""
 
         if mail_type == "plain":
