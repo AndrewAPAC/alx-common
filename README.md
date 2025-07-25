@@ -3,16 +3,21 @@
 **Reusable Python framework for infrastructure automation, monitoring, reporting, and internal tooling.**
 
 ---
-> Before use, you need to create 2 files in `$HOME/.config/alx`:
->   * `$HOME/.config/alx/env` with contents
->     * `venv=<path/to/venv>`
->     (do not include the /bin)
-> * `$HOME/.config/alx/key`
->   * Add the output from `python -c "from cryptography.fernet import Fernet; print(Fernet.generate_key().decode())"`
+## Prerequisites
 
-Inline documentation can be viewed with `pdoc alx` (or `pdoc ./alx` if not installed).
-Generated files are in the doc subdirectory.
+Before use, create 2 files in `$HOME/.config/alx`:
+* `$HOME/.config/alx/env` with contents
+  * `venv=<path/to/venv>` (do not include the /bin path)
+  * Other environment settings can also go in here if required 
+* `$HOME/.config/alx/key`
+  * Add the output from 
+  ```
+  python -c "from cryptography.fernet import Fernet; print(Fernet.generate_key().decode())"
+  ```
+  * This is your key to encrypt and decrypt strings - do not share
+
 ---
+## Summary
 
 **alx-common** provides a consistent foundation for building reliable internal applications that deal with:
 
@@ -27,42 +32,58 @@ Generated files are in the doc subdirectory.
 - ✅ Monitoring integrations (ITRS Geneos support)
 - ✅ Lightweight internal automation tools
 
-Originally designed to simplify and standardize automation scripts, reporting jobs, monitoring pipelines, and operational tooling across real-world production environments.
+Originally designed to simplify and standardize automation scripts, 
+reporting jobs, monitoring pipelines, and operational tooling across 
+real-world production environments.
+
+Too many times, I have seen developers share code to 'send an email'.
+Then the `mailhost` changes and there are 200 scripts to fix. Or
+a shell script is copied and something edited to create a wrapper
+to start a python script. Bad practice is endemic in the 
+developer community as there are too many coders adopting a 
+cut-and-paste mentality.
 
 ---
 
 ## Features
 
-* ### Application Framework (`ALXapp`)
+- ### Application Framework (`alx.app.ALXapp`)
   - Simplified argparse-based CLI definition
   - Config-driven parameter management (`alx.ini`)
-  - Environment layering (dev/test/prod)
+  - Environment separation (dev/test/prod)
   - Secure password storage (Fernet encryption)
   - Dynamic path management (logs, data, config)
-  - Application configuration parsed and stored in `ALXapp` object
+  - Application configuration automatically parsed 
+    and stored in `alx.app.ALXapp` object
+  - Centralized logger management handled providing
+    automatic house-keeping based on configuration
 
-- ### Database Utilities (`ALXdatabase`)
+- ### Database Utilities (`alx.db_util.ALXdatabase`)
   - Simplifies open source database access
   - Auto-formatted SQL logging
   - Centralized connection lifecycle
   - Transaction management
+  - Simplified execution mechanism
 
-- ### Reporting & Email
-  - Easy HTML generation (`ALXhtml`)
-  - Easy email formatting and sending(`ALXmail`)
+- ### Reporting (`alx.html.ALXhtml`)
+  - Easy HTML generation
+  - Promotes tidy and consistent code
+
+- ### Email creation (`alx.mail.ALXmail`)
+  - Supports plaintext and html formats
+  - Easy email formatting and sending
+  - Flexible
   - Integrated with SMTP servers, attachments, and inline images
-
-- ### Logging
-  - Centralized logger management
-  - Config-driven log levels, rotation, and retention
 
 - ### String manipulation (`strings.py`)
   - Commonly used string manipulation routines
 
-- ### ITRS Geneos routines
+- ### ITRS Geneos Alerts (`alx.itrs.alert.HtmlAlert`)
   - Provides a consistent way to parse the environment on an event
   - A standard alert in html / table format
-  - A class to create a toolkit sampler without the need to know internal details
+  - A class to create a toolkit sampler without the
+    need to know internal details (`alx.itrs.toolkit.Toolkit`)
+  - Standardised environment parsing (`alx.itrs.environment.Environment`)
 
 ## Examples
 
