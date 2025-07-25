@@ -1,6 +1,6 @@
 # Examples Area
 
-The examples in here are intended to guide you on how to
+These examples are intended to guide you on how to
 use alx-common effectively. They should be run by using the 
 script `run_examples`. The structure can be deployed
 anywhere as the location is determined dynamically.
@@ -22,7 +22,7 @@ is installed it can be accessed with `pdoc alx`
 ```
 .
 ├── bin
-│   ├── encrypt -> start    # calculate script to run from name
+│   ├── encrypt -> start    # each script is a symlink to start
 │   └── start               # start script for all apps
 ├── data
 │   └── encrypt             # created at run time
@@ -39,7 +39,13 @@ is installed it can be accessed with `pdoc alx`
 The `start` script uses the name of the symbolic link to determine
 the directory and script name to run. The `ALXapp` class then 
 calculates the `ini` file, log file location and name and the data 
-area. The data area can be added to the ini file as `$data` for 
-convenience.
+area. 
 
+The data area can be added to the ini file as `$data` for 
+convenience.  So you might have:
+```
+[DEFAULT]
+output_file:        $data/output.txt
+```
+and it will be replaced dynamically in `alx.app.py:parse_config`
 
