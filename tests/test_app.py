@@ -71,7 +71,7 @@ def test_encrypt_decrypt_roundtrip(tmp_path):
     keyfile.chmod(0o600)
     app.keyfile = str(keyfile)
 
-    plaintext = "SecretMessage"
+    plaintext = "SecretPassword"
     encrypted = app.encrypt(plaintext)
     decrypted = app.decrypt(encrypted)
 

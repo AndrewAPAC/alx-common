@@ -94,5 +94,5 @@ operation.
 
 ## Examples
 
-Please refer to the files in the examples directory
+Please refer to the files [in the examples directory](https://github.com/AndrewAPAC/alx-common/tree/main/examples)
 
