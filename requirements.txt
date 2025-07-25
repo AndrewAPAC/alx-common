@@ -2,7 +2,6 @@ setuptools-git
 setuptools
 cryptography
 DateTime
-mariadb
 build
 sql-formatter
 humanize
