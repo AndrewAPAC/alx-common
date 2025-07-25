@@ -6,7 +6,33 @@ export PYTHONPATH="$dir/.."
 
 echo "PYTHONPATH set to: $PYTHONPATH"
 
-for x in $(ls -1 $dir/bin | grep -v start); do
-    echo "*** Executing ${dir}/bin/$x SecretPassword"
-    ${dir}/bin/$x SecretPassword
-done
+pause()
+{
+  echo
+  echo Press Enter to continue
+  read x
+}
+
+echo "*** Executing ${dir}/bin/encrypt SecretPassword"
+${dir}/bin/encrypt SecretPassword
+pause
+
+echo "*** Executing ${dir}/bin/itrs_email"
+${dir}/bin/itrs_email $(whoami)@localhost
+pause
+
+echo "*** Executing ${dir}/bin/create_email"
+${dir}/bin/create_email
+pause
+
+echo "*** Executing ${dir}/bin/create_doc"
+${dir}/bin/create_doc
+pause
+
+echo "Listing log files"
+ls -lR log
+pause
+
+
+
+
