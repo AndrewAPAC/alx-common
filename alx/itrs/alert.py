@@ -1,15 +1,17 @@
+# Copyright © 2019 Andrew Lister
+# License: GNU General Public License v3.0 (see LICENSE file)
+#
+# Description:
+#
+# Parses and handles ITRS Geneos alerts, creating am html
+# table suitable for sending via email or other alert mechanism
+#
+
 from alx.html import ALXhtml
-from alx.date_util import date_subst
+from alx.strings import date_subst
 from alx.itrs.environment import Environment
 from alx.app import ALXapp
-
-
-colours = {"critical": "#FF7474",
-           "warning": "#FFCF80",
-           "ok": "#BCF0BC"}
-
-"""A global variable defining the standard ITRS colours.  It could potentially
-go in a config file one day"""
+import json
 
 
 class HtmlAlert:
@@ -23,9 +25,13 @@ class HtmlAlert:
         """
         self.environment = environment
         """Stores the environment passed"""
-        # Could read from config file....
-        # ALXapp.read_lib_config()
-        self.style = "background-color: %s;" % colours[environment.severity]
+        self.config = ALXapp.read_lib_config()
+        """The module configuration read from `alx.ini`"""
+        self.colours = json.loads(self.config.get("alert", "colours"))
+        """The alert colours read from `alx.ini`"""
+        self.date_format = self.config.get("alert", "date_format")
+        """The alert date format read from `alx.ini`"""
+        self.style = "background-color: %s;" % self.colours[environment.severity]
         """The additional styles for the cells coloured with the severity from colours"""
 
     def create(self) -> str:
@@ -39,7 +45,6 @@ class HtmlAlert:
 
         html.add_table()
         html.add_headings(["Variable", "Value"])
-        # html.set_column_headings()
         html.start_row()
         html.add_cell("Severity")
         html.add_cell(e.severity.title(), style=self.style)
@@ -48,7 +53,7 @@ class HtmlAlert:
         html.add_row(["Application", e.application])
         html.add_row(["Location", e.location])
         html.add_row(["Host", e.host])
-        html.add_row(["Date", date_subst("%a %b %d %Y %H:%M:%S %Z")])
+        html.add_row(["Date", date_subst(self.date_format)])
         html.add_row(["Managed Entity", e.managed_entity])
         html.add_row(["Sampler", e.sampler])
         html.add_headings(["Dataview", e.dataview])
@@ -67,5 +72,6 @@ class HtmlAlert:
 
         html.end_table()
 
-        return html.body
+        return html.body + "</body>\n"
+
     

@@ -8,3 +8,5 @@ sql-formatter
 humanize
 pytest
 unidecode
+requests
+pdoc

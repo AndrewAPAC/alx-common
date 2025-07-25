@@ -1,18 +1,15 @@
+# Copyright © 2019 Andrew Lister
+# License: GNU General Public License v3.0 (see LICENSE file)
 #
-# html.py - implements an easy to use html creator making code more
-# readable
-#
-# Author: Andrew Lister
-# Date: September 2019
+# Description:
+# Utility functions for rendering and escaping HTML content. Also includes
+# the ALXhtml class for composing text and HTML-based email messages.
+
 from alx.app import ALXapp
 from typing import Any
 
 
 class ALXhtml:
-    end_html = "</html>\n"
-    end_head = "</head>\n"
-    end_body = "</body>\n"
-
     def __init__(self, title: str = None) -> None:
         """
         An HTML module to simplify the creation of HTML through the use of
@@ -50,7 +47,7 @@ class ALXhtml:
          alignemnt of the first column to left, call 
          `set_column_alignments` with a parameter of `["left"]`"""
 
-    def set_css(self, css: str) -> None:
+    def add_css(self, css: str) -> None:
         """
         Allow the default css to be overridden if necessary
 
@@ -336,9 +333,9 @@ class ALXhtml:
         value += self.html
         value += self.head
         value += "<style>" + self.css + "\n</style>\n"
-        value += self.end_head
+        value += "</head>\n"
         value += self.body
-        value += self.end_body
-        value += self.end_html
+        value += "</body>\n"
+        value += "</html>\n"
 
         return value

@@ -1,3 +1,10 @@
+# Copyright © 2019 Andrew Lister
+# License: GNU General Public License v3.0 (see LICENSE file)
+#
+# Description:
+# String utility functions including normalization, trimming, and
+# conversion between naming styles (e.g., space to underscore).
+
 import re
 from datetime import datetime, timezone
 from unidecode import unidecode

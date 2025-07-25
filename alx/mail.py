@@ -1,3 +1,13 @@
+# Copyright © 2019 Andrew Lister
+# License: GNU General Public License v3.0 (see LICENSE file)
+#
+# Description:
+# ALXmail extends ALXhtml and provides a convenient interface for sending
+# emails using parameters configured in alx.ini or passed at runtime.
+#
+# Attachments and html/plain formats are supported as well as multiple
+# send attempts
+
 import os.path
 import socket
 from time import sleep
@@ -236,10 +246,11 @@ class ALXmail(ALXhtml):
         part = MIMEText(body, self.mail_type)
         self.message.attach(part)
 
+        retries = self.config.getint("mail", "retries")
+        delay = self.config.getint("mail", "retries")
         count = 0
-        loop = 20
 
-        while count < 20:
+        while count < retries:
             try:
                 self.server = smtplib.SMTP(self.mailhost)
                 self.server.send_message(self.message)
@@ -254,7 +265,7 @@ class ALXmail(ALXhtml):
                 if count == loop:
                     raise type(ex).__name__(format(ex))
                 else:
-                    sleep(5)
+                    sleep(delay)
 
     def _get_mime_message(self) -> Message:
         """

@@ -1,3 +1,10 @@
+# Copyright © 2019 Andrew Lister
+# License: GNU General Public License v3.0 (see LICENSE file)
+#
+# Description:
+# Provides a consistent framework for creating itrs toolkit samplers
+# without the need to know internal details
+
 from collections import OrderedDict
 import sys
 

@@ -1,3 +1,16 @@
+# Copyright © 2019 Andrew Lister
+# License: GNU General Public License v3.0 (see LICENSE file)
+#
+# Description:
+# Provides utilities for querying the environment when an alert
+# or user assignemnt event is generated. Each environment variable
+# is placed in a member of the class allowing for consistent
+# retrieval and parsing
+#
+# Dataview columns are also placed in a dict:
+#    self.dataview_columns["cpu"]
+# to allow alert enrichment
+
 import os
 
 

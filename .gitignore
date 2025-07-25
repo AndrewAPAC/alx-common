@@ -13,8 +13,11 @@
 .DS_Store
 dist/
 build/
+data/
+log/
 *.egg-info/
 __pycache__
+.pytest_cache
 
 # User-specific stuff
 workspace.xml

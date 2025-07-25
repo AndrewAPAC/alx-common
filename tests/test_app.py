@@ -60,25 +60,6 @@ baz = 123
     assert app.baz == 123
 
 
-def test_read_lib_config_creates_user_file(tmp_path, monkeypatch):
-    # Point XDG_CONFIG_HOME to a temp dir
-    monkeypatch.setenv("XDG_CONFIG_HOME", str(tmp_path))
-
-    # Create default config where __file__ is located
-    test_config = "[DEFAULT]\nfoo = bar\n"
-    with tempfile.TemporaryDirectory() as lib_dir:
-        default_path = os.path.join(lib_dir, "alx.ini")
-        with open(default_path, "w") as f:
-            f.write(test_config)
-
-        with mock.patch("alx.app.__file__", os.path.join(lib_dir, "app.py")):
-            config = ALXapp.read_lib_config()
-
-        expected_config_path = tmp_path / "alx" / "alx.ini"
-        assert expected_config_path.exists()
-        assert config.get("DEFAULT", "foo") == "bar"
-
-
 def test_encrypt_decrypt_roundtrip(tmp_path):
     with mock.patch("sys.argv", ["test_app.py"]):
         app = ALXapp("Encryption Test")

@@ -1,3 +1,11 @@
+# Copyright © 2019 Andrew Lister
+# License: GNU General Public License v3.0 (see LICENSE file)
+#
+# Description:
+# Provides ALXdatabase class for executing SQL queries on MariaDB/MySQL,
+# PostgreSQL, and SQLite backends using a consistent API.
+#
+
 from alx.app import ALXapp
 import re
 from typing import Any

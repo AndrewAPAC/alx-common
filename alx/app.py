@@ -1,3 +1,10 @@
+# Copyright © 2019 Andrew Lister
+# License: GNU General Public License v3.0 (see LICENSE file)
+#
+# Description:
+# Defines the ALXapp class and supporting infrastructure for application
+# initialization, configuration, command-line parsing, and logging.
+
 import configparser
 import os
 import sys
@@ -189,9 +196,7 @@ class ALXapp:
         self.key = None
         """The key to encrypt and decrypt encoded strings"""
         self.keyfile = os.path.join(
-            os.environ.get("XDG_CONFIG_HOME", os.path.expanduser("~/.config")),
-            "alx", "key"
-        )
+            os.path.expanduser("~"), ".config", "alx", "key")
         """The file from where to obtain the key: `~/.config/alx/key`"""
 
     @staticmethod
@@ -303,7 +308,7 @@ class ALXapp:
         Reads and parses a configuration file using `read_config`
 
         Order of preference:
-        1. `$XDG_CONFIG_HOME/alx/filename` (typically `~/.config/alx/alx.ini`)
+        1. `~/.config/alx/alx.ini`
         2. `alx.ini` in the module directory
 
         On first execution, `alx.ini` is copied from the module directory to
@@ -314,22 +319,20 @@ class ALXapp:
 
         :return: The `configparser.ConfigParser` configuration
         """
-        # Respect XDG_CONFIG_HOME, fallback to ~/.config
-        xdg_config_home = os.environ.get("XDG_CONFIG_HOME", os.path.expanduser("~/.config"))
-        user_config_dir = os.path.join(xdg_config_home, "alx")
-        user_config_path = os.path.join(user_config_dir, filename)
+        config_home = os.path.join(os.path.expanduser("~"), ".config", "alx")
+        user_config = os.path.join(config_home, filename)
 
         # Default config from package
         lib_home = os.path.dirname(os.path.abspath(__file__))
         default_config_path = os.path.join(lib_home, filename)
 
         # If the user config doesn't exist, create it
-        if not os.path.isfile(user_config_path):
+        if not os.path.isfile(user_config):
             os.makedirs(user_config_dir, exist_ok=True)
-            shutil.copyfile(default_config_path, user_config_path)
+            shutil.copyfile(default_config_path, user_config)
 
         # Read user config
-        return ALXapp.read_config(user_config_path)
+        return ALXapp.read_config(user_config)
 
     def start_logging(self):
         """
