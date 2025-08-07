@@ -16,7 +16,6 @@ import logging
 import platform
 from logging.handlers import TimedRotatingFileHandler
 from collections import OrderedDict
-from typing import Optional
 
 
 class Paths:
@@ -129,7 +128,7 @@ class ALXapp:
                                "help": "The first date from which to retrieve prices"}],
             ["-g", "--gui", {"action": "store_true", "default": False,
                              "help": "Display the browser."}]
-         ]
+        ]
         ```
         but you can just use this trimmed down version to store the
         arguments as strings
@@ -290,7 +289,7 @@ class ALXapp:
                             setattr(obj, item, f)
                         except (ValueError, TypeError):
                             # Only a string left....
-                            if (value.startswith('[') or value.startswith('{')):
+                            if value.startswith('[') or value.startswith('{'):
                                 try:
                                     setattr(obj, item, json.loads(value, object_pairs_hook=OrderedDict))
                                 except json.JSONDecodeError:
@@ -390,6 +389,19 @@ class ALXapp:
         self.logger.debug("Starting application '%s', logging at level '%s'",
                           format(self.name), format(loglevel))
 
+    def set_log_level(self, level: str) -> None:
+        """
+        Change the logging level at runtime
+
+        :param level: Log level string ('DEBUG', 'INFO', 'WARNING', 'ERROR', 'CRITICAL')
+        """
+        self.logger.setLevel(level)
+        # Update all handlers to the new level
+        for handler in self.logger.handlers:
+            handler.setLevel(level)
+
+        self.logger.info(f"Log level changed to {level}")
+
     def _read_key(self) -> Fernet:
         """Reads the key from `~/.config/alx/key` and uses it to encrypt and
          decrypt strings using the `cryptography` python module"""
@@ -399,7 +411,7 @@ class ALXapp:
             sys.exit(1)
         st = os.stat(self.keyfile)
         if platform.system() != 'Windows' and int(oct(st.st_mode)[3:]) > 600:
-            # Apologies to windows users but your security is too messy
+            # Apologies to Windows users but your security is too messy
             self.logger.error("Check permissions on %s.  Too open", self.keyfile)
             sys.exit(1)
 
@@ -439,7 +451,7 @@ class ALXapp:
         self.passwd = app.decrypt(app.config.get('mysql', 'password'))
         self.user = app.decrypt(app.config.get('mysql', 'user'))
         ```
-        To generate a key, use this one liner and place the ouput in `~/.config/alx/key`:
+        To generate a key, use this one-liner and place the ouput in `~/.config/alx/key`:
         ```
         python -c "from cryptography.fernet import Fernet; print(Fernet.generate_key().decode())"`
         ```
@@ -472,16 +484,3 @@ class ALXapp:
         :return: `True` if running in prod mode and `False` otherwise
         """
         return self.environment == 'prod'
-
-
-if __name__ == "__main__":
-    args = [
-        ["-d", "--date", {"help": "store as '%%Y-%%m-%%d' date in database"}],
-        ["-s", "--start", {"default": None, "type": str,
-                           "help": "The first date from which to retrieve prices"}],
-        ["-g", "--gui", {"action": "store_true", "default": False,
-                         "help": "Display the browser."}]
-    ]
-
-    app = ALXApp("test application", args=args, appname="account_info")
-    mail = ALXmail()
