@@ -32,7 +32,9 @@ class Paths:
         basename = os.path.basename(os.path.dirname(sys.argv[0]))
         dirname = os.path.dirname(sys.argv[0])
         self.root = os.path.abspath(os.path.join(dirname, "..", ".."))
-        """The root of the installation, typically `/opt/local/env` (where *env* is *prod*, *test* or *dev*) """
+        """The root of the installation, perhaps `/opt/local/env` 
+        (where *env* is *prod*, *test* or *dev*). Paths are calculated
+         dynamically, based on file location"""
         self.bin = os.path.join(self.root, "bin")
         """The location of the start script: `root/bin`"""
         self.data = os.path.join(self.root, "data", basename)
@@ -47,7 +49,10 @@ class Paths:
         """The location of the scripts: `root/scripts`"""
         self.top = os.path.join(self.root, "scripts", basename)
         """The location of the application scripts: `root/scripts/app`"""
+        self.module_config_dir = self.get_module_config_dir()
+        """The location of the module ini, key and env files"""
 
+        # Create directories for data and log which may not be required
         if not os.path.isdir(self.data):
             os.makedirs(self.data)
         if not os.path.isdir(self.log):
@@ -57,6 +62,13 @@ class Paths:
         """The name of the config file determined from `self.etc`/app"""
         if inifile:
             self.config = os.path.join(self.etc, inifile)
+
+    @staticmethod
+    def get_module_config_dir():
+        if platform.system() == "Windows":
+            return os.path.join(os.environ['APPDATA'], "alx")
+        else:
+            return os.path.join(os.path.expanduser("~"), ".config", "alx")
 
     def __str__(self) -> str:
         return "\n".join(f"{k}: {v}" for k, v in vars(self).items() if isinstance(v, str))
@@ -79,7 +91,8 @@ class ALXapp:
         * Reads and parses the library configuration stored in `alx.ini`
         * Initialises and starts logging to `Paths.logfile`
 
-        An example `alx.ini` or `$HOME/config/alx/alx.ini`
+        An example `alx.ini` or `$HOME/config/alx/alx.ini` or
+        `%APPDATA%\alx` on Windows
         ```
         [DEFAULT]
 
@@ -200,9 +213,9 @@ class ALXapp:
 
         self.key = None
         """The key to encrypt and decrypt encoded strings"""
-        self.keyfile = os.path.join(
-            os.path.expanduser("~"), ".config", "alx", "key")
-        """The file from where to obtain the key: `~/.config/alx/key`"""
+        self.keyfile = os.path.join(self.paths.module_config_dir, "key")
+        """The file from where to obtain the key: `~/.config/alx/key` or
+        `%APPDATA%\\alx\\key` on Windows"""
 
     @staticmethod
     def parse_config(obj: object, config: configparser.SectionProxy):
@@ -323,17 +336,19 @@ class ALXapp:
 
         Order of preference:
         1. `~/.config/alx/alx.ini`
+        1. `%APPDATA%/alx/alx.ini` (on Windows)
         2. `alx.ini` in the module directory
 
         On first execution, `alx.ini` is copied from the module directory to
-        the users .config directory
+        the users module config directory
 
         But the function can be used with any config (ini) file. Interpolation
         rules apply according to the `configparser.ConfigParser` documentation
 
         :return: The `configparser.ConfigParser` configuration
         """
-        config_home = os.path.join(os.path.expanduser("~"), ".config", "alx")
+
+        config_home = Paths.get_module_config_dir()
         user_config = os.path.join(config_home, filename)
 
         # Default config from package
@@ -432,6 +447,9 @@ class ALXapp:
         P9H7kabcdefghijwlSrfVnKKqV5VCnW5RE8OT21eH5k=
         ```
         Please refer to `decrypt` for how to create a key.
+
+        Note that due to the inconsistent implementation of permissions
+        on Windows, this check is ignored
 
         :param string: The string to encrypt.
         :return: The encrypted string

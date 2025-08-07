@@ -1,6 +1,6 @@
 # alx-common
 
-**Reusable Python framework for infrastructure automation, monitoring, reporting, and internal tooling.**
+**A comprehensive Python framework for infrastructure automation, monitoring, and reporting. Designed to standardize common development tasks and eliminate code duplication in production environments.**
 
 ---
 ## Prerequisites
@@ -94,5 +94,5 @@ operation.
 
 ## Examples
 
-Please refer to the files in the examples directory
+Please refer to the files [in the examples directory](https://github.com/AndrewAPAC/alx-common/tree/main/examples)
 
