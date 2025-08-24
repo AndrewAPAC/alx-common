@@ -235,16 +235,20 @@ class ALXmail(ALXhtml):
             self.bcc = list(set(self.bcc))
             self.message["Bcc"] = ", ".join(self.bcc)
 
-        for a in self.attachments:
-            self.message.attach(a)
+        if self.mail_type == "html":
+            for a in self.attachments:
+                self.message.attach(a)
 
-        if self.mail_type == 'html':
+        if self.mail_type == "html":
             body = self.get_html()
+            part = MIMEText(body, "html")
+            self.message.attach(part)
         else:
             body = self.body + "\n"
+            self.message.set_content(body)
 
-        part = MIMEText(body, self.mail_type)
-        self.message.attach(part)
+#        part = MIMEText(body, self.mail_type)
+#        self.message.attach(part)
 
         retries = self.config.getint("mail", "retries")
         delay = self.config.getint("mail", "retries")
