@@ -1,8 +1,9 @@
 import pytest
 import os
 import platform
-from unittest.mock import patch
+from unittest.mock import patch, MagicMock
 from alx.mail import ALXmail
+from email.message import EmailMessage
 
 
 def test_plain_email_body():
@@ -65,3 +66,37 @@ def test_binary_attachment(tmp_path):
 
     found = any(part.get_filename() == "test.png" for part in msg.walk())
     assert found, "Binary attachment not found"
+
+
+def test_send_plain_email(monkeypatch):
+    """Ensure plain text emails use set_content and do not create multipart payloads."""
+    mail = ALXmail(mail_type="plain")
+    mail.set_from("sender@example.com")
+    mail.add_recipient("recipient@example.com")
+    mail.set_subject("Send Plain Test")
+    mail.add_paragraph("Plain body line 1")
+    mail.add_paragraph("Plain body line 2")
+
+    sent_messages = {}
+
+    class DummySMTP:
+        def __init__(self, host):
+            self.host = host
+        def send_message(self, msg):
+            # Capture the outgoing message
+            sent_messages["msg"] = msg
+        def quit(self):
+            pass
+
+    monkeypatch.setattr("smtplib.SMTP", DummySMTP)
+
+    mail.send()
+
+    # Check that the message was captured
+    msg: EmailMessage = sent_messages["msg"]
+    assert msg.get_content_type() == "text/plain"
+    payload = msg.get_payload()
+    assert "Plain body line 1" in payload
+    assert "Plain body line 2" in payload
+    # Make sure it wasn't turned into multipart
+    assert not msg.is_multipart()
