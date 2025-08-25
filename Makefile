@@ -16,3 +16,9 @@ dist:: clean
 
 upload::
 	twine upload -r local dist/*
+
+pypi::
+	twine upload -r pypi dist/*
+
+testpypi::
+	twine upload -r testpypi dist/*
