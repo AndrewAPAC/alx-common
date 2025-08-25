@@ -9,7 +9,6 @@ import configparser
 import os
 import sys
 import argparse
-import shutil
 from cryptography.fernet import Fernet
 import json
 import logging
@@ -313,19 +312,23 @@ class ALXapp:
             raise
 
     @staticmethod
-    def read_config(filename: str):
+    def read_config(filename: str, filename2: str = None):
         """
         Reads the configuration file in `filename` using the parser
         passed in `parser` which is typically the default
 
         :param filename: Name of the configuration file to read
+        :param filename2: Name of a second config file to override first
         :return: The `configparser.ConfigParser` configuration
         """
         if not os.path.isfile(filename):
             return None
 
         config = configparser.ConfigParser()
-        config.read(filename)
+        if filename2:
+            config.read([filename, filename2])
+        else:
+            config.read(filename)
 
         return config
 
@@ -339,8 +342,8 @@ class ALXapp:
         1. `%APPDATA%/alx/alx.ini` (on Windows)
         2. `alx.ini` in the module directory
 
-        On first execution, `alx.ini` is copied from the module directory to
-        the users module config directory
+        On first execution, `alx.ini` is created from the module directory to
+        the users config directory
 
         But the function can be used with any config (ini) file. Interpolation
         rules apply according to the `configparser.ConfigParser` documentation
@@ -349,19 +352,25 @@ class ALXapp:
         """
 
         config_home = Paths.get_module_config_dir()
-        user_config = os.path.join(config_home, filename)
+        user_config_path = os.path.join(config_home, filename)
 
         # Default config from package
         lib_home = os.path.dirname(os.path.abspath(__file__))
-        default_config_path = os.path.join(lib_home, filename)
+        global_config_path = os.path.join(lib_home, filename)
 
-        # If the user config doesn't exist, create it
-        if not os.path.isfile(user_config):
+        # If the user config doesn't exist, create it with empty sections
+        if not os.path.isfile(user_config_path):
+            # Read the global configuration to get the sections
+            global_config = ALXapp.read_config(global_config_path)
             os.makedirs(config_home, exist_ok=True)
-            shutil.copyfile(default_config_path, user_config)
+            with open(user_config_path, 'w') as f:
+                f.write("[DEFAULT]\n\n")
+                for s in global_config.sections():
+                    f.write("[%s]\n\n" % s)
 
-        # Read user config
-        return ALXapp.read_config(user_config)
+        merged_config = ALXapp.read_config(global_config_path, user_config_path)
+
+        return merged_config
 
     def start_logging(self):
         """
