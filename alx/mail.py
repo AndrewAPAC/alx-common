@@ -247,11 +247,8 @@ class ALXmail(ALXhtml):
             body = self.body + "\n"
             self.message.set_content(body)
 
-#        part = MIMEText(body, self.mail_type)
-#        self.message.attach(part)
-
         retries = self.config.getint("mail", "retries")
-        delay = self.config.getint("mail", "retries")
+        delay = self.config.getint("mail", "delay")
         count = 0
 
         while count < retries:
