@@ -11,8 +11,9 @@ Points to note:
     * venv=<path/to/venv>
   * `$HOME/.config/alx/key`
     * Add the output from `python -c "from cryptography.fernet import Fernet; print(Fernet.generate_key().decode())"`
-* On the first run, the `alx.ini` file will be copied to the 
-configuration area so it can be modified to your liking
+* On the first run, a skeleton `alx.ini` file will be created
+in `$HOME/config/alx/alx.ini`. Any modified key will override the
+global values. You can even store your own if required.
 * The directory structure is intended to be Unix like and
 is created in the ALXapp initialisation. Some directories
 may not be used.
