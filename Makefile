@@ -1,3 +1,5 @@
+VERSION ?= $(error VERSION is required, e.g. make $@ VERSION=1.2.3)
+
 test::
 	pytest tests
 
@@ -17,8 +19,17 @@ dist:: clean
 upload::
 	twine upload -r local dist/*
 
-pypi::
-	twine upload -r pypi dist/*
+release::
+	@echo "Releasing version $(VERSION)"
+	sed -i 's/^version = .*/version = "$(VERSION)"/' pyproject.toml
+	git add pyproject.toml
+	git commit -m "Release $(VERSION)"
+	git tag v$(VERSION)
+	git push origin main
+	git push origin v$(VERSION)
 
-testpypi::
-	twine upload -r testpypi dist/*
+#pypi:: release
+#	twine upload -r pypi dist/*
+
+#testpypi:: release
+#	twine upload -r testpypi dist/*
