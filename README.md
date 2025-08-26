@@ -26,9 +26,11 @@ python -c "from cryptography.fernet import Fernet; print(Fernet.generate_key().d
 These files can (and should) be modified to suit your needs. For example,
 changing `alx.ini` and adding 
 
-```from:   Some User <root@localhost>```
+```
+[mail]
+from:   Application User <valid@email.address>```
 
-in the `[mail]` section would be a good idea.
+would be a good idea.
 
 ---
 ## Summary
