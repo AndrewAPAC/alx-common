@@ -18,13 +18,17 @@ and is set to the current python used to execute a script using
 there are multiple developers, then it is wise to share the key so
 the configuration file can remain consistent. *This file must be stored
 readable only by the user and not shared*. The command to create a key is:
+
 ```
 python -c "from cryptography.fernet import Fernet; print(Fernet.generate_key().decode())"
 ```
 
 These files can (and should) be modified to suit your needs. For example,
-changing `alx.ini` and adding `from:   Some User <root@localhost>` 
-would be a good idea.
+changing `alx.ini` and adding 
+
+```from:   Some User <root@localhost>```
+
+in the `[mail]` section would be a good idea.
 
 ---
 ## Summary
