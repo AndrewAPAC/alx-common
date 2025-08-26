@@ -3,18 +3,21 @@
 **A comprehensive Python framework for infrastructure automation, monitoring, and reporting. Designed to standardize common development tasks and eliminate code duplication in production environments.**
 
 ---
-## Prerequisites
+## Preamble
 
-Before use, create 2 files in `$HOME/.config/alx`:
-* `$HOME/.config/alx/env` with contents
-  * `venv=<path/to/venv>` (do not include the /bin path)
-  * Other environment settings can also go in here if required 
-* `$HOME/.config/alx/key`
-  * Add the output from 
-  ```
-  python -c "from cryptography.fernet import Fernet; print(Fernet.generate_key().decode())"
-  ```
-  * This is your key to encrypt and decrypt strings - do not share
+On first invocation, if the directory `$HOME/.config/alx` 
+(or `%APPDATA%/alx` on Windows) is not found, then it is created 
+along with the following files:
+* `alx.ini`: The module configuration file which should be used to 
+override settings in the defaults found in `alx.ini` in the installed 
+module directory
+* `env`: This file contains the path to the virtual environment in use
+and is set to the current python used to execute a script using 
+`alx-common`
+* `key`: An encryption key used to encrypt and decrypt strings. If
+there are multiple developers, then it is wise to share the key so
+the configuration file can remain consistent. *This file must be stored
+readable only by the user and not shared*
 
 ---
 ## Summary
@@ -24,7 +27,7 @@ Before use, create 2 files in `$HOME/.config/alx`:
 - ✅ Configuration management
 - ✅ Argument parsing
 - ✅ Different environment handling: dev, test, prod
-- ✅ Secure password, etc handling with encryption
+- ✅ Secure password, etc. handling with encryption
 - ✅ Logging (including file rotation, maximum size and console output)
 - ✅ Database utilities (MySQL, MariaDB, SQLite, PostgreSQL)
 - ✅ HTML report generation
@@ -48,7 +51,7 @@ Bad practice is endemic in the developer community as there are too
 many coders adopting a cut-and-paste mentality.
 
 The name comes from my company, ALX Solutions which is no longer in 
-operation.
+operation but now lives on in PyPI and GitHub!
 
 ---
 

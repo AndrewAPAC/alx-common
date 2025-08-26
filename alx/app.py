@@ -204,17 +204,24 @@ class ALXapp:
         if self.config and self.environment in self.config:
             self.parse_config(self, self.config[self.environment])
 
-        self.libconfig = self.read_lib_config()
-        """The global library configuration from `alx.ini`"""
-
-        # Start logging with all configured parameters
-        self.start_logging()
-
         self.key = None
         """The key to encrypt and decrypt encoded strings"""
         self.keyfile = os.path.join(self.paths.module_config_dir, "key")
         """The file from where to obtain the key: `~/.config/alx/key` or
         `%APPDATA%\\alx\\key` on Windows"""
+        self.local_env = os.path.join(self.paths.module_config_dir, "env")
+        """The path to the venv in use: `~/.config/alx/env`"""
+        self.local_config = os.path.join(self.paths.module_config_dir, "alx.ini")
+        """The path to the local configuration: `~/.config/alx/alx.ini`"""
+        self.global_config = os.path.join(
+            os.path.dirname(os.path.abspath(__file__)), "alx.ini")
+        """The path to the module configuration: `<venv>/lib/.../site-packages/alx/alx.ini`"""
+
+        self.libconfig = self.read_lib_config()
+        """The global library configuration from `alx.ini`"""
+
+        # Start logging with all configured parameters
+        self.start_logging()
 
     @staticmethod
     def parse_config(obj: object, config: configparser.SectionProxy):
@@ -222,7 +229,7 @@ class ALXapp:
         Parses the `config` and stores in `obj` as the appropriate type.
         It works out if it is a boolean, float, integer or string. If
         the configuration value starts with a `[` or `{` then it is
-        loaded using `json.loads` and stores in an `OrderedDict`
+        loaded using `json.loads` and stored in an `OrderedDict`
 
         The config file should be structured so there are sections named
         * `[DEFAULT]`
@@ -303,7 +310,8 @@ class ALXapp:
                             # Only a string left....
                             if value.startswith('[') or value.startswith('{'):
                                 try:
-                                    setattr(obj, item, json.loads(value, object_pairs_hook=OrderedDict))
+                                    setattr(obj, item, json.loads(
+                                        value, object_pairs_hook=OrderedDict))  # type: ignore[arg-type]
                                 except json.JSONDecodeError:
                                     setattr(obj, item, value)
                             else:
@@ -332,43 +340,57 @@ class ALXapp:
 
         return config
 
-    @staticmethod
-    def read_lib_config(filename: str = "alx.ini") -> configparser.ConfigParser:
+    def _create_configuration_files(self) -> None:
         """
-        Reads and parses a configuration file using `read_config`
+        Create some initial configuration files
 
-        Order of preference:
-        1. `~/.config/alx/alx.ini`
-        1. `%APPDATA%/alx/alx.ini` (on Windows)
-        2. `alx.ini` in the module directory
+        :return: None
+        """
+        os.makedirs(self.paths.module_config_dir, exist_ok=True)
 
-        On first execution, `alx.ini` is created from the module directory to
-        the users config directory
+        if not os.path.isfile(self.local_config):
+            print("*** NOTE: Creating user config file '{}'".format(self.local_config))
+            with open(self.local_config, 'w') as f:
+                for s in ["DEFAULT", "logging", "mail", "alert", "html"]:
+                    f.write("[%s]\n\n" % s)
 
-        But the function can be used with any config (ini) file. Interpolation
-        rules apply according to the `configparser.ConfigParser` documentation
+        if not os.path.isfile(self.keyfile):
+            print("*** NOTE: Creating key file '{}'".format(self.keyfile))
+            # Create an initial fernet key.  User to adjust as required
+            with open(self.keyfile, 'w') as f:
+                f.write("%s\n" % Fernet.generate_key().decode())
+            # Ensure strict permissions
+            os.chmod(self.keyfile, 0o600)
+
+        if not os.path.isfile(self.local_env):
+            print("*** NOTE: Creating local environment file: '{}'".format(self.local_env))
+            # Assume that the current python invocation is the path to the virtual env
+            with open(self.local_env, 'w') as f:
+                venv = os.path.dirname(os.path.dirname(sys.executable))
+                f.write("venv=%s\n" % venv)
+
+    def read_lib_config(self) -> configparser.ConfigParser:
+        """
+        Reads and parses the module configuration file and the local
+        configuration file (`~/.config/alx/alx.ini` or
+        `%APPDATA%/alx/alx.ini`). The local configuration overrides
+        any values in the module configuration file.
+
+        On first invocation, the user files are checked and created if
+        they don't exist.
 
         :return: The `configparser.ConfigParser` configuration
         """
 
-        config_home = Paths.get_module_config_dir()
-        user_config_path = os.path.join(config_home, filename)
+        # If the user configuration doesn't exist, create them
+        if not all([
+            os.path.isdir(self.paths.module_config_dir),
+            os.path.isfile(self.local_config),
+            os.path.isfile(self.keyfile),
+            os.path.isfile(self.local_env),]):
+            self._create_configuration_files()
 
-        # Default config from package
-        lib_home = os.path.dirname(os.path.abspath(__file__))
-        global_config_path = os.path.join(lib_home, filename)
-
-        # If the user config doesn't exist, create it with empty sections
-        if not os.path.isfile(user_config_path):
-            # Read the global configuration to get the sections
-            global_config = ALXapp.read_config(global_config_path)
-            os.makedirs(config_home, exist_ok=True)
-            with open(user_config_path, 'w') as f:
-                f.write("[DEFAULT]\n\n")
-                for s in global_config.sections():
-                    f.write("[%s]\n\n" % s)
-
-        merged_config = ALXapp.read_config(global_config_path, user_config_path)
+        merged_config = ALXapp.read_config(self.global_config, self.local_config)
 
         return merged_config
 

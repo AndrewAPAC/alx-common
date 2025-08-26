@@ -23,7 +23,7 @@ import smtplib
 from email.message import EmailMessage, Message
 from email.mime.multipart import MIMEMultipart
 from email.mime.text import MIMEText
-from typing import Union, Optional
+from typing import Union
 
 
 class ALXmail(ALXhtml):
@@ -96,7 +96,7 @@ class ALXmail(ALXhtml):
         elif recipient_type == "bcc":
             self.bcc.append(to)
 
-    def set_recipients(self, to: Union[str, list], recipient_type = "to") -> None:
+    def set_recipients(self, to: Union[str, list], recipient_type="to") -> None:
         """
         Sets the list of recipients for the email
         :param to: A list or string of recipients, separated by ' ', ',' or ';'
@@ -176,7 +176,7 @@ class ALXmail(ALXhtml):
         # If you are composing a plain text email, do not try to
         # add an attachment. Tell your manager to fire you and
         # find someone who knows what they are doing
-        assert(self.mail_type == 'html')
+        assert (self.mail_type == 'html')
 
         if not os.path.isfile(filename):
             raise FileNotFoundError(filename)
@@ -217,11 +217,11 @@ class ALXmail(ALXhtml):
         """
         Sends the message. It firsts constructs the email message
         from the all the parts provided and adds the attachments.
-        It also tries a number of times (20) with a 5 second
+        It also tries a number of times (20) with a 5-second
         delay between each attempt - in case there is a network
         or mailhost glitch. If the number of attempts is exceeded,
         the corresponding exception is thrown. The SMTP host to use is
-        configured in `alx.ini`
+        configured in `alx.ini`. As are retries and delay.
         """
         self.message["From"] = self.sender
         self.message["Subject"] = self.subject

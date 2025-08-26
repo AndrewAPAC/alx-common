@@ -194,7 +194,7 @@ class ALXhtml:
         self.body += ">\n"
         self._current_row = self._current_column = 0
 
-    def set_column_headings(self, headings: list = [True]) -> None:
+    def set_column_headings(self, headings: list = None) -> None:
         """
         Set columns to be headings (bold / different background) for each
         column where the list element is True
@@ -203,9 +203,12 @@ class ALXhtml:
             heading.  By default, the first column is set
         :return: None
         """
+        if not headings:
+            headings = [True]
+
         self.column_headings = headings
 
-    def set_column_alignments(self, alignments: list = ["left"]) -> None:
+    def set_column_alignments(self, alignments: list = None) -> None:
         """
         Set column alignments to the values in `alignments`
 
@@ -215,6 +218,9 @@ class ALXhtml:
         set to left justified
         :return: None
         """
+        if not alignments:
+            alignments = ["left"]
+
         self.column_alignments = alignments
 
     def start_row(self, style: str = "") -> None:
