@@ -19,6 +19,10 @@ there are multiple developers, then it is wise to share the key so
 the configuration file can remain consistent. *This file must be stored
 readable only by the user and not shared*
 
+These files can (and should) be modified to suit your needs. For example,
+changing `alx.ini` and adding `from:   Some User <root@localhost>` 
+would be a good idea.
+
 ---
 ## Summary
 
