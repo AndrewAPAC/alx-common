@@ -17,8 +17,10 @@ and is set to the current python used to execute a script using
 * `key`: An encryption key used to encrypt and decrypt strings. If
 there are multiple developers, then it is wise to share the key so
 the configuration file can remain consistent. *This file must be stored
-readable only by the user and not shared*.  To create a key, the command
-is `python -c "from cryptography.fernet import Fernet; print(Fernet.generate_key().decode())"`
+readable only by the user and not shared*. The command to create a key is:
+```
+python -c "from cryptography.fernet import Fernet; print(Fernet.generate_key().decode())"
+```
 
 These files can (and should) be modified to suit your needs. For example,
 changing `alx.ini` and adding `from:   Some User <root@localhost>` 
