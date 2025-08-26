@@ -17,7 +17,7 @@ class ALXhtml:
 
         :param title: The title to use in the head section of the HTML
         """
-        self.config = ALXapp.read_lib_config()
+        self.config = ALXapp.read_lib_config(self)
         """Adds the configuration read from `alx.ini`"""
         self.logger = ALXapp.logger
         """The default logger from the alx.app.ALXapp.logger"""
