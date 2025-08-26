@@ -28,7 +28,8 @@ changing `alx.ini` and adding
 
 ```
 [mail]
-from:   Application User <valid@email.address>```
+from:   Application User <valid@email.address>
+```
 
 would be a good idea.
 
