@@ -350,7 +350,7 @@ class ALXapp:
                     f.write("[%s]\n\n" % s)
 
         if not os.path.isfile(self.paths.keyfile):
-            print("*** NOTE: Creating key file '{}'".format(self.keyfile))
+            print("*** NOTE: Creating key file '{}'".format(self.paths.keyfile))
             # Create an initial fernet key.  User to adjust as required
             with open(self.paths.keyfile, 'w') as f:
                 f.write("%s\n" % Fernet.generate_key().decode())
