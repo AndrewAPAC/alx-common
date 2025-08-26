@@ -54,7 +54,7 @@ def replace_spaces(s: str, c: str = ".") -> str:
     Replace spaces in a string with another character. Default is '.'
 
     :param s: The input string
-    :param c: The character to use in the substitution., Default is '.')
+    :param c: The character to use in the substitution., Default is '.'
 
     :return: The new string
     """
@@ -86,4 +86,3 @@ def sanitize_filename(s: str, c: str = ".") -> str:
     s = re.sub(rf'[^{re.escape(c)}a-zA-Z0-9._-]', c, s)   # Replace everything else
 
     return s
-

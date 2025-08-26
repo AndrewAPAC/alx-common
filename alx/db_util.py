@@ -5,7 +5,6 @@
 # Provides ALXdatabase class for executing SQL queries on MariaDB/MySQL,
 # PostgreSQL, and SQLite backends using a consistent API.
 #
-
 from alx.app import ALXapp
 import re
 from typing import Any
@@ -16,11 +15,13 @@ try:
     import psycopg2
     has_postgres = True
 except ImportError:
+    psycopg2 = None
     has_postgres = False
 try:
     import sqlite3
     has_sqlite = True
 except ImportError:
+    sqlite3 = None
     has_sqlite = False  # basically always True, part of stdlib
 try:
     import mariadb as mysql
@@ -135,7 +136,7 @@ class ALXdatabase:
         return sql
 
     def run(self, sql: str, name: str = None,
-            params = None,
+            params=None,
             multi: bool = False) -> list:
         """
         Tidies up the SQL string passed, logs the statement to
@@ -212,20 +213,20 @@ class ALXdatabase:
     def close(self) -> None:
         """
         Close the `ALXdatabase` connection and cursor and
-         set them to None
+        set them to None
         """
         try:
             if self.connection:
                 self.connection.close()
             if self.cursor:
                 self.cursor.close()
-        except Exception:
+        except (sqlite3.Error, Exception):
             pass
 
         self.cursor = None
         self.connection = None
 
-    def __enter__(self) -> None:
+    def __enter__(self):
         return self
 
     def __exit__(self, exc_type, exc_value, traceback) -> None:
@@ -238,5 +239,5 @@ class ALXdatabase:
     def __del__(self):
         try:
             self.close()
-        except Exception:
+        except (sqlite3.Error, Exception):
             pass
