@@ -1,7 +1,7 @@
 import os
 import pytest
 from alx.itrs.environment import Environment
-
+import sys
 
 @pytest.fixture
 def sample_env(monkeypatch):
@@ -15,8 +15,10 @@ def sample_env(monkeypatch):
     monkeypatch.setenv("_ROWNAME", "orderCount")
     monkeypatch.setenv("_COLUMN", "Value")
     monkeypatch.setenv("_VALUE", "999")
-    monkeypatch.setenv("_units", "orders")
-    monkeypatch.setenv("_threshold", "1000")
+    if sys.platform != "win32":
+        # Retarded capitalisation of environment variables.
+        monkeypatch.setenv("_units", "orders")
+        monkeypatch.setenv("_threshold", "1000")
     monkeypatch.setenv("_NETPROBE_HOST", "host01")
     monkeypatch.setenv("_HEADLINE", "")  # Simulate no fallback needed
     yield
@@ -37,8 +39,10 @@ def test_environment_parses_values(sample_env):
     assert env.value == "999"
     assert env.host == "host01"
 
-    assert env.dataview_columns["units"] == "orders"
-    assert env.dataview_columns["threshold"] == "1000"
+    if sys.platform != "win32":
+        # Not set above
+        assert env.dataview_columns["units"] == "orders"
+        assert env.dataview_columns["threshold"] == "1000"
 
 
 def test_environment_defaults_to_critical(monkeypatch):
