@@ -28,8 +28,8 @@ release::
 	git push origin main
 	git push origin v$(VERSION)
 
-#pypi:: release
-#	twine upload -r pypi dist/*
+pypi:: release
+	twine upload -r pypi dist/*
 
-#testpypi:: release
-#	twine upload -r testpypi dist/*
+testpypi:: release
+	twine upload -r testpypi dist/*
