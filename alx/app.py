@@ -18,16 +18,17 @@ from collections import OrderedDict
 
 
 class Paths:
-    def __init__(self, _app: 'ALXapp', inifile: str = None) -> None:
+    def __init__(self, appname: str, inifile: str = None) -> None:
         """
         A class to hold the default paths for the application
 
-        If the `data` or `log` directory does not exist, it will be created even if not used.
+        If the `data` is needed, it must be created manually to avoid unnecessary
+        data directories.
 
-        :param _app: The `app.ALXApp` object
+        :param appname: The application name
         :param inifile: If the inifile name is different from the default `app.ini` then it can be set here
         """
-        appname = _app.name
+
         basename = os.path.basename(os.path.dirname(sys.argv[0]))
         dirname = os.path.dirname(sys.argv[0])
         self.root = os.path.abspath(os.path.join(dirname, "..", ".."))
@@ -50,12 +51,16 @@ class Paths:
         """The location of the application scripts: `root/scripts/app`"""
         self.module_config_dir = self.get_module_config_dir()
         """The location of the module ini, key and env files"""
-
-        # Create directories for data and log which may not be required
-        if not os.path.isdir(self.data):
-            os.makedirs(self.data)
-        if not os.path.isdir(self.log):
-            os.makedirs(self.log)
+        self.keyfile = os.path.join(self.module_config_dir, "key")
+        """The file from where to obtain the key: `~/.config/alx/key` or
+        `%APPDATA%\\alx\\key` on Windows"""
+        self.local_env = os.path.join(self.module_config_dir, "env")
+        """The path to the venv in use: `~/.config/alx/env`"""
+        self.local_config = os.path.join(self.module_config_dir, "alx.ini")
+        """The path to the local configuration: `~/.config/alx/alx.ini`"""
+        self.global_config = os.path.join(
+            os.path.dirname(os.path.abspath(__file__)), "alx.ini")
+        """The path to the module configuration: `<venv>/lib/.../site-packages/alx/alx.ini`"""
 
         self.config = os.path.join(self.etc, appname + ".ini")
         """The name of the config file determined from `self.etc`/app"""
@@ -194,7 +199,7 @@ class ALXapp:
         elif self.arguments.env in ('prd', 'prod', 'production'):
             self.environment = 'prod'
 
-        self.paths = Paths(self, inifile)
+        self.paths = Paths(self.name, inifile)
         """The `Paths` namespace that holds path information"""
 
         self.config = self.read_config(self.paths.config)
@@ -206,16 +211,6 @@ class ALXapp:
 
         self.key = None
         """The key to encrypt and decrypt encoded strings"""
-        self.keyfile = os.path.join(self.paths.module_config_dir, "key")
-        """The file from where to obtain the key: `~/.config/alx/key` or
-        `%APPDATA%\\alx\\key` on Windows"""
-        self.local_env = os.path.join(self.paths.module_config_dir, "env")
-        """The path to the venv in use: `~/.config/alx/env`"""
-        self.local_config = os.path.join(self.paths.module_config_dir, "alx.ini")
-        """The path to the local configuration: `~/.config/alx/alx.ini`"""
-        self.global_config = os.path.join(
-            os.path.dirname(os.path.abspath(__file__)), "alx.ini")
-        """The path to the module configuration: `<venv>/lib/.../site-packages/alx/alx.ini`"""
 
         self.libconfig = self.read_lib_config()
         """The global library configuration from `alx.ini`"""
@@ -348,24 +343,24 @@ class ALXapp:
         """
         os.makedirs(self.paths.module_config_dir, exist_ok=True)
 
-        if not os.path.isfile(self.local_config):
-            print("*** NOTE: Creating user config file '{}'".format(self.local_config))
-            with open(self.local_config, 'w') as f:
+        if not os.path.isfile(self.paths.local_config):
+            print("*** NOTE: Creating user config file '{}'".format(self.paths.local_config))
+            with open(self.paths.local_config, 'w') as f:
                 for s in ["DEFAULT", "logging", "mail", "alert", "html"]:
                     f.write("[%s]\n\n" % s)
 
-        if not os.path.isfile(self.keyfile):
+        if not os.path.isfile(self.paths.keyfile):
             print("*** NOTE: Creating key file '{}'".format(self.keyfile))
             # Create an initial fernet key.  User to adjust as required
-            with open(self.keyfile, 'w') as f:
+            with open(self.paths.keyfile, 'w') as f:
                 f.write("%s\n" % Fernet.generate_key().decode())
             # Ensure strict permissions
-            os.chmod(self.keyfile, 0o600)
+            os.chmod(self.paths.keyfile, 0o600)
 
-        if not os.path.isfile(self.local_env):
-            print("*** NOTE: Creating local environment file: '{}'".format(self.local_env))
+        if not os.path.isfile(self.paths.local_env):
+            print("*** NOTE: Creating local environment file: '{}'".format(self.paths.local_env))
             # Assume that the current python invocation is the path to the virtual env
-            with open(self.local_env, 'w') as f:
+            with open(self.paths.local_env, 'w') as f:
                 venv = os.path.dirname(os.path.dirname(sys.executable))
                 f.write("venv=%s\n" % venv)
 
@@ -381,16 +376,19 @@ class ALXapp:
 
         :return: The `configparser.ConfigParser` configuration
         """
+        if not hasattr(self, 'paths'):
+            self.paths = Paths("alx-common")
 
         # If the user configuration doesn't exist, create them
         if not all([
             os.path.isdir(self.paths.module_config_dir),
-            os.path.isfile(self.local_config),
-            os.path.isfile(self.keyfile),
-            os.path.isfile(self.local_env),]):
+            os.path.isfile(self.paths.local_config),
+            os.path.isfile(self.paths.keyfile),
+            os.path.isfile(self.paths.local_env),]):
             self._create_configuration_files()
 
-        merged_config = ALXapp.read_config(self.global_config, self.local_config)
+        merged_config = ALXapp.read_config(self.paths.global_config,
+                                           self.paths.local_config)
 
         return merged_config
 
@@ -452,16 +450,16 @@ class ALXapp:
         """Reads the key from `~/.config/alx/key` and uses it to encrypt and
          decrypt strings using the `cryptography` python module"""
 
-        if not os.path.exists(self.keyfile):
+        if not os.path.exists(self.paths.keyfile):
             self.logger.error("Could not open %s", self.keyfile)
             sys.exit(1)
-        st = os.stat(self.keyfile)
+        st = os.stat(self.paths.keyfile)
         if platform.system() != 'Windows' and int(oct(st.st_mode)[3:]) > 600:
             # Apologies to Windows users but your security is too messy
             self.logger.error("Check permissions on %s.  Too open", self.keyfile)
             sys.exit(1)
 
-        with open(self.keyfile) as k:
+        with open(self.paths.keyfile) as k:
             key = k.read().strip()
 
         fernet = Fernet(key)

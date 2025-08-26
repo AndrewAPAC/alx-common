@@ -25,7 +25,7 @@ class HtmlAlert:
         """
         self.environment = environment
         """Stores the environment passed"""
-        self.config = ALXapp.read_lib_config()
+        self.config = ALXapp.read_lib_config(self)
         """The module configuration read from `alx.ini`"""
         self.colours = json.loads(self.config.get("alert", "colours"))
         """The alert colours read from `alx.ini`"""

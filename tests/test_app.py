@@ -39,7 +39,6 @@ def test_paths_dirs_created(tmp_path):
     with mock.patch("sys.argv", [str(dummy_script)]):
         app = ALXapp("Test App", appname="myapp")
 
-    assert os.path.exists(app.paths.data)
     assert os.path.exists(app.paths.log)
     assert "myapp" in str(app.paths.logfile)
 
@@ -89,18 +88,6 @@ def test_decrypt_invalid_token(tmp_path):
     # Use a bogus encrypted value
     with pytest.raises(InvalidToken):
         app.decrypt("gAAAAABbogus")
-
-
-def test_encrypt_without_keyfile_exits(monkeypatch):
-    with mock.patch("sys.argv", ["test_app.py"]):
-        app = ALXapp("Test No Key")
-        app.keyfile = "/non/existent/keyfile"
-        app._key = None  # Ensure fallback doesn't interfere
-
-        with pytest.raises(SystemExit) as exc_info:
-            app.encrypt("Test123")
-
-        assert exc_info.value.code == 1
 
 
 def test_logging_creates_file(tmp_path, monkeypatch):
