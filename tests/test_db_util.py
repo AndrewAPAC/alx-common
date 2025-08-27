@@ -1,3 +1,8 @@
+# Copyright © 2019-2025 Andrew Lister
+# License: GNU General Public License v3.0 (see LICENSE file)
+#
+# pytest routines for alx.db_util
+
 import pytest
 from unittest.mock import MagicMock, call
 from alx.db_util import ALXdatabase  # Adjust import as needed

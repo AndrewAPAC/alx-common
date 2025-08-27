@@ -1,3 +1,7 @@
+# Copyright © 2019-2025 Andrew Lister
+# License: GNU General Public License v3.0 (see LICENSE file)
+#
+# Create plain and html emails.
 
 from alx.mail import ALXmail
 

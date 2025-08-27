@@ -1,3 +1,8 @@
+# Copyright © 2019-2025 Andrew Lister
+# License: GNU General Public License v3.0 (see LICENSE file)
+#
+# pytest routines for alx.itrs.toolkit
+
 import pytest
 from io import StringIO
 from unittest.mock import patch

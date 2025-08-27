@@ -1,4 +1,4 @@
-setuptools-git
+setuptools-scm
 setuptools
 cryptography
 DateTime

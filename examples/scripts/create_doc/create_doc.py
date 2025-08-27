@@ -1,3 +1,7 @@
+# Copyright © 2019-2025 Andrew Lister
+# License: GNU General Public License v3.0 (see LICENSE file)
+#
+# Demonstration of creating an html document without an ALXapp object.
 
 from alx.html import ALXhtml
 

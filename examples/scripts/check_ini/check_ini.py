@@ -1,3 +1,8 @@
+# Copyright © 2019-2025 Andrew Lister
+# License: GNU General Public License v3.0 (see LICENSE file)
+#
+# Demonstrate the ini file reading in different modes
+
 from alx.app import ALXapp
 from alx.strings import date_subst
 import os
@@ -16,7 +21,7 @@ def print_vars():
     print(sep)
 
 
-app = ALXapp("Demonstrate the ini file reading in dev mode")
+app = ALXapp("Demonstrate the ini file reading in different modes")
 
 print("Typically, you would create different installations of the code")
 print("like in /opt/local/env, where env is dev, test or prod")

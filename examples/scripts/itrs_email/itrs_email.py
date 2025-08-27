@@ -1,4 +1,7 @@
 #!/usr/bin/env python
+
+# Copyright © 2019-2025 Andrew Lister
+# License: GNU General Public License v3.0 (see LICENSE file)
 #
 # Generic script to allow ITRS to send email.  The recipients are passed
 # as sys.argv[1] and can can be comma or space separated.  If no recipients
