@@ -28,9 +28,9 @@ release:: test clean dist
 	@echo "Releasing version $(VERSION) with tag $(TAG_PREFIX)v$(VERSION)"
 	sed -i 's/^version = .*/version = "$(VERSION)"/' pyproject.toml
 	git diff --quiet pyproject.toml || git commit -m "Release $(VERSION)" pyproject.toml
-	git tag -f $(TAG_PREFIX)v$(VERSION)
+	git tag --force $(TAG_PREFIX)v$(VERSION)
 	git push origin main
-	git push origin $(TAG_PREFIX)v$(VERSION)
+	git push --force origin $(TAG_PREFIX)v$(VERSION)
 
 pypi:: release
 	twine upload -r pypi dist/*
