@@ -22,9 +22,8 @@ upload::
 release::
 	@echo "Releasing version $(VERSION)"
 	sed -i 's/^version = .*/version = "$(VERSION)"/' pyproject.toml
-	git add pyproject.toml
-	git commit -m "Release $(VERSION)" pyproject.toml
-	git tag -f v$(VERSION)
+	git diff --quiet pyproject.toml || git commit -m "Release $(VERSION)" pyproject.toml
+	git tag v$(VERSION)
 	git push origin main
 	git push origin v$(VERSION)
 
