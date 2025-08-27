@@ -142,3 +142,5 @@ Please refer to the files [in the examples directory](https://github.com/AndrewA
 * ![Downloads](https://static.pepy.tech/badge/alx-common)
 * ![Downloads per week](https://static.pepy.tech/badge/alx-common/week)
 * ![Downloads per month](https://static.pepy.tech/badge/alx-common/month)
+
+More at https://pepy.tech/projects/alx-common
