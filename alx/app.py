@@ -345,8 +345,9 @@ class ALXapp:
 
         if not os.path.isfile(self.paths.local_config):
             print("*** NOTE: Creating user config file '{}'".format(self.paths.local_config))
+            gc = ALXapp.read_config(self.paths.global_config)
             with open(self.paths.local_config, 'w') as f:
-                for s in ["DEFAULT", "logging", "mail", "alert", "html"]:
+                for s in gc.sections():
                     f.write("[%s]\n\n" % s)
 
         if not os.path.isfile(self.paths.keyfile):
