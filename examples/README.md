@@ -22,7 +22,7 @@ is installed it can be accessed with `pdoc alx`
 │   ├── encrypt -> start    # each script is a symlink to start
 │   └── start               # start script for all apps
 ├── data
-│   └── encrypt             # created at run time
+│   └── encrypt             # create if required
 ├── etc                     # holds the config (ini) files
 ├── log                     # created at run time
 │   └── encrypt
