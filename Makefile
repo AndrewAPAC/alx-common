@@ -1,3 +1,6 @@
+# Copyright © 2019-2025 Andrew Lister
+# License: GNU General Public License v3.0 (see LICENSE file)
+
 VERSION ?= $(error VERSION is required, e.g. make $@ VERSION=1.2.3)
 TAG_PREFIX ?=
 
