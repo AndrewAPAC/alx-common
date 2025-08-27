@@ -1,4 +1,5 @@
 VERSION ?= $(error VERSION is required, e.g. make $@ VERSION=1.2.3)
+TAG_PREFIX ?=
 
 test::
 	pytest tests
@@ -20,16 +21,16 @@ upload::
 	twine upload -r local dist/*
 
 release::
-	@echo "Releasing version $(VERSION)"
+	@echo "Releasing version $(VERSION) with tag $(TAG_PREFIX)v$(VERSION)"
 	sed -i 's/^version = .*/version = "$(VERSION)"/' pyproject.toml
-	git add pyproject.toml
-	git commit -m "Release $(VERSION)" pyproject.toml
-	git tag -f v$(VERSION)
+	git diff --quiet pyproject.toml || git commit -m "Release $(VERSION)" pyproject.toml
+	git tag -f $(TAG_PREFIX)v$(VERSION)
 	git push origin main
-	git push origin v$(VERSION)
+	git push origin $(TAG_PREFIX)v$(VERSION)
 
 pypi:: release
 	twine upload -r pypi dist/*
 
+testpypi:: TAG_PREFIX = test-
 testpypi:: release
 	twine upload -r testpypi dist/*
