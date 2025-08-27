@@ -13,17 +13,18 @@ clean::
 pip::
 	pip install --upgrade alx-common
 
-all:: clean test dist upload pip
+all:: upload pip
 
 install:: all
 
 dist:: clean
 	python -m build
 
-upload::
+upload:: TAG_PREFIX = local-
+upload:: release
 	twine upload -r local dist/*
 
-release::
+release:: test clean dist
 	@echo "Releasing version $(VERSION) with tag $(TAG_PREFIX)v$(VERSION)"
 	sed -i 's/^version = .*/version = "$(VERSION)"/' pyproject.toml
 	git diff --quiet pyproject.toml || git commit -m "Release $(VERSION)" pyproject.toml
