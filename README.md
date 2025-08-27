@@ -6,7 +6,7 @@
 ## Preamble
 
 On first invocation, if the directory `$HOME/.config/alx` 
-(or `%APPDATA%/alx` on Windows) is not found, then it is created 
+(or `%APPDATA%\alx` on Windows) is not found, then it is created 
 along with the following files:
 * `alx.ini`: The module configuration file which should be used to 
 override settings in the defaults found in `alx.ini` in the installed 
