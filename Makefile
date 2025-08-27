@@ -17,11 +17,11 @@ all:: dist upload pip
 
 install:: all
 
+dist:: TAG_PREFIX = local-
 dist:: clean test
 	python -m build
 
-upload:: TAG_PREFIX = local-
-upload:: release
+upload:: dist release
 	twine upload -r local dist/*
 
 release::
