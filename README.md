@@ -137,3 +137,7 @@ sys.exit(0)
 
 Please refer to the files [in the examples directory](https://github.com/AndrewAPAC/alx-common/tree/main/examples)
 
+## Stats for nerds
+
+![Downloads](https://static.pepy.tech/badge/alx-common)
+![Downloads per month](https://static.pepy.tech/badge/alx-common/month)
