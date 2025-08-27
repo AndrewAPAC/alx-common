@@ -140,4 +140,5 @@ Please refer to the files [in the examples directory](https://github.com/AndrewA
 ## Stats for nerds
 
 * ![Downloads](https://static.pepy.tech/badge/alx-common)
+* ![Downloads per week](https://static.pepy.tech/badge/alx-common/week)
 * ![Downloads per month](https://static.pepy.tech/badge/alx-common/month)
