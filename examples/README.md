@@ -5,18 +5,14 @@ use alx-common effectively. They should be run by using the
 script `run_examples`. The structure can be deployed
 anywhere as the location is determined dynamically.
 
-Points to note:
-* You will need to create some configuration files:
-  * `$HOME/.config/alx/env` with contents
-    * venv=<path/to/venv>
-  * `$HOME/.config/alx/key`
-    * Add the output from `python -c "from cryptography.fernet import Fernet; print(Fernet.generate_key().decode())"`
 * On the first run, a skeleton `alx.ini` file will be created
-in `$HOME/config/alx/alx.ini`. Any modified key will override the
-global values. You can even store your own if required.
+in `$HOME/config/alx/alx.ini` as described in the Preamble in 
+[README.md](https://github.com/AndrewAPAC/alx-common/blob/main/README.md).
+Any modified key will override the global values. You can even 
+store your own if required.
 * The directory structure is intended to be Unix like and
-is created in the ALXapp initialisation. Some directories
-may not be used.
+is created in the ALXapp initialisation. If a data directory is 
+required, it should be created manually.
 * Comprehensive documentation is included. Once the module
 is installed it can be accessed with `pdoc alx`
 
