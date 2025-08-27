@@ -139,5 +139,5 @@ Please refer to the files [in the examples directory](https://github.com/AndrewA
 
 ## Stats for nerds
 
-![Downloads](https://static.pepy.tech/badge/alx-common)
-![Downloads per month](https://static.pepy.tech/badge/alx-common/month)
+* ![Downloads](https://static.pepy.tech/badge/alx-common)
+* ![Downloads per month](https://static.pepy.tech/badge/alx-common/month)
