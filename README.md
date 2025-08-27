@@ -109,6 +109,30 @@ operation but now lives on in PyPI and GitHub!
     need to know internal details (`alx.itrs.toolkit.Toolkit`)
   - Standardised environment parsing (`alx.itrs.environment.Environment`)
 
+## Quick Start
+
+```python
+from alx.app import ALXapp
+import sys
+
+args = [
+    ['string'],
+    ['-d', '--decrypt', {'action': 'store_true', 'default': False}]
+]
+
+app = ALXapp("Password encryption tool", args=args)
+
+string = app.arguments.string
+
+if not app.arguments.decrypt:
+    string = app.encrypt(string)
+    print("Encrypted: " + string)
+
+print("Decrypted: " + app.decrypt(string))
+
+sys.exit(0)
+```
+
 ## Examples
 
 Please refer to the files [in the examples directory](https://github.com/AndrewAPAC/alx-common/tree/main/examples)
