@@ -1,6 +1,5 @@
 #!/bin/bash
 
-# Determine venv config location using XDG spec
 env_file="$HOME/.config/alx/env"
 
 if [ ! -f "$env_file" ]; then
