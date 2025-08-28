@@ -4,12 +4,10 @@
 env_file="$HOME/.config/alx/env"
 
 if [ ! -f "$env_file" ]; then
-    echo "Missing venv config at: $env_file"
-    echo
-    echo "Please create it and add:"
-    echo "    venv=/path/to/venv"
-    echo "Do not include /bin at the end"
-    exit 1
+    # Create this file for first use
+    line="venv=$(dirname $(dirname $(which python)))"
+    echo "NOTE: *** Creating $env_file with: $line"
+    echo $line > $env_file
 fi
 
 # Load the venv=... setting
