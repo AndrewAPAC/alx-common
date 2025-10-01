@@ -31,7 +31,7 @@ jobs:
 
       - name: Generate documentation
         run: |
-          pdoc alx_common -o docs/ --html
+          pdoc alx_common -o docs/
           # pdoc creates an extra subdirectory, so we move contents up
           if [ -d "docs/alx_common" ]; then
             mv docs/alx_common/* docs/
