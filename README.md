@@ -109,6 +109,12 @@ operation but now lives on in PyPI and GitHub!
     need to know internal details (`alx.itrs.toolkit.Toolkit`)
   - Standardised environment parsing (`alx.itrs.environment.Environment`)
 
+## Documentation
+
+Documentation exists inline in [pdoc](https://pdoc.dev/) format. Once the
+module is installed `pdoc alx` will display the fully formatted 
+documaentation in a browser window.
+
 ## Quick Start
 
 ```python
