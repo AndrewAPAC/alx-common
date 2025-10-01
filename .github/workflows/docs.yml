@@ -1,0 +1,57 @@
+name: Build and Deploy Documentation
+
+on:
+  push:
+    branches:
+      - main  # Change this if your default branch is different
+  workflow_dispatch:  # Allows manual triggering from Actions tab
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.10'
+
+      - name: Install dependencies
+        run: |
+          pip install pdoc
+          pip install -e .  # Install your package in editable mode
+
+      - name: Generate documentation
+        run: |
+          pdoc alx_common -o docs/ --html
+          # pdoc creates an extra subdirectory, so we move contents up
+          if [ -d "docs/alx_common" ]; then
+            mv docs/alx_common/* docs/
+            rmdir docs/alx_common
+          fi
+
+      - name: Upload artifact
+        uses: actions/upload-pages-artifact@v2
+        with:
+          path: ./docs
+
+  deploy:
+    needs: build
+    runs-on: ubuntu-latest
+
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+
+    steps:
+      - name: Deploy to GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v3
