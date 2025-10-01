@@ -39,7 +39,7 @@ jobs:
           fi
 
       - name: Upload artifact
-        uses: actions/upload-pages-artifact@v
+        uses: actions/upload-pages-artifact@v4
         with:
           path: ./docs
 
