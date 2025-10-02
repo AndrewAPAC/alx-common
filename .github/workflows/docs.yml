@@ -24,8 +24,10 @@ jobs:
           pip install -r requirements.txt
 
       - name: Build documentation
+        env:
+          PDOC: 1
         run: |
-          pdoc -o ./docs ./alx
+          pdoc --force -o ./docs ./alx
 
       - name: Deploy to GitHub Pages
         uses: peaceiris/actions-gh-pages@v4
