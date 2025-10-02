@@ -41,6 +41,8 @@ classifiers = [
 Homepage = "https://github.com/AndrewAPAC/alx-common"
 Examples = "https://github.com/AndrewAPAC/alx-common/tree/main/examples"
 Issues = "https://github.com/AndrewAPAC/alx-common/issues"
+Documentation = "https://andrewapac.github.io/alx-common/"
+Discussion = "https://github.com/AndrewAPAC/alx-common/discussions"
 
 [tool.setuptools.packages.find]
 where = ["."]
