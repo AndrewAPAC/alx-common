@@ -27,7 +27,7 @@ def test_run_select_returns_results(mock_db_util):
 
     assert result == [('a', 1), ('b', 2)]
     mock_db_util.cursor.execute.assert_called_once_with(sql)
-    mock_db_util.logger.info.assert_any_call("%d rows returned", 2)
+    mock_db_util.logger.debug.assert_any_call("%d rows returned", 2)
 
 
 def test_run_insert_returns_empty_list(mock_db_util):
@@ -39,7 +39,7 @@ def test_run_insert_returns_empty_list(mock_db_util):
 
     assert result == []
     mock_db_util.cursor.execute.assert_called_once_with(sql)
-    mock_db_util.logger.info.assert_any_call("%d rows affected", 1)
+    mock_db_util.logger.debug.assert_any_call("%d rows affected", 1)
 
 
 def test_run_logs_sql_formatting(mock_db_util):
