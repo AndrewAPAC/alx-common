@@ -24,7 +24,7 @@ dist:: clean test
 upload:: dist release
 	twine upload -r local dist/*
 
-release::
+release:: clean dist
 	@echo "Releasing version $(VERSION) with tag $(TAG_PREFIX)v$(VERSION)"
 	sed -i 's/^version = .*/version = "$(VERSION)"/' pyproject.toml
 	git diff --quiet pyproject.toml || git commit -m "Release $(VERSION)" pyproject.toml
