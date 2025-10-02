@@ -40,6 +40,7 @@ classifiers = [
 [project.urls]
 Homepage = "https://github.com/AndrewAPAC/alx-common"
 Examples = "https://github.com/AndrewAPAC/alx-common/tree/main/examples"
+Changelog = "https://github.com/AndrewAPAC/alx-common/blob/main/CHANGELOG.md"
 Issues = "https://github.com/AndrewAPAC/alx-common/issues"
 Documentation = "https://andrewapac.github.io/alx-common/"
 Discussion = "https://github.com/AndrewAPAC/alx-common/discussions"

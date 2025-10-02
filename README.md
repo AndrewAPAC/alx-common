@@ -144,6 +144,10 @@ sys.exit(0)
 
 Please refer to the files [in the examples directory](https://github.com/AndrewAPAC/alx-common/tree/main/examples)
 
+## Changelog
+
+See [CHANGELOG.md](CHANGELOG.md) for details of public releases.
+
 ## Stats for nerds
 
 * ![Downloads](https://static.pepy.tech/badge/alx-common)
