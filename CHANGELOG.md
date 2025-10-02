@@ -15,6 +15,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - Added CHANGELOG.md and updated supporting documentation / links
 
+### Fixed
+
+- Makefile dependency issues
+
 ## [2.8.2] - 2025-10-02
 
 ### Added

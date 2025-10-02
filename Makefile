@@ -17,17 +17,17 @@ all:: dist upload pip
 
 install:: all
 
-dist:: TAG_PREFIX = local-
 dist:: clean test
+	@echo "Building version $(VERSION)"
+	sed -i 's/^version = .*/version = "$(VERSION)"/' pyproject.toml
+	git diff --quiet pyproject.toml || git commit -m "Release $(VERSION)" pyproject.toml
 	python -m build
 
 upload:: dist release
 	twine upload -r local dist/*
 
-release:: clean dist
+release:: dist
 	@echo "Releasing version $(VERSION) with tag $(TAG_PREFIX)v$(VERSION)"
-	sed -i 's/^version = .*/version = "$(VERSION)"/' pyproject.toml
-	git diff --quiet pyproject.toml || git commit -m "Release $(VERSION)" pyproject.toml
 	git tag --force $(TAG_PREFIX)v$(VERSION)
 	git push origin main
 	git push --force origin $(TAG_PREFIX)v$(VERSION)
