@@ -8,7 +8,7 @@ test::
 	pytest tests
 
 clean::
-	rm -fr dist *egg-info doc build alx_common-*
+	rm -fr dist *egg-info docs build alx_common-*
 
 pip::
 	pip install --upgrade alx-common
