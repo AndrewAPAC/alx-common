@@ -23,7 +23,16 @@
 
             <h2>Contents</h2>
             <ul>
-  <li><a href="#alx-common">alx-common</a></li>
+  <li><a href="#alx-common">alx-common</a>
+  <ul>
+    <li><a href="#preamble">Preamble</a></li>
+    <li><a href="#summary">Summary</a></li>
+    <li><a href="#features">Features</a></li>
+    <li><a href="#documentation">Documentation</a></li>
+    <li><a href="#quick-start">Quick Start</a></li>
+    <li><a href="#examples">Examples</a></li>
+    <li><a href="#stats-for-nerds">Stats for nerds</a></li>
+  </ul></li>
 </ul>
 
 
@@ -56,6 +65,180 @@
 alx    </h1>
 
                         <div class="docstring"><h1 id="alx-common">alx-common</h1>
+
+<p><strong>A comprehensive Python framework for infrastructure automation, monitoring, and reporting. Designed to standardize common development tasks and eliminate code duplication in production environments.</strong></p>
+
+<hr />
+
+<h2 id="preamble">Preamble</h2>
+
+<p>On first invocation, if the directory <code>$HOME/.config/alx</code> 
+(or <code>%APPDATA%\alx</code> on Windows) is not found, then it is created 
+along with the following files:</p>
+
+<ul>
+<li><code>alx.ini</code>: The module configuration file which should be used to 
+override settings in the defaults found in <code>alx.ini</code> in the installed 
+module directory</li>
+<li><code>env</code>: This file contains the path to the virtual environment in use
+and is set to the current python used to execute a script using 
+<code>alx-common</code></li>
+<li><code>key</code>: An encryption key used to encrypt and decrypt strings. If
+there are multiple developers, then it is wise to share the key so
+the configuration file can remain consistent. <em>This file must be stored
+readable only by the user and not shared</em>. The command to create a key is:</li>
+</ul>
+
+<pre><code>python -c "from cryptography.fernet import Fernet; print(Fernet.generate_key().decode())"
+</code></pre>
+
+<p>These files can (and should) be modified to suit your needs. For example,
+changing <code>alx.ini</code> and adding </p>
+
+<pre><code>[mail]
+from:   Application User &lt;valid@email.address&gt;
+</code></pre>
+
+<p>would be a good idea.</p>
+
+<hr />
+
+<h2 id="summary">Summary</h2>
+
+<p><strong>alx-common</strong> provides a consistent foundation for building reliable internal applications that deal with:</p>
+
+<ul>
+<li>✅ Configuration management</li>
+<li>✅ Argument parsing</li>
+<li>✅ Different environment handling: dev, test, prod</li>
+<li>✅ Secure password, etc. handling with encryption</li>
+<li>✅ Logging (including file rotation, maximum size and console output)</li>
+<li>✅ Database utilities (MySQL, MariaDB, SQLite, PostgreSQL)</li>
+<li>✅ HTML report generation</li>
+<li>✅ Email notifications (plain, HTML, attachments, inline images)</li>
+<li>✅ Monitoring integrations (ITRS Geneos support)</li>
+<li>✅ Lightweight internal automation tools</li>
+</ul>
+
+<p>Originally designed to simplify and standardize automation scripts, 
+reporting jobs, monitoring pipelines, and operational tooling across 
+real-world production environments.  The aim of <code>alx-common</code> is to 
+reduce hard coding and duplication of snippets. </p>
+
+<p>Too many times, I have seen developers share code to 'send an email'.
+Then the <code>mailhost</code> changes and there are 200 scripts to fix. Or
+a shell script is copied and something edited to create a wrapper
+to start a python script. Or the same code is used over and over to 
+set up logging or read a configuration file coupled with a lot of hard
+coding an inconsistencies.</p>
+
+<p>Bad practice is endemic in the developer community as there are too
+many coders adopting a cut-and-paste mentality.</p>
+
+<p>The name comes from my company, ALX Solutions which is no longer in 
+operation but now lives on in PyPI and GitHub!</p>
+
+<hr />
+
+<h2 id="features">Features</h2>
+
+<ul>
+<li><h3 id="application-framework-alxappalxapp">Application Framework (<code><a href="alx/app.html#ALXapp">alx.app.ALXapp</a></code>)</h3>
+
+<ul>
+<li>Simplified argparse-based CLI definition</li>
+<li>Config-driven parameter management (<code>alx.ini</code>)</li>
+<li>Environment separation (dev/test/prod)</li>
+<li>Secure password storage (Fernet encryption)</li>
+<li>Dynamic path management (logs, data, config)</li>
+<li>Application configuration automatically parsed 
+and stored in <code><a href="alx/app.html#ALXapp">alx.app.ALXapp</a></code> object</li>
+<li>Centralized logger management handled providing
+automatic house-keeping based on configuration</li>
+</ul></li>
+<li><h3 id="database-utilities-alxdb_utilalxdatabase">Database Utilities (<code><a href="alx/db_util.html#ALXdatabase">alx.db_util.ALXdatabase</a></code>)</h3>
+
+<ul>
+<li>Simplifies open source database access</li>
+<li>Auto-formatted SQL logging</li>
+<li>Centralized connection lifecycle</li>
+<li>Transaction management</li>
+<li>Simplified execution mechanism</li>
+</ul></li>
+<li><h3 id="reporting-alxhtmlalxhtml">Reporting (<code><a href="alx/html.html#ALXhtml">alx.html.ALXhtml</a></code>)</h3>
+
+<ul>
+<li>Easy HTML generation</li>
+<li>Promotes tidy and consistent code</li>
+</ul></li>
+<li><h3 id="email-creation-alxmailalxmail">Email creation (<code><a href="alx/mail.html#ALXmail">alx.mail.ALXmail</a></code>)</h3>
+
+<ul>
+<li>Supports plaintext and html formats</li>
+<li>Easy email formatting and sending</li>
+<li>Flexible</li>
+<li>Integrated with SMTP servers, attachments, and inline images</li>
+</ul></li>
+<li><h3 id="string-manipulation-stringspy">String manipulation (<code>strings.py</code>)</h3>
+
+<ul>
+<li>Commonly used string manipulation routines</li>
+</ul></li>
+<li><h3 id="itrs-geneos-alerts-alxitrsalerthtmlalert">ITRS Geneos Alerts (<code><a href="alx/itrs/alert.html#HtmlAlert">alx.itrs.alert.HtmlAlert</a></code>)</h3>
+
+<ul>
+<li>Provides a consistent way to parse the environment on an event</li>
+<li>A standard alert in html / table format</li>
+<li>A class to create a toolkit sampler without the
+need to know internal details (<code><a href="alx/itrs/toolkit.html#Toolkit">alx.itrs.toolkit.Toolkit</a></code>)</li>
+<li>Standardised environment parsing (<code><a href="alx/itrs/environment.html#Environment">alx.itrs.environment.Environment</a></code>)</li>
+</ul></li>
+</ul>
+
+<h2 id="documentation">Documentation</h2>
+
+<p>Documentation exists inline in <a href="https://pdoc.dev/">pdoc</a> format. Once the
+module is installed <code>pdoc alx</code> will display the fully formatted 
+documaentation in a browser window.</p>
+
+<h2 id="quick-start">Quick Start</h2>
+
+<div class="pdoc-code codehilite">
+<pre><span></span><code><span class="kn">from</span><span class="w"> </span><span class="nn"><a href="alx/app.html">alx.app</a></span><span class="w"> </span><span class="kn">import</span> <span class="n">ALXapp</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">sys</span>
+
+<span class="n">args</span> <span class="o">=</span> <span class="p">[</span>
+    <span class="p">[</span><span class="s1">&#39;string&#39;</span><span class="p">],</span>
+    <span class="p">[</span><span class="s1">&#39;-d&#39;</span><span class="p">,</span> <span class="s1">&#39;--decrypt&#39;</span><span class="p">,</span> <span class="p">{</span><span class="s1">&#39;action&#39;</span><span class="p">:</span> <span class="s1">&#39;store_true&#39;</span><span class="p">,</span> <span class="s1">&#39;default&#39;</span><span class="p">:</span> <span class="kc">False</span><span class="p">}]</span>
+<span class="p">]</span>
+
+<span class="n">app</span> <span class="o">=</span> <span class="n">ALXapp</span><span class="p">(</span><span class="s2">&quot;Password encryption tool&quot;</span><span class="p">,</span> <span class="n">args</span><span class="o">=</span><span class="n">args</span><span class="p">)</span>
+
+<span class="n">string</span> <span class="o">=</span> <span class="n">app</span><span class="o">.</span><span class="n">arguments</span><span class="o">.</span><span class="n">string</span>
+
+<span class="k">if</span> <span class="ow">not</span> <span class="n">app</span><span class="o">.</span><span class="n">arguments</span><span class="o">.</span><span class="n">decrypt</span><span class="p">:</span>
+    <span class="n">string</span> <span class="o">=</span> <span class="n">app</span><span class="o">.</span><span class="n">encrypt</span><span class="p">(</span><span class="n">string</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Encrypted: &quot;</span> <span class="o">+</span> <span class="n">string</span><span class="p">)</span>
+
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Decrypted: &quot;</span> <span class="o">+</span> <span class="n">app</span><span class="o">.</span><span class="n">decrypt</span><span class="p">(</span><span class="n">string</span><span class="p">))</span>
+
+<span class="n">sys</span><span class="o">.</span><span class="n">exit</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
+</code></pre>
+</div>
+
+<h2 id="examples">Examples</h2>
+
+<p>Please refer to the files <a href="https://github.com/AndrewAPAC/alx-common/tree/main/examples">in the examples directory</a></p>
+
+<h2 id="stats-for-nerds">Stats for nerds</h2>
+
+<ul>
+<li><img src="https://static.pepy.tech/badge/alx-common" alt="Downloads" /></li>
+<li><img src="https://static.pepy.tech/badge/alx-common/week" alt="Downloads per week" /></li>
+<li><img src="https://static.pepy.tech/badge/alx-common/month" alt="Downloads per month" /></li>
+</ul>
+
+<p>More at <a href="https://pepy.tech/projects/alx-common">https://pepy.tech/projects/alx-common</a></p>
 </div>
 
                         <input id="mod-alx-view-source" class="view-source-toggle-state" type="checkbox" aria-hidden="true" tabindex="-1">
