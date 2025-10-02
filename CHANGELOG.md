@@ -9,7 +9,15 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+
+## Added
+- Github Actions to build and publish wheel and tar.gz
+## Changed
 - Changed library logging to level `DEBUG`
+## Deprecated
+## Removed
+## Fixed
+## Security
 
 ## [2.8.3] - 2025-10-02
 

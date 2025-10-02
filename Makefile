@@ -3,6 +3,7 @@
 
 VERSION ?= $(error VERSION is required, e.g. make $@ VERSION=1.2.3)
 TAG_PREFIX ?=
+TAG_SUFFIX ?=
 
 test::
 	pytest tests
@@ -13,28 +14,47 @@ clean::
 pip::
 	pip install --upgrade alx-common
 
-all:: dist upload pip
+# Check for uncommitted changes
+check-clean:
+	@CHANGED=$$(git diff --name-only); \
+	STAGED=$$(git diff --cached --name-only); \
+	if [ -n "$$CHANGED" ] || [ -n "$$STAGED" ]; then \
+		echo "-------------------------------------------"; \
+		echo "Error: you have uncommitted changes!"; \
+		if [ -n "$$CHANGED" ]; then \
+			echo "Modified/unstaged files:"; \
+			echo "$$CHANGED"; \
+		fi; \
+		if [ -n "$$STAGED" ]; then \
+			echo "Staged but uncommitted files:"; \
+			echo "$$STAGED"; \
+		fi; \
+		echo "-------------------------------------------"; \
+		exit 1; \
+	fi
 
-install:: all
+local:: clean
+	python -m build
+	twine upload -r local dist/*
+	pip install --index-url http://pypi:8083/simple alx-common
 
-dist:: clean test
+dist:: clean check-clean test
 	@echo "Building version $(VERSION)"
 	sed -i 's/^version = .*/version = "$(VERSION)"/' pyproject.toml
 	git diff --quiet pyproject.toml || git commit -m "Release $(VERSION)" pyproject.toml
-	python -m build
-
-upload:: dist release
-	twine upload -r local dist/*
 
 release:: dist
-	@echo "Releasing version $(VERSION) with tag $(TAG_PREFIX)v$(VERSION)"
-	git tag --force $(TAG_PREFIX)v$(VERSION)
+	@echo "Releasing version $(VERSION) with tag $(TAG)"
+	git tag $(TAG)
 	git push origin main
-	git push --force origin $(TAG_PREFIX)v$(VERSION)
+	git push origin $(TAG)
 
+pypi:: TAG=v$(VERSION)
 pypi:: release
-	twine upload -r pypi dist/*
 
-testpypi:: TAG_PREFIX = test-
-testpypi:: release
-	twine upload -r testpypi dist/*
+testpypi::
+	@SUFFIX=$$(date +%Y%m%d%H%M); \
+	TEST_VERSION=$(VERSION).dev$$SUFFIX; \
+	TAG=v$$TEST_VERSION; \
+	echo "Building test version $$TEST_VERSION"; \
+	$(MAKE) VERSION=$$TEST_VERSION TAG=$$TAG release
