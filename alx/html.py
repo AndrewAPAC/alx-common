@@ -257,8 +257,6 @@ class ALXhtml:
             self.body += "    <t%s>%s</t%s>\n" % (tag, str(value), tag)
         else:
             self.body += "    <t%s style='%s'>%s</t%s>\n" % (tag, style, str(value), tag)
-        self.logger.debug("Row: %d, Column: %d (%s)", self._current_row,
-                          self._current_column, str(value))
         self._current_column += 1
 
     def add_cells(self, values: list, tag: str = 'd', style: str = "") -> None:

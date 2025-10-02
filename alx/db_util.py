@@ -185,10 +185,10 @@ class ALXdatabase:
             raise
 
         if sql.lower().startswith("select"):
-            self.logger.info("%d rows returned", self.cursor.rowcount)
+            self.logger.debug("%d rows returned", self.cursor.rowcount)
             return self.cursor.fetchall()
 
-        self.logger.info("%d rows affected", self.cursor.rowcount)
+        self.logger.debug("%d rows affected", self.cursor.rowcount)
         return []
 
     def commit(self):
