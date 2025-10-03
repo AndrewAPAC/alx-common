@@ -9,19 +9,32 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Added
+### Changed
+### Deprecated
+### Removed
+### Fixed
+### Security
 
-## Added
-- Github Actions to build and publish wheel and tar.gz
-## Changed
+
+## [2.8.4] - 2025-10-03
+
+### Added
+- Github Actions to build and publish wheel and tar.gz for 
+https://test.pypi.org/project/alx-common/ and 
+https://pypi.org/project/alx-common/
+- New Makefile targets for `testpypi` and `pypi`
+
+### Changed
 - Changed library logging to level `DEBUG`
-## Deprecated
-## Removed
-## Fixed
-## Security
+### Deprecated
+### Removed
+### Fixed
+### Security
 
 ## [2.8.3] - 2025-10-02
 
-## Added
+### Added
 
 - Added CHANGELOG.md and updated supporting documentation / links
 
