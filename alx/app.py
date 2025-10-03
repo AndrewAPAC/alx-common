@@ -74,7 +74,7 @@ class Paths:
         else:
             return os.path.join(os.path.expanduser("~"), ".config", "alx")
 
-    def _create_configuration_files(self) -> None:
+    def create_configuration_files(self) -> None:
         """
         Create some initial configuration files
 
@@ -381,7 +381,7 @@ class ALXapp:
             self.paths = Paths("alx-common")
 
         # If the user configuration doesn't exist, create them
-        self.paths._create_configuration_files()
+        self.paths.create_configuration_files()
 
         merged_config = ALXapp.read_config(self.paths.global_config,
                                            self.paths.local_config)

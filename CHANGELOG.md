@@ -28,8 +28,11 @@ https://pypi.org/project/alx-common/
 - Moved `alx.app._create_configuration_files()` to `alx.app.Paths`
 to further remove need for ALXapp instantiation in 
 `alx.html.ALXhtml()`
+- Renamed `_create_configuration_files` to `create_configuration_files`
 
 ### Fixed
+
+- `test_alert.py` failure due to config files not existing
 
 ## [2.8.3] - 2025-10-02
 
