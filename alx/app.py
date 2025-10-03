@@ -20,7 +20,8 @@ from collections import OrderedDict
 class Paths:
     def __init__(self, appname: str, inifile: str = None) -> None:
         """
-        A class to hold the default paths for the application
+        A class to hold the default paths for the application. These values are
+        all determined from the installation location of the calling script.
 
         If the `data` is needed, it must be created manually to avoid unnecessary
         data directories.
@@ -50,20 +51,24 @@ class Paths:
         self.top = os.path.join(self.root, "scripts", basename)
         """The location of the application scripts: `root/scripts/app`"""
         self.module_config_dir = self.get_module_config_dir()
-        """The location of the module ini, key and env files"""
+        """The location of the `keyfile`, `local_env` and `local_config` files"""
         self.keyfile = os.path.join(self.module_config_dir, "key")
         """The file from where to obtain the key: `~/.config/alx/key` or
-        `%APPDATA%\\alx\\key` on Windows"""
+        `%APPDATA%\\alx\\key` on Windows. This file holds the `cryptography`
+        key for use with `ALXapp.decrypt` and `ALXapp.encrypt`"""
         self.local_env = os.path.join(self.module_config_dir, "env")
-        """The path to the venv in use: `~/.config/alx/env`"""
+        """The path to the environment to be used in use: `~/.config/alx/env`.
+        Typically it only holds the python venv to be used:
+        - `venv=/path/to/venv/current`"""
         self.local_config = os.path.join(self.module_config_dir, "alx.ini")
-        """The path to the local configuration: `~/.config/alx/alx.ini`"""
+        """The path to the local configuration: `~/.config/alx/alx.ini`. Entries
+        in this file will override those of the global configuration"""
         self.global_config = os.path.join(
             os.path.dirname(os.path.abspath(__file__)), "alx.ini")
         """The path to the module configuration: `<venv>/lib/.../site-packages/alx/alx.ini`"""
 
         self.config = os.path.join(self.etc, appname + ".ini")
-        """The name of the config file determined from `self.etc`/app"""
+        """The name of the config file determined from `self.etc/app.ini`"""
         if inifile:
             self.config = os.path.join(self.etc, inifile)
 
