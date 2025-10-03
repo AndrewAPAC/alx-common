@@ -11,11 +11,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 ### Changed
-### Deprecated
-### Removed
 ### Fixed
-### Security
-
 
 ## [2.8.4] - 2025-10-03
 
@@ -24,13 +20,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 https://test.pypi.org/project/alx-common/ and 
 https://pypi.org/project/alx-common/
 - New Makefile targets for `testpypi` and `pypi`
+- Check for checked out files when building pypi target
 
 ### Changed
 - Changed library logging to level `DEBUG`
-### Deprecated
-### Removed
 ### Fixed
-### Security
 
 ## [2.8.3] - 2025-10-02
 

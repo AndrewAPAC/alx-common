@@ -38,7 +38,7 @@ local:: clean
 	twine upload -r local dist/*
 	pip install --index-url http://pypi:8083/simple alx-common
 
-dist:: clean check-clean test
+dist:: clean test
 	@echo "Building version $(VERSION)"
 	sed -i 's/^version = .*/version = "$(VERSION)"/' pyproject.toml
 	git diff --quiet pyproject.toml || git commit -m "Release $(VERSION)" pyproject.toml
@@ -50,7 +50,7 @@ release:: dist
 	git push origin $(TAG)
 
 pypi:: TAG=v$(VERSION)
-pypi:: release
+pypi:: check-clean release
 
 testpypi::
 	@SUFFIX=$$(date +%Y%m%d%H%M); \
