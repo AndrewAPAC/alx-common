@@ -146,7 +146,7 @@ Please refer to the files [in the examples directory](https://github.com/AndrewA
 
 ## Changelog
 
-See [CHANGELOG.md](CHANGELOG.md) for details of public releases.
+See [CHANGELOG](https://github.com/AndrewAPAC/alx-common/blob/main/CHANGELOG.md) for details of public releases.
 
 ## Stats for nerds
 
