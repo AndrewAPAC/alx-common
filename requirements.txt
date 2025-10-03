@@ -5,6 +5,7 @@ DateTime
 build
 sql-formatter
 humanize
+twine
 pytest
 unidecode
 requests
