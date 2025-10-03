@@ -76,7 +76,11 @@ class Paths:
 
     def create_configuration_files(self) -> None:
         """
-        Create some initial configuration files
+        Create some initial configuration files under `module_config_dir`.
+        Descriptions of the files are above:
+        - `local_env`
+        - `local_config`
+        - `keyfile`
 
         :return: None
         """
