@@ -25,6 +25,9 @@ https://pypi.org/project/alx-common/
 ### Changed
 - Changed library logging to level `DEBUG`
 - Use trusted publishing instead of API tokens
+- Moved `alx.app._create_configuration_files()` to `alx.app.Paths`
+to further remove need for ALXapp instantiation in 
+`alx.html.ALXhtml()`
 
 ### Fixed
 
@@ -76,8 +79,7 @@ are overridden from installed `alx.ini`
 ### Fixed
 
 - Changed `ALXapp.read_lib_config()` to not require an entire `ALXapp`
-class to be instantiated if oit has not been already
-
+class to be instantiated if it has not been already
 
 ## [2.7.6] - 2025-08-25
 

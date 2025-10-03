@@ -74,6 +74,36 @@ class Paths:
         else:
             return os.path.join(os.path.expanduser("~"), ".config", "alx")
 
+    def _create_configuration_files(self) -> None:
+        """
+        Create some initial configuration files
+
+        :return: None
+        """
+        os.makedirs(self.module_config_dir, exist_ok=True)
+
+        if not os.path.isfile(self.local_config):
+            print("*** NOTE: Creating user config file '{}'".format(self.local_config))
+            gc = ALXapp.read_config(self.global_config)
+            with open(self.local_config, 'w') as f:
+                for s in gc.sections():
+                    f.write("[%s]\n\n" % s)
+
+        if not os.path.isfile(self.keyfile):
+            print("*** NOTE: Creating key file '{}'".format(self.keyfile))
+            # Create an initial fernet key.  User to adjust as required
+            with open(self.keyfile, 'w') as f:
+                f.write("%s\n" % Fernet.generate_key().decode())
+            # Ensure strict permissions
+            os.chmod(self.keyfile, 0o600)
+
+        if not os.path.isfile(self.local_env):
+            print("*** NOTE: Creating local environment file: '{}'".format(self.local_env))
+            # Assume that the current python invocation is the path to the virtual env
+            with open(self.local_env, 'w') as f:
+                venv = os.path.dirname(os.path.dirname(sys.executable))
+                f.write("venv=%s\n" % venv)
+
     def __str__(self) -> str:
         return "\n".join(f"{k}: {v}" for k, v in vars(self).items() if isinstance(v, str))
 
@@ -335,36 +365,6 @@ class ALXapp:
 
         return config
 
-    def _create_configuration_files(self) -> None:
-        """
-        Create some initial configuration files
-
-        :return: None
-        """
-        os.makedirs(self.paths.module_config_dir, exist_ok=True)
-
-        if not os.path.isfile(self.paths.local_config):
-            print("*** NOTE: Creating user config file '{}'".format(self.paths.local_config))
-            gc = ALXapp.read_config(self.paths.global_config)
-            with open(self.paths.local_config, 'w') as f:
-                for s in gc.sections():
-                    f.write("[%s]\n\n" % s)
-
-        if not os.path.isfile(self.paths.keyfile):
-            print("*** NOTE: Creating key file '{}'".format(self.paths.keyfile))
-            # Create an initial fernet key.  User to adjust as required
-            with open(self.paths.keyfile, 'w') as f:
-                f.write("%s\n" % Fernet.generate_key().decode())
-            # Ensure strict permissions
-            os.chmod(self.paths.keyfile, 0o600)
-
-        if not os.path.isfile(self.paths.local_env):
-            print("*** NOTE: Creating local environment file: '{}'".format(self.paths.local_env))
-            # Assume that the current python invocation is the path to the virtual env
-            with open(self.paths.local_env, 'w') as f:
-                venv = os.path.dirname(os.path.dirname(sys.executable))
-                f.write("venv=%s\n" % venv)
-
     def read_lib_config(self) -> configparser.ConfigParser:
         """
         Reads and parses the module configuration file and the local
@@ -386,7 +386,7 @@ class ALXapp:
             os.path.isfile(self.paths.local_config),
             os.path.isfile(self.paths.keyfile),
             os.path.isfile(self.paths.local_env),]):
-            self._create_configuration_files()
+            self.paths._create_configuration_files()
 
         merged_config = ALXapp.read_config(self.paths.global_config,
                                            self.paths.local_config)
