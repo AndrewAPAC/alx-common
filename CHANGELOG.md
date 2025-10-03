@@ -24,6 +24,8 @@ https://pypi.org/project/alx-common/
 
 ### Changed
 - Changed library logging to level `DEBUG`
+- Use trusted publishing instead of API tokens
+
 ### Fixed
 
 ## [2.8.3] - 2025-10-02
