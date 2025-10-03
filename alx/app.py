@@ -381,12 +381,7 @@ class ALXapp:
             self.paths = Paths("alx-common")
 
         # If the user configuration doesn't exist, create them
-        if not all([
-            os.path.isdir(self.paths.module_config_dir),
-            os.path.isfile(self.paths.local_config),
-            os.path.isfile(self.paths.keyfile),
-            os.path.isfile(self.paths.local_env),]):
-            self.paths._create_configuration_files()
+        self.paths._create_configuration_files()
 
         merged_config = ALXapp.read_config(self.paths.global_config,
                                            self.paths.local_config)
