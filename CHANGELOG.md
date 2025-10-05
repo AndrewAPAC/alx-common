@@ -48,7 +48,8 @@ to further remove need for ALXapp instantiation in
 ## [2.8.2] - 2025-10-02
 
 ### Added
-- GitHub Actions workflow to automatically build and deploy pdoc documentation to GitHub Pages.
+- GitHub Actions workflow to automatically build and deploy pdoc 
+  documentation to GitHub Pages: https://andrewapac.github.io/alx-common
 - README.md displayed as landing page in generated docs.
 - `alx.__init__.py` sets `__doc__` based on PDOC environment variable.
 
