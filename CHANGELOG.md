@@ -11,6 +11,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 ### Changed
+- Show sql params in `db_utils.run` if passed
 ### Fixed
 - README.md link to CHANGELOG.md
 

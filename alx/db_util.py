@@ -166,6 +166,10 @@ class ALXdatabase:
             log = "%s:\n%s" % (name, format_sql(sql))
         else:
             log = format_sql(sql)
+
+        if params:
+            log += "\nParams: %s" % (format(params))
+
         self.logger.debug(log)
 
         try:
