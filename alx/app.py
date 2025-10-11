@@ -183,7 +183,9 @@ class ALXapp:
             ["-s", "--start", {"default": None, "type": str,
                                "help": "The first date from which to retrieve prices"}],
             ["-g", "--gui", {"action": "store_true", "default": False,
-                             "help": "Display the browser."}]
+                             "help": "Display the browser."}],
+            ["locations", {nargs='*', default=[],
+                           "help": "List of locations"}]
         ]
         ```
         but you can just use this trimmed down version to store the
@@ -258,7 +260,7 @@ class ALXapp:
         self.start_logging()
 
     @staticmethod
-    def parse_config(obj: object, config: configparser.SectionProxy):
+    def parse_config(obj: object, config: configparser.SectionProxy) -> object:
         """
         Parses the `config` and stores in `obj` as the appropriate type.
         It works out if it is a boolean, float, integer or string. If
@@ -315,10 +317,12 @@ class ALXapp:
          values (usually `self`)
         :param config: The `configparser` object.  It can be a section
         like `config[app.environment]`
+
+        :return: The object with typed configuration attributes added
         """
 
         try:
-            for item in config:
+            for item, value in config.items():
                 # Add all the config values as string values in the app
                 value = config.get(item)
                 if '$data' in value:
@@ -353,6 +357,44 @@ class ALXapp:
         except Exception:
             raise
 
+        return obj
+
+    def parse_config_section(self, obj, config, include_defaults=False) -> object:
+        """
+        Parse a config file section and store it in the object `obj`. This is
+        a wrapper for the `staticmethod` `parse_config` function and may be
+        deprecated in a future release.
+
+        :param obj: An object in which to store the configuration
+        :param config: The configparser object.  It can be a section
+         like `config[app.environment]`
+        :param include_defaults: Whether the values in the `[DEFAULT]` should
+        be parsed.
+
+        :return: The object with typed configuration attributes added
+        """
+
+        if include_defaults:
+            items = config.items()
+        else:
+            # Get keys that are explicitly defined in the section (not from defaults)
+            section_keys = set(self.config.options(config.name)) - set(self.config.defaults().keys())
+
+            items = {}
+            for key in config:
+                # Include only keys that are explicitly in this section
+                if key in section_keys:
+                    items[key] = config[key]
+                # Or keys in defaults that are overridden (have different values)
+                elif key in self.config.defaults() and config[key] != self.config.defaults()[key]:
+                    items[key] = config[key]
+                else:
+                    # First default-only key, stop
+                    break
+
+        # Reuse the existing parsing logic
+        return self.parse_config(obj, items)
+
     @staticmethod
     def read_config(filename: str, filename2: str = None):
         """
@@ -384,7 +426,7 @@ class ALXapp:
         On first invocation, the user files are checked and created if
         they don't exist.
 
-        :return: The `configparser.ConfigParser` configuration
+        :return: The merge `configparser.ConfigParser` configuration
         """
         if not hasattr(self, 'paths'):
             self.paths = Paths("alx-common")

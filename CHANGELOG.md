@@ -10,6 +10,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [Unreleased]
 
 ### Added
+- Added `parse_config_section` to parse a section of the config file
+without including the `[DEFAULT]` keys
 ### Changed
 - Show sql params in `db_utils.run` if passed
 ### Fixed
@@ -18,7 +20,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [2.8.4] - 2025-10-03
 
 ### Added
-- Github Actions to build and publish wheel and tar.gz for 
+- GitHub Actions to build and publish wheel and tar.gz for 
 https://test.pypi.org/project/alx-common/ and 
 https://pypi.org/project/alx-common/
 - New Makefile targets for `testpypi` and `pypi`
