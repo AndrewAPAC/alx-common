@@ -538,8 +538,8 @@
 </span><span id="L-362"><a href="#L-362"><span class="linenos">362</span></a>    <span class="k">def</span><span class="w"> </span><span class="nf">parse_config_section</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">obj</span><span class="p">,</span> <span class="n">config</span><span class="p">,</span> <span class="n">include_defaults</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">object</span><span class="p">:</span>
 </span><span id="L-363"><a href="#L-363"><span class="linenos">363</span></a><span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 </span><span id="L-364"><a href="#L-364"><span class="linenos">364</span></a><span class="sd">        Parse a config file section and store it in the object `obj`. This is</span>
-</span><span id="L-365"><a href="#L-365"><span class="linenos">365</span></a><span class="sd">        a wrapper for the `staticmethod` `parse_config` function and may be</span>
-</span><span id="L-366"><a href="#L-366"><span class="linenos">366</span></a><span class="sd">        deprecated in a future release.</span>
+</span><span id="L-365"><a href="#L-365"><span class="linenos">365</span></a><span class="sd">        a wrapper for `parse_config` function to maintain compatibility</span>
+</span><span id="L-366"><a href="#L-366"><span class="linenos">366</span></a><span class="sd">        with `ALXapp.parse_config`.</span>
 </span><span id="L-367"><a href="#L-367"><span class="linenos">367</span></a>
 </span><span id="L-368"><a href="#L-368"><span class="linenos">368</span></a><span class="sd">        :param obj: An object in which to store the configuration</span>
 </span><span id="L-369"><a href="#L-369"><span class="linenos">369</span></a><span class="sd">        :param config: The configparser object.  It can be a section</span>
@@ -1492,8 +1492,8 @@ Descriptions of the files are above:</p>
 </span><span id="ALXapp-363"><a href="#ALXapp-363"><span class="linenos">363</span></a>    <span class="k">def</span><span class="w"> </span><span class="nf">parse_config_section</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">obj</span><span class="p">,</span> <span class="n">config</span><span class="p">,</span> <span class="n">include_defaults</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">object</span><span class="p">:</span>
 </span><span id="ALXapp-364"><a href="#ALXapp-364"><span class="linenos">364</span></a><span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 </span><span id="ALXapp-365"><a href="#ALXapp-365"><span class="linenos">365</span></a><span class="sd">        Parse a config file section and store it in the object `obj`. This is</span>
-</span><span id="ALXapp-366"><a href="#ALXapp-366"><span class="linenos">366</span></a><span class="sd">        a wrapper for the `staticmethod` `parse_config` function and may be</span>
-</span><span id="ALXapp-367"><a href="#ALXapp-367"><span class="linenos">367</span></a><span class="sd">        deprecated in a future release.</span>
+</span><span id="ALXapp-366"><a href="#ALXapp-366"><span class="linenos">366</span></a><span class="sd">        a wrapper for `parse_config` function to maintain compatibility</span>
+</span><span id="ALXapp-367"><a href="#ALXapp-367"><span class="linenos">367</span></a><span class="sd">        with `ALXapp.parse_config`.</span>
 </span><span id="ALXapp-368"><a href="#ALXapp-368"><span class="linenos">368</span></a>
 </span><span id="ALXapp-369"><a href="#ALXapp-369"><span class="linenos">369</span></a><span class="sd">        :param obj: An object in which to store the configuration</span>
 </span><span id="ALXapp-370"><a href="#ALXapp-370"><span class="linenos">370</span></a><span class="sd">        :param config: The configparser object.  It can be a section</span>
@@ -2277,8 +2277,8 @@ like <code>config[app.environment]</code></li>
             <div class="pdoc-code codehilite"><pre><span></span><span id="ALXapp.parse_config_section-363"><a href="#ALXapp.parse_config_section-363"><span class="linenos">363</span></a>    <span class="k">def</span><span class="w"> </span><span class="nf">parse_config_section</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">obj</span><span class="p">,</span> <span class="n">config</span><span class="p">,</span> <span class="n">include_defaults</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">object</span><span class="p">:</span>
 </span><span id="ALXapp.parse_config_section-364"><a href="#ALXapp.parse_config_section-364"><span class="linenos">364</span></a><span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 </span><span id="ALXapp.parse_config_section-365"><a href="#ALXapp.parse_config_section-365"><span class="linenos">365</span></a><span class="sd">        Parse a config file section and store it in the object `obj`. This is</span>
-</span><span id="ALXapp.parse_config_section-366"><a href="#ALXapp.parse_config_section-366"><span class="linenos">366</span></a><span class="sd">        a wrapper for the `staticmethod` `parse_config` function and may be</span>
-</span><span id="ALXapp.parse_config_section-367"><a href="#ALXapp.parse_config_section-367"><span class="linenos">367</span></a><span class="sd">        deprecated in a future release.</span>
+</span><span id="ALXapp.parse_config_section-366"><a href="#ALXapp.parse_config_section-366"><span class="linenos">366</span></a><span class="sd">        a wrapper for `parse_config` function to maintain compatibility</span>
+</span><span id="ALXapp.parse_config_section-367"><a href="#ALXapp.parse_config_section-367"><span class="linenos">367</span></a><span class="sd">        with `ALXapp.parse_config`.</span>
 </span><span id="ALXapp.parse_config_section-368"><a href="#ALXapp.parse_config_section-368"><span class="linenos">368</span></a>
 </span><span id="ALXapp.parse_config_section-369"><a href="#ALXapp.parse_config_section-369"><span class="linenos">369</span></a><span class="sd">        :param obj: An object in which to store the configuration</span>
 </span><span id="ALXapp.parse_config_section-370"><a href="#ALXapp.parse_config_section-370"><span class="linenos">370</span></a><span class="sd">        :param config: The configparser object.  It can be a section</span>
@@ -2313,8 +2313,8 @@ like <code>config[app.environment]</code></li>
 
 
             <div class="docstring"><p>Parse a config file section and store it in the object <code>obj</code>. This is
-a wrapper for the <code>staticmethod</code> <code><a href="#ALXapp.parse_config">parse_config</a></code> function and may be
-deprecated in a future release.</p>
+a wrapper for <code><a href="#ALXapp.parse_config">parse_config</a></code> function to maintain compatibility
+with <code><a href="#ALXapp.parse_config">ALXapp.parse_config</a></code>.</p>
 
 <h6 id="parameters">Parameters</h6>
 
