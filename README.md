@@ -1,7 +1,9 @@
 # alx-common
 
-**A comprehensive Python framework for infrastructure automation, monitoring, and reporting. Designed to standardize common development tasks and eliminate code duplication in production environments.**
-
+**A comprehensive Python framework for infrastructure automation, monitoring,
+and reporting. Designed to standardize common development tasks, directory
+structure and eliminate code duplication in development, test and
+production environments.**
 ---
 ## Preamble
 
