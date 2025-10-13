@@ -362,8 +362,8 @@ class ALXapp:
     def parse_config_section(self, obj, config, include_defaults=False) -> object:
         """
         Parse a config file section and store it in the object `obj`. This is
-        a wrapper for the `staticmethod` `parse_config` function and may be
-        deprecated in a future release.
+        a wrapper for `parse_config` function to maintain compatibility
+        with `ALXapp.parse_config`.
 
         :param obj: An object in which to store the configuration
         :param config: The configparser object.  It can be a section
