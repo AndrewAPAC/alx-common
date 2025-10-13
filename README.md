@@ -28,9 +28,9 @@ changing `alx.ini` and adding
 
 ```
 [mail]
-from:   Application User <valid@email.address>
+from:       Application User <valid@email.address>
+server:     your.mailhost.org
 ```
-
 would be a good idea.
 
 ---
