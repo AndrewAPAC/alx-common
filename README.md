@@ -1,6 +1,9 @@
 # alx-common
 
-**A comprehensive Python framework for infrastructure automation, monitoring, and reporting. Designed to standardize common development tasks and eliminate code duplication in production environments.**
+A comprehensive Python framework for infrastructure automation, 
+monitoring, and reporting. Designed to standardize common development 
+tasks and eliminate code duplication in dev, test and production
+environments.
 
 ---
 ## Preamble
@@ -59,7 +62,7 @@ Then the `mailhost` changes and there are 200 scripts to fix. Or
 a shell script is copied and something edited to create a wrapper
 to start a python script. Or the same code is used over and over to 
 set up logging or read a configuration file coupled with a lot of hard
-coding an inconsistencies.
+coding and inconsistencies.
 
 Bad practice is endemic in the developer community as there are too
 many coders adopting a cut-and-paste mentality.
@@ -102,12 +105,13 @@ operation but now lives on in PyPI and GitHub!
 - ### String manipulation (`strings.py`)
   - Commonly used string manipulation routines
 
-- ### ITRS Geneos Alerts (`alx.itrs.alert.HtmlAlert`)
+- ### ITRS Geneos Utilities (`alx.itrs`)
   - Provides a consistent way to parse the environment on an event
-  - A standard alert in html / table format
-  - A class to create a toolkit sampler without the
+    (`alx.itrs.environment.Environment`)
+  - A standard alert in html / table format (`alx.itrs.alert.HtmlAlert`)
+  - A class to create a [Geneos toolkit sampler](https://docs.itrsgroup.com/docs/geneos/7.6.0/collection/toolkit-plugin/index.html) without the
     need to know internal details (`alx.itrs.toolkit.Toolkit`)
-  - Standardised environment parsing (`alx.itrs.environment.Environment`)
+  - Standardised environment parsing 
 
 ## Documentation
 
@@ -155,3 +159,9 @@ See [CHANGELOG](https://github.com/AndrewAPAC/alx-common/blob/main/CHANGELOG.md)
 * ![Downloads per month](https://static.pepy.tech/badge/alx-common/month)
 
 More at https://pepy.tech/projects/alx-common
+
+## Resources
+
+* PyPI: https://pypi.org/project/alx-common/
+* GitHub: https://github.com/AndrewAPAC/alx-common
+* Documentation: https://andrewapac.github.io/alx-common/

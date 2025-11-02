@@ -16,6 +16,7 @@ without including the `[DEFAULT]` keys
 - Show sql params in `db_utils.run` if passed
 ### Fixed
 - README.md link to CHANGELOG.md
+- Tidied up and corrected some documentation
 
 ## [2.8.4] - 2025-10-03
 
