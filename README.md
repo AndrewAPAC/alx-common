@@ -31,9 +31,9 @@ changing `alx.ini` and adding
 
 ```
 [mail]
-from:   Application User <valid@email.address>
+from:       Application User <valid@email.address>
+server:     your.mailhost.org
 ```
-
 would be a good idea.
 
 ---
@@ -117,8 +117,8 @@ operation but now lives on in PyPI and GitHub!
 
 Documentation exists inline in [pdoc](https://pdoc.dev/) format. Once the
 module is installed `pdoc alx` will display the fully formatted 
-documaentation in a browser window.  It is also generated in
-`html` format at https://andrewapac.github.io/alx-common
+documaentation in a browser window.  It is also generated in html 
+format at https://andrewapac.github.io/alx-common
 
 ## Quick Start
 
