@@ -33,6 +33,14 @@ check-clean:
 		exit 1; \
 	fi
 
+check-branch:
+	@BRANCH=$$(git rev-parse --abbrev-ref HEAD); \
+	if [ "$$BRANCH" != "main" ]; then \
+		echo "Error: You must be on 'main' branch to release!"; \
+		echo "Current branch: $$BRANCH"; \
+		exit 1; \
+	fi
+
 local:: clean
 	python -m build
 	twine upload -r local dist/*
@@ -50,7 +58,7 @@ release:: dist
 	git push origin $(TAG)
 
 pypi:: TAG=v$(VERSION)
-pypi:: check-clean release
+pypi:: check-branch check-clean release
 
 testpypi::
 	@SUFFIX=$$(date +%Y%m%d%H%M); \
