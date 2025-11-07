@@ -359,7 +359,8 @@ class ALXapp:
 
         return obj
 
-    def parse_config_section(self, obj, config, include_defaults=False) -> object:
+    def parse_config_section(self, obj: object, config: configparser.SectionProxy,
+                             include_defaults: bool = False) -> object:
         """
         Parse a config file section and store it in the object `obj`. This is
         a wrapper for `parse_config` function to maintain compatibility
@@ -375,26 +376,33 @@ class ALXapp:
         """
 
         if include_defaults:
-            items = config.items()
+            return self.parse_config(obj, config)
         else:
             # Get keys that are explicitly defined in the section (not from defaults)
-            section_keys = set(self.config.options(config.name)) - set(self.config.defaults().keys())
+            section_keys = (set(self.config.options(config.name)) -
+                            set(self.config.defaults().keys()))
 
-            items = {}
-            for key in config:
-                # Include only keys that are explicitly in this section
-                if key in section_keys:
-                    items[key] = config[key]
-                # Or keys in defaults that are overridden (have different values)
-                elif key in self.config.defaults() and config[key] != self.config.defaults()[key]:
-                    items[key] = config[key]
-                else:
-                    # First default-only key, stop
-                    break
+            # Also include keys from defaults that have been overridden (different values)
+            for key in self.config.defaults().keys():
+                if key in config:
+                    default_value = self.config.defaults()[key]
+                    section_value = self.config.get(config.name, key, raw=True)
+                    if default_value != section_value:
+                        section_keys.add(key)
 
-        # Reuse the existing parsing logic
-        return self.parse_config(obj, items)
+            # Create a new ConfigParser with the same interpolation as the original
+            section_config = configparser.ConfigParser()
+            section_config.add_section('section')
 
+            for key in section_keys:
+                if key in config:
+                    # Get the raw value to preserve %% escaping
+                    raw_value = self.config.get(config.name, key, raw=True)
+                    section_config.set('section', key, raw_value)
+
+            # Pass the new SectionProxy to parse_config
+            return self.parse_config(obj, section_config['section'])
+        
     @staticmethod
     def read_config(filename: str, filename2: str = None):
         """

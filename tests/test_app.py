@@ -111,3 +111,128 @@ def test_logging_creates_file(tmp_path, monkeypatch):
 
         log_content = app.paths.logfile.read_text()
         assert "Test log entry" in log_content
+
+
+# At the top of the file, add OrderedDict to imports (it's already there, but make sure):
+from collections import OrderedDict
+
+
+# Fix test_parse_config_section_without_defaults
+def test_parse_config_section_without_defaults(tmp_path):
+    """Test parsing with include_defaults=False"""
+    cfg = tmp_path / "test.ini"
+    cfg.write_text("""
+[DEFAULT]
+default_value = from_default
+shared_value = default_shared
+loglevel = INFO
+
+[test_section]
+shared_value = section_override
+section_only = test_value
+""")
+
+    with mock.patch("sys.argv", ["test_app.py"]):
+        app = ALXapp("Test App")
+        app.config = ALXapp.read_config(str(cfg))
+
+        obj = type('TestObj', (), {})()
+        result = app.parse_config_section(
+            obj,
+            app.config['test_section'],
+            include_defaults=False
+        )
+
+        # Should NOT include default_value (only in DEFAULT)
+        assert not hasattr(result, 'default_value')
+
+        # shared_value is overridden in test_section, so it SHOULD be included
+        assert hasattr(result, 'shared_value')
+        assert result.shared_value == 'section_override'
+
+        # Should include section-specific values
+        assert result.section_only == 'test_value'
+
+        # Should NOT include values only in DEFAULT
+        assert not hasattr(result, 'loglevel')
+
+
+# Fix test_parse_config_section_type_conversion - add import check
+def test_parse_config_section_type_conversion(tmp_path):
+    """Test that values are converted to correct types"""
+    from collections import OrderedDict  # Add this line
+
+    cfg = tmp_path / "test.ini"
+    cfg.write_text("""
+[test_section]
+boolean_value = True
+float_value = 3.14
+int_value = 100
+json_list = [1, 2, 3, 4]
+json_dict = {"key": "value", "number": 123}
+string_value = hello
+""")
+
+    with mock.patch("sys.argv", ["test_app.py"]):
+        app = ALXapp("Test App")
+        app.config = ALXapp.read_config(str(cfg))
+
+        obj = type('TestObj', (), {})()
+        result = app.parse_config_section(
+            obj,
+            app.config['test_section'],
+            include_defaults=False
+        )
+
+        # Boolean
+        assert isinstance(result.boolean_value, bool)
+        assert result.boolean_value is True
+
+        # Float
+        assert isinstance(result.float_value, float)
+        assert result.float_value == 3.14
+
+        # Integer
+        assert isinstance(result.int_value, int)
+        assert result.int_value == 100
+
+        # JSON list
+        assert isinstance(result.json_list, list)
+        assert result.json_list == [1, 2, 3, 4]
+
+        # JSON dict (should be OrderedDict)
+        assert isinstance(result.json_dict, OrderedDict)
+        assert result.json_dict['key'] == 'value'
+
+        # String
+        assert isinstance(result.string_value, str)
+        assert result.string_value == 'hello'
+
+
+# Fix test_parse_config_section_data_path_expansion
+def test_parse_config_section_data_path_expansion(tmp_path):
+    """Test that $data is expanded correctly"""
+    cfg = tmp_path / "test.ini"
+    cfg.write_text("""
+[test_section]
+path_value = $data/output.txt
+""")
+
+    with mock.patch("sys.argv", ["test_app.py"]):
+        app = ALXapp("Test App", appname="testapp")
+        app.config = ALXapp.read_config(str(cfg))
+
+        obj = type('TestObj', (), {})()
+        obj.paths = app.paths
+
+        result = app.parse_config_section(
+            obj,
+            app.config['test_section'],
+            include_defaults=False
+        )
+
+        # Check that $data was replaced and path ends correctly
+        assert '$data' not in result.path_value
+        assert result.path_value.endswith('output.txt')
+        # Check that it contains the data directory path
+        assert str(app.paths.data) in result.path_value
