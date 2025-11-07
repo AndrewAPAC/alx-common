@@ -4,7 +4,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "alx-common"
-version = "2.8.5-fix"
+version = "2.8.6"
 description = "An application framework promoting consistency and centralising common tasks"
 readme = {file = "README.md", content-type = "text/markdown"}
 requires-python = ">=3.10"
