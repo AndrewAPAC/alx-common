@@ -4,15 +4,10 @@
 # pytest routines for alx.app
 
 import os
-import tempfile
-import configparser
 import pytest
 from unittest import mock
 from alx.app import ALXapp, Paths
 from cryptography.fernet import Fernet, InvalidToken
-import tempfile
-import logging
-import stat
 
 
 def test_app_sets_environment_dev_by_default():
@@ -113,10 +108,6 @@ def test_logging_creates_file(tmp_path, monkeypatch):
         assert "Test log entry" in log_content
 
 
-# At the top of the file, add OrderedDict to imports (it's already there, but make sure):
-from collections import OrderedDict
-
-
 # Fix test_parse_config_section_without_defaults
 def test_parse_config_section_without_defaults(tmp_path):
     """Test parsing with include_defaults=False"""
@@ -170,6 +161,7 @@ float_value = 3.14
 int_value = 100
 json_list = [1, 2, 3, 4]
 json_dict = {"key": "value", "number": 123}
+json_strings = ["percentage %%", "value1", "value2"]
 string_value = hello
 """)
 
@@ -207,6 +199,9 @@ string_value = hello
         # String
         assert isinstance(result.string_value, str)
         assert result.string_value == 'hello'
+
+        # Interpolation
+        assert "percentage %" in result.json_strings
 
 
 # Fix test_parse_config_section_data_path_expansion

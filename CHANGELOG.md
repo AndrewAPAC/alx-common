@@ -10,13 +10,26 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [Unreleased]
 
 ### Added
+
+### Changed
+
+### Fixed
+
+## [2.8.5] - 2025-11-07
+
+### Added
 - Added `parse_config_section` to parse a section of the config file
 without including the `[DEFAULT]` keys
+- More tests for `parse_config_section`
+
 ### Changed
 - Show sql params in `db_utils.run` if passed
+
 ### Fixed
 - README.md link to CHANGELOG.md
 - Tidied up and corrected some documentation
+- A type mismatch in `parse_config_section` resulted in an exception
+when calling `config.getboolean()`
 
 ## [2.8.4] - 2025-10-03
 
