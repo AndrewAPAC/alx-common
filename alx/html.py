@@ -112,6 +112,12 @@ class ALXhtml:
         """
         self.body += "<hr>\n"
 
+    def add_break(self) -> None:
+        """
+        Adds a horizontal line
+        """
+        self.body += "<br>\n"
+
     def add_paragraph(self, paragraph: str) -> None:
         """
         Adds a paragraph of text
