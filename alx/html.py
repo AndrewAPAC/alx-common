@@ -114,7 +114,7 @@ class ALXhtml:
 
     def add_break(self) -> None:
         """
-        Adds a horizontal line
+        Adds a break
         """
         self.body += "<br>\n"
 
