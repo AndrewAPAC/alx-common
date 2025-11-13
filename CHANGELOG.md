@@ -7,14 +7,22 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - The first public release was 2.7.5 on August 25, 2025
 
-## [Unreleased]
+## [2.8.7] - 2025-11-13
 
 ### Added
-- Added `alx.html.add_break`
 
 ### Changed
 
 ### Fixed
+
+- `db_util.run` only returned values for a select statement - added with and
+statements with `returning`.  Other statements returning values will need
+to be handled independently.
+
+
+## [2.8.6] - 2025-11-07
+
+Released from dev branch.  Fix in place to prevent again. Version was yanked.
 
 ## [2.8.5] - 2025-11-07
 
