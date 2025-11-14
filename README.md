@@ -16,7 +16,7 @@ override settings in the defaults found in `alx.ini` in the installed
 module directory
 * `env`: This file contains the path to the virtual environment in use
 and is set to the current python used to execute a script using 
-`alx-common`
+`alx-common`.  The file is used [in a standardised start script](https://github.com/AndrewAPAC/alx-common/blob/main/examples/bin/start) that should be used to make best use of the module.
 * `key`: An encryption key used to encrypt and decrypt strings. If
 there are multiple developers, then it is wise to share the key so
 the configuration file can remain consistent. *This file must be stored
