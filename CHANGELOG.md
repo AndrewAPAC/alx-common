@@ -15,7 +15,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Fixed
 
-## [2.8.6] - 2025-11-13
+## [2.8.7] - 2025-11-13
 
 ### Added
 
@@ -29,7 +29,7 @@ to be handled independently as they are mostly command line functions.
 
 ## [2.8.6] - 2025-11-07
 
-Released from dev branch.  Fix in place to prevent again. Version was yanked.
+Released from dev branch.  Fix in place to prevent again. 2.8.5 was yanked.
 
 ## [2.8.5] - 2025-11-07
 
