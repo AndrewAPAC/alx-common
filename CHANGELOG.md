@@ -7,7 +7,15 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - The first public release was 2.7.5 on August 25, 2025
 
-## [2.8.8] - 
+## [2.8.9] - Unreleased
+
+### Added
+
+### Changed
+
+### Fixed
+
+## [2.8.8] - 2026-01-01
 
 ### Added
 
