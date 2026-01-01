@@ -7,9 +7,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - The first public release was 2.7.5 on August 25, 2025
 
-## [Unreleased] - 
+## [2.8.8] - 
 
 ### Added
+
+- New html routines: `add_code(), add_pre()` and `add_blockquote()`
 
 ### Changed
 

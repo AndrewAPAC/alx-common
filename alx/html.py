@@ -322,6 +322,25 @@ class ALXhtml:
         """
         self.body += value + "\n"
 
+    def add_pre(self, text: str) -> None:
+        """
+        Add preformatted text to the html
+        """
+        self.body += "<pre>\n" + text + "\n</pre>\n"
+
+    def add_code(self, code: str) -> None:
+        """
+        Add a block of code to the html. The code parameter should be a
+        multiline string
+        """
+        self.body += "<pre><code>\n" + code + "\n</code></pre>\n"
+
+    def add_blockquote(self, quote: str) -> None:
+        """
+        Add an HTML blockquote.
+        """
+        self.body += "<blockquote>\n" + quote + "\n</blockquote>\n"
+
     def add_url(self, target: str, text: str = None) -> None:
         """
         Add a url to the object that will be displayed as a clickable link
