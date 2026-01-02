@@ -49,6 +49,11 @@ class HtmlAlert:
         html.add_cell("Severity")
         html.add_cell(e.severity.title(), style=self.style)
         html.end_row()
+        html.start_row()
+        html.add_cell("Value")
+        html.add_cell("%s %s is %s" % (e.rowname, e.column, e.value),
+                      style=self.style)
+        html.end_row()
         html.add_row(["Gateway", e.gateway])
         html.add_row(["Application", e.application])
         html.add_row(["Location", e.location])
