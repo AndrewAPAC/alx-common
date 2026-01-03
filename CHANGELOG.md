@@ -13,6 +13,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changed
 
+- There were a `Dataview` spanned column heading in the html generated
+by `alx.itrs.alert.py`. It was unnecessary. Moved the `Value` row to right
+under the `Severity` row so a small change visually.
+
 ### Fixed
 
 ## [2.8.8] - 2026-01-01
