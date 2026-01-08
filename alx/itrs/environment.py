@@ -59,6 +59,7 @@ class Environment:
         If it is a headline variable, then it is set to `_HEADLINE`"""
         if not self.rowname:
             self.rowname = os.getenv("_HEADLINE")
+            self.headline = self.rowname
         self.column = os.getenv("_COLUMN")
         """The value of the environment variable `_COLUMN` -
         The column name of the dataview cell the data-item belongs to (if any)."""
@@ -78,6 +79,9 @@ class Environment:
         self.host = os.getenv("_NETPROBE_HOST")
         """The value of the environment variable `_NETPROBE_HOST` -
         The hostname of the probe the data-item belongs to (if any). """
+        self.netprobe_host = os.getenv("_NETPROBE_HOST")
+        """The value of the environment variable `_NETPROBE_HOST` -
+        The hostname of the probe the data-item belongs to (if any). """
         self.probe = os.getenv("_PROBE")
         """The value of the environment variable `_PROBE` -
         The name of the probe the data-item belongs to (if any)."""
@@ -90,6 +94,9 @@ class Environment:
         Converted to lower case"""
         self.severity = self.severity.lower()
         self.path = os.getenv("_VARIABLEPATH")
+        """The value of the environment variable `_VARIABLEPATH` - The full gateway path 
+        to the data-item."""
+        self.variablepath = os.getenv("_VARIABLEPATH")
         """The value of the environment variable `_VARIABLEPATH` - The full gateway path 
         to the data-item."""
         self.assignee_email = os.getenv("_ASSIGNEE_EMAIL")
