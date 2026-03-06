@@ -16,6 +16,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - There were a `Dataview` spanned column heading in the html generated
 by `alx.itrs.alert.py`. It was unnecessary.
 - Using the cursor description in `db_util.py` is a better way of determing return values
+- Added a newline when printing SQL statements to the log - easier to read
 
 ### Fixed
 

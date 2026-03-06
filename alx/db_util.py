@@ -165,7 +165,7 @@ class ALXdatabase:
         if name:
             log = "%s:\n%s" % (name, format_sql(sql))
         else:
-            log = format_sql(sql)
+            log = format_sql("\n" + sql)
 
         if params:
             log += "\nParams: %s" % (format(params))
