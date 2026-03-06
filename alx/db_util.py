@@ -188,16 +188,14 @@ class ALXdatabase:
             self.logger.error('SQL execution failed: %s', e)
             raise
 
-        statement = sql.lower()
-        if statement.startswith("select") or \
-            statement.startswith("with") and "select" in statement or \
-            "returning" in statement:
-            # There are other statements like call, execute  values, show
-            # and explain that are not handled
-            self.logger.debug("%d rows returned", self.cursor.rowcount)
-            return self.cursor.fetchall()
+        if self.cursor.description is not None:
+            rows = self.cursor.fetchall()
+            self.logger.debug("%d rows returned", len(rows))
+            return rows
 
-        self.logger.debug("%d rows affected", self.cursor.rowcount)
+        if self.cursor.rowcount >= 0:
+            self.logger.debug("%d rows affected", self.cursor.rowcount)
+
         return []
 
     def commit(self):
