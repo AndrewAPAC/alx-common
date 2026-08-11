@@ -56,6 +56,7 @@ class HtmlAlert:
         html.add_row(["Date", date_subst(self.date_format)])
         html.add_row(["Managed Entity", e.managed_entity])
         html.add_row(["Sampler", e.sampler])
+        html.add_row(["Dataview", e.dataview])
         html.start_row()
         html.add_cell("Value")
         html.add_cell("%s %s is %s" % (e.rowname, e.column, e.value),

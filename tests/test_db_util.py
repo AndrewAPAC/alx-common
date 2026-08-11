@@ -33,7 +33,7 @@ def test_run_select_returns_results(mock_db_util):
 def test_run_insert_returns_empty_list(mock_db_util):
     mock_db_util.cursor.execute.return_value = None
     mock_db_util.cursor.rowcount = 1
-
+    mock_db_util.cursor.description = None
     sql = "INSERT INTO test_table VALUES (1, 'x')"
     result = mock_db_util.run(sql, name="insert_test")
 
@@ -83,6 +83,7 @@ def test_run_with_params(mock_db_util):
 def test_run_with_executemany(mock_db_util):
     sql = "INSERT INTO test_table (id) VALUES (%s)"
     mock_db_util.cursor.rowcount = 2
+    mock_db_util.cursor.description = None
     params = [(1,), (2,)]
 
     result = mock_db_util.run(sql, params=params, multi=True, name="bulk_insert")

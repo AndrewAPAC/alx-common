@@ -27,7 +27,7 @@ from typing import Union
 
 
 class ALXmail(ALXhtml):
-    def __init__(self, mail_type: str = "html") -> None:
+    def __init__(self, mail_type: str="html") -> None:
         """
         Class to send itrs_email - both text and HTML (default). It is a subclass
         of `alx.html.ALXhtml` to allow simple HTML mail composition. Configuration
@@ -72,6 +72,8 @@ class ALXmail(ALXhtml):
         """User for connection to the smtp server"""
         self.smtp_password = self.config.get("mail", "password", fallback="")
         """Password for connection to the smtp server"""
+        self.smtp_timeout = self.config.getint("mail", "timeout", fallback=5)
+        """Timeout for connection to the smtp server"""
         self.recipients = []
         """A list of recipients"""
         self.cc = []
@@ -313,7 +315,8 @@ class ALXmail(ALXhtml):
 
         while count < self.smtp_retries:
             try:
-                self.server = smtplib.SMTP(self.mailhost, self.smtp_port)
+                self.server = smtplib.SMTP(self.mailhost, self.smtp_port,
+                                           timeout=self.smtp_timeout)
                 if self.smtp_use_tls:
                     self.server.starttls()
                 if self.smtp_user:
@@ -331,6 +334,29 @@ class ALXmail(ALXhtml):
                     raise
                 else:
                     sleep(self.smtp_delay)
+
+    def test_connection(self) -> bool:
+        """
+        Attempts a single connection to the configured SMTP server to
+        verify connectivity and credentials, without sending a message.
+        Unlike `send()`, this does not retry - any exception raised by
+        the connection attempt propagates immediately.
+
+        :return: True if the connection (and optional STARTTLS/login)
+         succeeded
+        """
+        server = smtplib.SMTP(self.mailhost, self.smtp_port, timeout=10)
+        try:
+            server.ehlo()
+            if self.smtp_use_tls:
+                server.starttls()
+                server.ehlo()
+            if self.smtp_user:
+                server.login(self.smtp_user, self.smtp_password)
+        finally:
+            server.quit()
+
+        return True
 
     def _get_mime_message(self) -> Message:
         """
