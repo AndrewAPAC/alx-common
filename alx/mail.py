@@ -60,6 +60,18 @@ class ALXmail(ALXhtml):
         """Used for naming multiple image attachments"""
         self.mailhost = self.config.get("mail", "server")
         """The hostname of the smtp server. Configured in alx.ini"""
+        self.smtp_retries = self.config.getint("mail", "retries", fallback=6)
+        """The number of retries to attempt if a connection failure"""
+        self.smtp_delay = self.config.getint("mail", "delay", fallback=5)
+        """The delay between retries in seconds"""
+        self.smtp_port = self.config.getint("mail", "port", fallback=25)
+        """The smtp port to use. Default is 25"""
+        self.smtp_use_tls = self.config.getboolean("mail", "tls", fallback=False)
+        """If the connection is secure and requires tls communication"""
+        self.smtp_user = self.config.get("mail", "user", fallback="")
+        """User for connection to the smtp server"""
+        self.smtp_password = self.config.get("mail", "password", fallback="")
+        """Password for connection to the smtp server"""
         self.recipients = []
         """A list of recipients"""
         self.cc = []
@@ -213,6 +225,56 @@ class ALXmail(ALXhtml):
 
         return content_id
 
+    def set_smtp_server(self, server: str) -> None:
+        """
+        Sets the hostname of the smtp server, overriding the value from `alx.ini`
+
+        :param server: The smtp server hostname
+        """
+        self.mailhost = server
+
+    def set_smtp_port(self, port: int) -> None:
+        """
+        Sets the smtp port, overriding the value from `alx.ini`
+
+        :param port: The smtp port
+        """
+        self.smtp_port = port
+
+    def set_tls(self, use_tls: bool = True) -> None:
+        """
+        Sets whether the connection to the smtp server uses STARTTLS,
+        overriding the value from `alx.ini`
+
+        :param use_tls: True to use STARTTLS. Default is True
+        """
+        self.smtp_use_tls = use_tls
+
+    def set_smtp_credentials(self, user: str, password: str) -> None:
+        """
+        Sets the username and password used to authenticate to the
+        smtp server, overriding the values from `alx.ini`. If user is
+        left blank, no authentication is attempted
+
+        :param user: The smtp username
+        :param password: The smtp password
+        """
+        self.smtp_user = user
+        self.smtp_password = password
+
+    def set_smtp_retries(self, retries: int, delay: int = None) -> None:
+        """
+        Sets the number of send attempts and, optionally, the delay
+        between them, overriding the values from `alx.ini`
+
+        :param retries: The number of times to attempt sending
+        :param delay: The delay in seconds between attempts. If not
+         given, the existing delay is left unchanged
+        """
+        self.smtp_retries = retries
+        if delay is not None:
+            self.smtp_delay = delay
+
     def send(self) -> None:
         """
         Sends the message. It firsts constructs the email message
@@ -247,13 +309,15 @@ class ALXmail(ALXhtml):
             body = self.body + "\n"
             self.message.set_content(body)
 
-        retries = self.config.getint("mail", "retries")
-        delay = self.config.getint("mail", "delay")
         count = 0
 
-        while count < retries:
+        while count < self.smtp_retries:
             try:
-                self.server = smtplib.SMTP(self.mailhost)
+                self.server = smtplib.SMTP(self.mailhost, self.smtp_port)
+                if self.smtp_use_tls:
+                    self.server.starttls()
+                if self.smtp_user:
+                    self.server.login(self.smtp_user, self.smtp_password)
                 self.server.send_message(self.message)
                 self.server.quit()
                 return
@@ -263,10 +327,10 @@ class ALXmail(ALXhtml):
                     SMTPResponseException, SMTPSenderRefused,
                     SMTPServerDisconnected) as ex:
                 count += 1
-                if count == loop:
-                    raise type(ex).__name__(format(ex))
+                if count == self.smtp_retries:
+                    raise
                 else:
-                    sleep(delay)
+                    sleep(self.smtp_delay)
 
     def _get_mime_message(self) -> Message:
         """
