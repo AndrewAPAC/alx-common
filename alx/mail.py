@@ -72,7 +72,7 @@ class ALXmail(ALXhtml):
         """User for connection to the smtp server"""
         self.smtp_password = self.config.get("mail", "password", fallback="")
         """Password for connection to the smtp server"""
-        self.smtp_timeout = self.config.getint("mail", "timeout", fallback=5)
+        self.smtp_timeout = self.config.getint("mail", "timeout", fallback=10)
         """Timeout for connection to the smtp server"""
         self.recipients = []
         """A list of recipients"""
@@ -264,7 +264,7 @@ class ALXmail(ALXhtml):
         self.smtp_user = user
         self.smtp_password = password
 
-    def set_smtp_retries(self, retries: int, delay: int = None) -> None:
+    def set_smtp_retries(self, retries: int, delay: int=5) -> None:
         """
         Sets the number of send attempts and, optionally, the delay
         between them, overriding the values from `alx.ini`
@@ -276,6 +276,15 @@ class ALXmail(ALXhtml):
         self.smtp_retries = retries
         if delay is not None:
             self.smtp_delay = delay
+
+    def set_smtp_timeout(self, timeout: int) -> None:
+        """
+        Sets the connection timeout in seconds, overriding the value
+        from `alx.ini`
+
+        :param timeout: The timeout in seconds
+        """
+        self.smtp_timeout = timeout
 
     def send(self) -> None:
         """
@@ -345,7 +354,8 @@ class ALXmail(ALXhtml):
         :return: True if the connection (and optional STARTTLS/login)
          succeeded
         """
-        server = smtplib.SMTP(self.mailhost, self.smtp_port, timeout=10)
+        server = smtplib.SMTP(self.mailhost, self.smtp_port,
+                              timeout=self.smtp_timeout)
         try:
             server.ehlo()
             if self.smtp_use_tls:

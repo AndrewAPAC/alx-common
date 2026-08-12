@@ -85,7 +85,7 @@ def test_send_plain_email(monkeypatch):
     sent_messages = {}
 
     class DummySMTP:
-        def __init__(self, host, port=25, timeout: int = None):
+        def __init__(self, host, port= 25, timeout: int = None):
             self.host = host
             self.port = port
         def send_message(self, msg):
