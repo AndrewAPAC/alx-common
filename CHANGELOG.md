@@ -7,9 +7,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - The first public release was 2.7.5 on August 25, 2025
 
-## [2.8.9] - Unreleased
+## [2.9.0] - 2026-08-12
 
 ### Added
+
+- TLS authentication added to `mail.py`
 
 ### Changed
 
