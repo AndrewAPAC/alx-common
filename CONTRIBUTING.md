@@ -58,10 +58,7 @@ Build the package:
 ```
 make dist
 ```
-Generate documentation:
-```
-make doc
-```
+
 ## Reporting Issues
 
 If you encounter a bug or want to request a feature:
