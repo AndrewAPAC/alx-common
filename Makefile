@@ -56,6 +56,7 @@ release:: dist
 	git tag $(TAG)
 	git push origin main
 	git push origin $(TAG)
+	@echo "Check https://pypi.org/project/alx-common/ for the updated package"
 
 pypi:: TAG=v$(VERSION)
 pypi:: check-branch check-clean release
