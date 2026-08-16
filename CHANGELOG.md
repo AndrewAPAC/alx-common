@@ -7,6 +7,15 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - The first public release was 2.7.5 on August 25, 2025
 
+## [2.9.1] - 2026-08-16
+
+### Added
+
+- Added `smtp_tls_verify` flag (`verify` in `alx.ini` to verify certificates. If using
+self signed, you need to set to false
+
+### Fixed
+
 ## [2.9.0] - 2026-08-12
 
 ### Added

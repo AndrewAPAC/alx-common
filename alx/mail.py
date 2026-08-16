@@ -24,6 +24,7 @@ from email.message import EmailMessage, Message
 from email.mime.multipart import MIMEMultipart
 from email.mime.text import MIMEText
 from typing import Union
+import ssl
 
 
 class ALXmail(ALXhtml):
@@ -74,6 +75,8 @@ class ALXmail(ALXhtml):
         """Password for connection to the smtp server"""
         self.smtp_timeout = self.config.getint("mail", "timeout", fallback=10)
         """Timeout for connection to the smtp server"""
+        self.smtp_tls_verify = self.config.getboolean("mail", "verify", fallback=True)
+        """Whether TLS certificates should be verified"""
         self.recipients = []
         """A list of recipients"""
         self.cc = []
@@ -252,6 +255,15 @@ class ALXmail(ALXhtml):
         """
         self.smtp_use_tls = use_tls
 
+    def set_tls_verify(self, verify: bool = True) -> None:
+        """
+        Sets whether to verify the tls certificates,
+        overriding the value from `alx.ini`
+
+        :param verify: True to verify tls certificates. Default is True
+        """
+        self.smtp_tls_verify = verify
+
     def set_smtp_credentials(self, user: str, password: str) -> None:
         """
         Sets the username and password used to authenticate to the
@@ -327,7 +339,7 @@ class ALXmail(ALXhtml):
                 self.server = smtplib.SMTP(self.mailhost, self.smtp_port,
                                            timeout=self.smtp_timeout)
                 if self.smtp_use_tls:
-                    self.server.starttls()
+                    self.server.starttls(context=self._tls_context())
                 if self.smtp_user:
                     self.server.login(self.smtp_user, self.smtp_password)
                 self.server.send_message(self.message)
@@ -359,7 +371,7 @@ class ALXmail(ALXhtml):
         try:
             server.ehlo()
             if self.smtp_use_tls:
-                server.starttls()
+                server.starttls(context=self._tls_context())
                 server.ehlo()
             if self.smtp_user:
                 server.login(self.smtp_user, self.smtp_password)
@@ -367,6 +379,19 @@ class ALXmail(ALXhtml):
             server.quit()
 
         return True
+
+    def _tls_context(self) -> ssl.SSLContext:
+        """
+        Builds the SSL context used for STARTTLS, honouring
+        `smtp_tls_verify`
+
+        :return: A verifying context by default, or an unverified
+         context if `smtp_tls_verify` is False
+        """
+        if self.smtp_tls_verify:
+            return ssl.create_default_context()
+        context = ssl._create_unverified_context()
+        return context
 
     def _get_mime_message(self) -> Message:
         """

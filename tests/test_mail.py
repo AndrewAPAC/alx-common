@@ -220,3 +220,107 @@ def test_connection_starttls_failure_propagates_and_still_quits(monkeypatch):
 
     server.quit.assert_called_once()
     server.login.assert_not_called()
+
+
+# ---------------------------------------------------------------------------
+# TLS certificate verification — smtp_tls_verify / set_tls_verify() /
+# _tls_context(). Confirms the *context passed to starttls()* actually
+# differs by verify setting, not just that starttls() was called.
+# ---------------------------------------------------------------------------
+
+def test_tls_verify_defaults_true():
+    """Default (no override, no alx.ini key) should verify certificates."""
+    mail = _mailer()
+    assert mail.smtp_tls_verify is True
+
+
+def test_set_tls_verify_overrides_default():
+    mail = _mailer()
+    mail.set_tls_verify(False)
+    assert mail.smtp_tls_verify is False
+
+    mail.set_tls_verify(True)
+    assert mail.smtp_tls_verify is True
+
+
+def test_tls_context_verifying_by_default():
+    import ssl
+    mail = _mailer()
+    context = mail._tls_context()
+    assert isinstance(context, ssl.SSLContext)
+    assert context.check_hostname is True
+    assert context.verify_mode == ssl.CERT_REQUIRED
+
+
+def test_tls_context_unverified_when_disabled():
+    import ssl
+    mail = _mailer()
+    mail.set_tls_verify(False)
+    context = mail._tls_context()
+    assert isinstance(context, ssl.SSLContext)
+    assert context.verify_mode == ssl.CERT_NONE
+
+
+def test_connection_passes_verifying_context_to_starttls(monkeypatch):
+    """test_connection() should pass a verifying context by default."""
+    mock_smtp = MagicMock()
+    monkeypatch.setattr("smtplib.SMTP", mock_smtp)
+    server = mock_smtp.return_value
+
+    mail = _mailer(tls=True)
+    mail.test_connection()
+
+    _, kwargs = server.starttls.call_args
+    assert kwargs["context"].verify_mode.name == "CERT_REQUIRED"
+
+
+def test_connection_passes_unverified_context_when_disabled(monkeypatch):
+    mock_smtp = MagicMock()
+    monkeypatch.setattr("smtplib.SMTP", mock_smtp)
+    server = mock_smtp.return_value
+
+    mail = _mailer(tls=True)
+    mail.set_tls_verify(False)
+    mail.test_connection()
+
+    _, kwargs = server.starttls.call_args
+    assert kwargs["context"].verify_mode.name == "CERT_NONE"
+
+
+def test_send_passes_unverified_context_when_disabled(monkeypatch):
+    """Same check but through send(), not just test_connection()."""
+    mail = ALXmail(mail_type="plain")
+    mail.set_from("sender@example.com")
+    mail.add_recipient("recipient@example.com")
+    mail.set_subject("verify test")
+    mail.add_paragraph("body")
+    mail.set_tls(True)
+    mail.set_tls_verify(False)
+
+    class DummySMTP:
+        def __init__(self, host, port=25, timeout=None):
+            self.host = host
+            self.port = port
+            self.tls_context = None
+
+        def starttls(self, context=None):
+            self.tls_context = context
+
+        def send_message(self, msg):
+            pass
+
+        def quit(self):
+            pass
+
+    dummy_holder = {}
+
+    def factory(*args, **kwargs):
+        instance = DummySMTP(*args, **kwargs)
+        dummy_holder["instance"] = instance
+        return instance
+
+    monkeypatch.setattr("smtplib.SMTP", factory)
+
+    mail.send()
+
+    assert dummy_holder["instance"].tls_context.verify_mode.name == "CERT_NONE"
