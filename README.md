@@ -111,7 +111,6 @@ operation but now lives on in PyPI and GitHub!
   - A standard alert in html / table format (`alx.itrs.alert.HtmlAlert`)
   - A class to create a [Geneos toolkit sampler](https://docs.itrsgroup.com/docs/geneos/7.6.0/collection/toolkit-plugin/index.html) without the
     need to know internal details (`alx.itrs.toolkit.Toolkit`)
-  - Standardised environment parsing 
 
 ## Documentation
 
@@ -127,7 +126,6 @@ from alx.app import ALXapp
 import sys
 
 args = [
-    ['string'],
     ['-d', '--decrypt', {'action': 'store_true', 'default': False}]
 ]
 
